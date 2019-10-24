@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">boop</string>
+    <string name="color_picker">Color Mode</string>
+    <string name="engine_handler">Synth Engine</string>
+</resources>
