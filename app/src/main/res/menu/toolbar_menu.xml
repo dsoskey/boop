@@ -3,12 +3,12 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
 >
     <item android:id="@+id/action_bar_engine_handler"
-          android:icon="@drawable/baseline_memory_white_24dp"
+          android:icon="@drawable/outline_music_note_24"
           android:title="@string/engine_handler"
           app:showAsAction="ifRoom"
     />
     <item android:id="@+id/action_color_picker_mode"
-          android:icon="@drawable/baseline_color_lens_white_24dp"
+          android:icon="@drawable/outline_palette_24"
           android:title="@string/color_picker"
           app:showAsAction="ifRoom|collapseActionView"
           app:actionLayout="@layout/color_picker_banner"
