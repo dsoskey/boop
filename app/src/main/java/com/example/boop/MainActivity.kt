@@ -13,26 +13,30 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
-    var colorScheme: ColorScheme = ColorScheme.DIAGONAL(
+    var colorScheme: ColorScheme = ColorScheme.diagonal(
         Color.valueOf(Color.parseColor("#FFF549")),
         Color.valueOf(Color.parseColor("#FFBF07"))
     )
-    private var buttonToColor: MutableMap<Int, Int> = colorScheme.buttonToColor()
     private val synthesizer: Synthesizer = DefaultSynthesizer.DEFAULT_SYNTHESIZER
-    private val padFragment: PadFragment = PadFragment(this, synthesizer, buttonToColor)
+    private val padFragment: PadFragment = PadFragment(this, synthesizer, colorScheme)
 
     override fun onDialogDismissed(dialogId: Int) {}
-    override fun onColorSelected(dialogId: Int, color: Int) {
-        buttonToColor[dialogId] = color
-        padFragment.setPadColor(dialogId, Color.valueOf(color))
+    override fun onColorSelected(dialogId: Int, colorInt: Int) {
+        val color = Color.valueOf(colorInt)
+        colorScheme.withColor(dialogId, color)
+        padFragment.setPadColor(dialogId, color)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.action_color_picker_mode -> {
                 padFragment.actionMode = PadFragment.PadAction.COLOR
+                colorScheme.idList.forEach { id -> padFragment.brighten(id) }
             }
-            else -> padFragment.actionMode = PadFragment.PadAction.PLAY
+            else -> {
+                padFragment.actionMode = PadFragment.PadAction.PLAY
+                colorScheme.idList.forEach { id -> padFragment.darken(id) }
+            }
         }
         return super.onOptionsItemSelected(item)
     }

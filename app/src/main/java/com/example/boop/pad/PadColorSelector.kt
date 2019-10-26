@@ -11,19 +11,18 @@ import com.example.boop.R
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 
-class PadColorSelector(private val parent: FragmentActivity, private val buttonToColor: Map<Int, Int>) : Fragment(),
+class PadColorSelector(private val parent: FragmentActivity, private val colorScheme: ColorScheme) : Fragment(),
     View.OnClickListener {
 
     private var fragmentView: View? = null
 
     override fun onClick(view: View) {
         val buttonId = view.id
-        val colorInt = buttonToColor.getOrDefault(buttonId, 0)
         ColorPickerDialog.newBuilder()
             .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
             .setAllowPresets(false)
             .setDialogId(buttonId)
-            .setColor(colorInt)
+            .setColor(colorScheme.getColor(buttonId).toArgb())
             .setShowAlphaSlider(true)
             .show(parent)
     }

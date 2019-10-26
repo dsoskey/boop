@@ -17,9 +17,10 @@
             android:width="98dp"
             android:height="98dp"
             android:background="#FFF549"
-            android:onClick="onPressedDown"
             app:layout_constraintEnd_toStartOf="@+id/grid-1"
-            app:layout_constraintTop_toBottomOf="@+id/grid-4"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-4"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-1"
@@ -31,7 +32,9 @@
             android:height="98dp"
             android:background="#FFEC3E"
             app:layout_constraintEnd_toStartOf="@+id/grid-left-guideline"
-            app:layout_constraintTop_toBottomOf="@+id/grid-5"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-5"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-2"
@@ -43,7 +46,9 @@
             android:layout_marginTop="1dp"
             android:background="#FFE333"
             app:layout_constraintStart_toEndOf="@+id/grid-1"
-            app:layout_constraintTop_toBottomOf="@+id/grid-6"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-6"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-3"
@@ -55,7 +60,9 @@
             android:layout_marginTop="1dp"
             android:background="#FFDA28"
             app:layout_constraintStart_toEndOf="@+id/grid-2"
-            app:layout_constraintTop_toBottomOf="@+id/grid-7"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-7"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-4"
@@ -67,7 +74,9 @@
             android:height="98dp"
             android:background="#FFEC3E"
             app:layout_constraintEnd_toStartOf="@+id/grid-5"
-            app:layout_constraintTop_toBottomOf="@+id/grid-8"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-8"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-5"
@@ -79,7 +88,9 @@
             android:height="98dp"
             android:background="#FFE333"
             app:layout_constraintEnd_toStartOf="@+id/grid-left-guideline"
-            app:layout_constraintTop_toBottomOf="@+id/grid-9"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-9"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-6"
@@ -91,7 +102,9 @@
             android:layout_marginTop="1dp"
             android:background="#FFDA28"
             app:layout_constraintStart_toEndOf="@+id/grid-5"
-            app:layout_constraintTop_toBottomOf="@+id/grid-10"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-10"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-7"
@@ -103,7 +116,9 @@
             android:layout_marginTop="1dp"
             android:background="#FFD11D"
             app:layout_constraintStart_toEndOf="@+id/grid-6"
-            app:layout_constraintTop_toBottomOf="@+id/grid-11"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-11"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-8"
@@ -115,7 +130,9 @@
             android:height="98dp"
             android:background="#FFE333"
             app:layout_constraintEnd_toStartOf="@+id/grid-9"
-            app:layout_constraintTop_toBottomOf="@+id/grid-12"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-12"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-9"
@@ -127,7 +144,9 @@
             android:height="98dp"
             android:background="#FFDA28"
             app:layout_constraintEnd_toStartOf="@+id/grid-left-guideline"
-            app:layout_constraintTop_toBottomOf="@+id/grid-13"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-13"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-10"
@@ -139,7 +158,9 @@
             android:layout_marginTop="1dp"
             android:background="#FFD11D"
             app:layout_constraintStart_toEndOf="@+id/grid-9"
-            app:layout_constraintTop_toBottomOf="@+id/grid-14"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-14"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-11"
@@ -151,7 +172,9 @@
             android:layout_marginTop="1dp"
             android:background="#FFC812"
             app:layout_constraintStart_toEndOf="@+id/grid-10"
-            app:layout_constraintTop_toBottomOf="@+id/grid-15"/>
+            app:layout_constraintTop_toBottomOf="@+id/grid-15"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-12"
@@ -163,7 +186,9 @@
             android:height="98dp"
             android:background="#FFDA28"
             app:layout_constraintEnd_toStartOf="@+id/grid-13"
-            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"/>
+            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-13"
@@ -175,7 +200,9 @@
             android:height="98dp"
             android:background="#FFD11D"
             app:layout_constraintEnd_toStartOf="@+id/grid-left-guideline"
-            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"/>
+            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-14"
@@ -187,7 +214,9 @@
             android:layout_marginTop="1dp"
             android:background="#FFC812"
             app:layout_constraintStart_toEndOf="@+id/grid-13"
-            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"/>
+            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"
+            android:backgroundTintMode="src_over"
+    />
 
     <Button
             android:id="@+id/grid-15"
@@ -199,7 +228,9 @@
             android:layout_marginTop="1dp"
             android:background="#FFBF07"
             app:layout_constraintStart_toEndOf="@+id/grid-14"
-            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"/>
+            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"
+            android:backgroundTintMode="src_over"
+    />
 
     <androidx.constraintlayout.widget.Guideline
             android:id="@+id/grid-left-guideline"

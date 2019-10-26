@@ -7,8 +7,8 @@ import android.graphics.Color
  * Note: returned color list will have length step
  */
 //TODO("Rewrite to be more kotlin-y")
-fun gradient(color1: Color, color2: Color, step: Int?): List<Color> {
-    val redStep = (color2.red() - color1.red()) / step!!
+fun gradient(color1: Color, color2: Color, step: Int): List<Color> {
+    val redStep = (color2.red() - color1.red()) / step
     val greenStep = (color2.green() - color1.green()) / step
     val blueStep = (color2.blue() - color1.blue()) / step
 
