@@ -67,7 +67,7 @@ class PadFragment(
     }
     fun darken(id: Int) {
         val pad = fragmentView!!.findViewById<Button>(id)
-        pad.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#80000000"))
+        pad.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40000000"))
     }
     fun brighten(id: Int) {
         val pad = fragmentView!!.findViewById<Button>(id)

@@ -12,36 +12,9 @@ import wav.boop.waveform.SawEngine
 import wav.boop.waveform.SineEngine
 import wav.boop.waveform.SquareEngine
 
-class EngineSelectorFragment(private val synthesizer: Synthesizer) : Fragment()/*, View.OnTouchListener */ {
+class EngineSelectorFragment(private val synthesizer: Synthesizer) : Fragment() {
 
     private var fragmentView: View? = null
-
-//    override fun onTouch(view: View, event: MotionEvent): Boolean {
-//        val squareButton = fragmentView!!.findViewById<Button>(R.id.square_button)
-//        val sineButton = fragmentView!!.findViewById<Button>(R.id.sine_button)
-//        val sawButton = fragmentView!!.findViewById<Button>(R.id.saw_button)
-//        when (view.id) {
-//            R.id.square_button -> {
-//                squareButton.setTextColor(Color.parseColor("#FFFFFF"))
-//                sineButton.setTextColor(Color.parseColor("#000000"))
-//                sawButton.setTextColor(Color.parseColor("#000000"))
-//                synthesizer.waveformEngine = SquareEngine()
-//            }
-//            R.id.sine_button -> {
-//                sineButton.setTextColor(Color.parseColor("#FFFFFF"))
-//                squareButton.setTextColor(Color.parseColor("#000000"))
-//                sawButton.setTextColor(Color.parseColor("#000000"))
-//                synthesizer.waveformEngine = SineEngine()
-//            }
-//            R.id.saw_button -> {
-//                sawButton.setTextColor(Color.parseColor("#FFFFFF"))
-//                squareButton.setTextColor(Color.parseColor("#000000"))
-//                sineButton.setTextColor(Color.parseColor("#000000"))
-//                synthesizer.waveformEngine = SawEngine()
-//            }
-//        }
-//        return true
-//    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saveInstanceState: Bundle?): View? {
         fragmentView = inflater.inflate(R.layout.engine_handler, container, false)
