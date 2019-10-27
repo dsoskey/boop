@@ -1,4 +1,4 @@
-package com.example.boop.pad
+package wav.boop.pad
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.example.boop.R
-import com.example.boop.synth.Synthesizer
+import wav.boop.R
+import wav.boop.synth.Synthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 
 class PadFragment(

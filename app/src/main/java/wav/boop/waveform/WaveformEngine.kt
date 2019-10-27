@@ -1,4 +1,4 @@
-package com.example.boop.waveform
+package wav.boop.waveform
 
 interface WaveformEngine {
     val DEFAULT_SAMPLE_RATE_IN_SECONDS: Int

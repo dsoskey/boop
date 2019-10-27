@@ -1,4 +1,4 @@
-package com.example.boop
+package wav.boop
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("com.example.boop", appContext.packageName)
+        assertEquals("com.example.wav.boop", appContext.packageName)
     }
 }

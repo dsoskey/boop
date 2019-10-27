@@ -1,4 +1,4 @@
-package com.example.boop
+package wav.boop
 
 import org.junit.Test
 

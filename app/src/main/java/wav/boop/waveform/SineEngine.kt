@@ -1,6 +1,5 @@
-package com.example.boop.waveform
+package wav.boop.waveform
 
-import kotlin.math.pow
 import kotlin.math.cos
 
 class SineEngine : WaveformEngine {

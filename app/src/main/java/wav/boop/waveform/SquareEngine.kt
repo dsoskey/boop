@@ -1,4 +1,4 @@
-package com.example.boop.waveform
+package wav.boop.waveform
 
 class SquareEngine : WaveformEngine {
     override fun getWaveform(frequency: Double): () -> DoubleArray {

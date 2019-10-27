@@ -1,17 +1,16 @@
-package com.example.boop
+package wav.boop
 
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.boop.synth.Synthesizer
-import com.example.boop.waveform.SawEngine
-import com.example.boop.waveform.SineEngine
-import com.example.boop.waveform.SquareEngine
+import wav.boop.synth.Synthesizer
+import wav.boop.waveform.SawEngine
+import wav.boop.waveform.SineEngine
+import wav.boop.waveform.SquareEngine
 
 class EngineSelectorFragment(private val synthesizer: Synthesizer) : Fragment()/*, View.OnTouchListener */ {
 

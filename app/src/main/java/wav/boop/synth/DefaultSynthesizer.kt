@@ -1,7 +1,7 @@
-package com.example.boop.synth
+package wav.boop.synth
 
-import com.example.boop.audio.AudioEngine
-import com.example.boop.waveform.*
+import wav.boop.audio.AudioEngine
+import wav.boop.waveform.*
 
 class DefaultSynthesizer(override var waveformEngine: WaveformEngine, override var audioEngine: AudioEngine) :
     Synthesizer {

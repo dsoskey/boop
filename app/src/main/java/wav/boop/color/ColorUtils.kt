@@ -1,4 +1,4 @@
-package com.example.boop.color
+package wav.boop.color
 
 import android.graphics.Color
 

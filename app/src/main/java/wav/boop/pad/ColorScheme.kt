@@ -1,8 +1,8 @@
-package com.example.boop.pad
+package wav.boop.pad
 
 import android.graphics.Color
-import com.example.boop.R
-import com.example.boop.color.gradient
+import wav.boop.R
+import wav.boop.color.gradient
 
 class ColorScheme(var defaultValue: Color = Color.valueOf(Color.BLACK)) {
 

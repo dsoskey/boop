@@ -1,4 +1,4 @@
-package com.example.boop.pad
+package wav.boop.pad
 
 import android.graphics.Color
 import android.os.Bundle
@@ -9,7 +9,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
-import com.example.boop.R
+import wav.boop.R
 
 class PadPatternSelector(private val colorSchemeManager: ColorSchemeManager) :
     Fragment(), AdapterView.OnItemSelectedListener {

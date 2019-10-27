@@ -1,4 +1,4 @@
-package com.example.boop.pad
+package wav.boop.pad
 
 interface ColorSchemeManager {
     var colorScheme: ColorScheme

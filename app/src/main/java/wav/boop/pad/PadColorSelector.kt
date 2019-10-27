@@ -1,4 +1,4 @@
-package com.example.boop.pad
+package wav.boop.pad
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.example.boop.R
+import wav.boop.R
 
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 

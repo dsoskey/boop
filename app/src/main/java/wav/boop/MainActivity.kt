@@ -1,4 +1,4 @@
-package com.example.boop
+package wav.boop
 
 import android.graphics.Color
 import android.os.Bundle
@@ -6,9 +6,9 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.example.boop.pad.*
-import com.example.boop.synth.DefaultSynthesizer
-import com.example.boop.synth.Synthesizer
+import wav.boop.pad.*
+import wav.boop.synth.DefaultSynthesizer
+import wav.boop.synth.Synthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 
 

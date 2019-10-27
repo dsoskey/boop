@@ -1,4 +1,4 @@
-package com.example.boop.waveform
+package wav.boop.waveform
 
 import kotlin.math.cos
 

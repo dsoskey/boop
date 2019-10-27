@@ -1,4 +1,4 @@
-package com.example.boop.audio
+package wav.boop.audio
 
 import android.media.AudioAttributes
 import android.media.AudioFormat
