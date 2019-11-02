@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import wav.boop.pad.*
 import wav.boop.synth.DefaultSynthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import wav.boop.visualisation.OscilloscopeFragment
 import javax.inject.Inject
 
 
@@ -74,13 +75,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val toolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(toolbar)
 
-        val engineTransaction = supportFragmentManager.beginTransaction()
-        val engineSelectorFragment = EngineSelectorFragment(synthesizer)
-        engineTransaction.add(R.id.side_action, engineSelectorFragment)
-        engineTransaction.commit()
+        val oscilloscopeTransaction = supportFragmentManager.beginTransaction()
+        val oscilloscopeFragment = OscilloscopeFragment()
+        oscilloscopeTransaction.add(R.id.side_action, oscilloscopeFragment)
+        oscilloscopeTransaction.commit()
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        padFragment = PadFragment(this, synthesizer, colorScheme)
+        padFragment = PadFragment(this, oscilloscopeFragment, synthesizer, colorScheme)
         fragmentTransaction.add(R.id.main_action, padFragment)
         fragmentTransaction.commit()
     }

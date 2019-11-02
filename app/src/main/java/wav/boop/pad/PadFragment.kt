@@ -13,10 +13,11 @@ import androidx.fragment.app.FragmentActivity
 import wav.boop.R
 import wav.boop.synth.Synthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
-import javax.inject.Inject
+import wav.boop.visualisation.OscilloscopeFragment
 
 class PadFragment(
     private val parent: FragmentActivity,
+    private val oscilloscopeFragment: OscilloscopeFragment,
     private val synthesizer: Synthesizer,
     private val colorScheme: ColorScheme,
     var actionMode: PadAction = PadAction.PLAY
@@ -43,7 +44,9 @@ class PadFragment(
             }
             PadAction.PLAY -> {
                 if (event.action == MotionEvent.ACTION_DOWN) {
-                    synthesizer.play(frequencyMap[buttonId]!!, buttonId)
+                    val frequency = frequencyMap[buttonId]!!
+                    oscilloscopeFragment.setPlot(synthesizer.waveformEngine.getWaveform(frequency)())
+                    synthesizer.play(frequency, buttonId)
                     brighten(buttonId)
                 } else if (event.action == MotionEvent.ACTION_UP ||
                     event.action == MotionEvent.ACTION_CANCEL ||
