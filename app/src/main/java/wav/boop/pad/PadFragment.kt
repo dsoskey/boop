@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import wav.boop.R
 import wav.boop.synth.Synthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
+import javax.inject.Inject
 
 class PadFragment(
     private val parent: FragmentActivity,

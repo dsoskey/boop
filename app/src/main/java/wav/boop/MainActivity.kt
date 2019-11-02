@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import wav.boop.pad.*
 import wav.boop.synth.DefaultSynthesizer
-import wav.boop.synth.Synthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
@@ -17,8 +17,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         Color.valueOf(Color.parseColor("#FFF549")),
         Color.valueOf(Color.parseColor("#FFBF07"))
     )
-    private val synthesizer: Synthesizer = DefaultSynthesizer.DEFAULT_SYNTHESIZER
-    private val padFragment: PadFragment = PadFragment(this, synthesizer, colorScheme)
+    @Inject lateinit var synthesizer: DefaultSynthesizer
+    lateinit var padFragment: PadFragment
 
     override fun onDialogDismissed(dialogId: Int) {}
     override fun onColorSelected(dialogId: Int, colorInt: Int) {
@@ -27,19 +27,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         padFragment.setPadColor(dialogId, color)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.action_color_picker_mode -> {
-                padFragment.actionMode = PadFragment.PadAction.COLOR
-                colorScheme.idList.forEach { id -> padFragment.brighten(id) }
-            }
-            else -> {
-                padFragment.actionMode = PadFragment.PadAction.PLAY
-                colorScheme.idList.forEach { id -> padFragment.darken(id) }
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
     override fun onOptionsMenuClosed(menu: Menu?) {
         padFragment.actionMode = PadFragment.PadAction.PLAY
         super.onOptionsMenuClosed(menu)
@@ -47,15 +34,45 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
+
+        val engineSelectorExpandListener = object: MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                return true // Return true to collapse action view
+            }
+
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                padFragment.actionMode = PadFragment.PadAction.PLAY
+                colorScheme.idList.forEach { id -> padFragment.darken(id) }
+                return true // Return true to expand action view
+            }
+        }
+        val engineSelectorMenuItem = menu?.findItem(R.id.action_color_picker_mode)
+        engineSelectorMenuItem?.setOnActionExpandListener(engineSelectorExpandListener)
+
+        val colorPickerExpandListener = object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                padFragment.actionMode = PadFragment.PadAction.PLAY
+                colorScheme.idList.forEach { id -> padFragment.darken(id) }
+                return true // Return true to collapse action view
+            }
+
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                padFragment.actionMode = PadFragment.PadAction.COLOR
+                colorScheme.idList.forEach { id -> padFragment.brighten(id) }
+                return true // Return true to expand action view
+            }
+        }
+        val colorPickerMenuItem = menu?.findItem(R.id.action_color_picker_mode)
+        colorPickerMenuItem?.setOnActionExpandListener(colorPickerExpandListener)
         return true
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        (applicationContext as BoopApp).appGraph.inject(this)
+
         val toolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(toolbar)
-
-        val synthesizer = DefaultSynthesizer.DEFAULT_SYNTHESIZER
 
         val engineTransaction = supportFragmentManager.beginTransaction()
         val engineSelectorFragment = EngineSelectorFragment(synthesizer)
@@ -63,6 +80,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         engineTransaction.commit()
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
+        padFragment = PadFragment(this, synthesizer, colorScheme)
         fragmentTransaction.add(R.id.main_action, padFragment)
         fragmentTransaction.commit()
     }

@@ -5,7 +5,8 @@
     <item android:id="@+id/action_bar_engine_handler"
           android:icon="@drawable/outline_music_note_24"
           android:title="@string/engine_handler"
-          app:showAsAction="ifRoom"
+          app:showAsAction="ifRoom|collapseActionView"
+          app:actionProviderClass="wav.boop.menu.EngineSelectorActionProvider"
     />
     <item android:id="@+id/action_color_picker_mode"
           android:icon="@drawable/outline_palette_24"

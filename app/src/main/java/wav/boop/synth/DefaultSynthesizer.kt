@@ -2,9 +2,14 @@ package wav.boop.synth
 
 import wav.boop.audio.AudioEngine
 import wav.boop.waveform.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class DefaultSynthesizer(override var waveformEngine: WaveformEngine, override var audioEngine: AudioEngine) :
-    Synthesizer {
+@Singleton
+class DefaultSynthesizer @Inject constructor(): Synthesizer {
+
+    override var waveformEngine: WaveformEngine = SawEngine(100)
+    override var audioEngine: AudioEngine = AudioEngine(16)
 
     override fun play(frequency: Double, viewId: Int) {
         audioEngine.play(toShortArray(frequency), viewId)
@@ -23,9 +28,5 @@ class DefaultSynthesizer(override var waveformEngine: WaveformEngine, override v
             }
             return shortWave
         }
-    }
-
-    companion object {
-        var DEFAULT_SYNTHESIZER = DefaultSynthesizer(SawEngine(100), AudioEngine(16))
     }
 }
