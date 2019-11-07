@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 class EngineSelectorActionProvider (context: Context) : ActionProvider(context), AdapterView.OnItemSelectedListener {
     enum class Engines {
-        SAW,
         SINE,
+        SAW,
         SQUARE,
     }
 
@@ -29,7 +29,7 @@ class EngineSelectorActionProvider (context: Context) : ActionProvider(context),
         val newEngine = when (
             Engines.valueOf(adapterView?.getItemAtPosition(pos).toString())
         ) {
-            Engines.SAW -> SawEngine()
+            Engines.SAW -> SawEngine(100)
             Engines.SINE -> SineEngine()
             Engines.SQUARE -> SquareEngine()
         }

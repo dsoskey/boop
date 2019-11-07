@@ -8,4 +8,23 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="OscDark">
+        <item name="android:background">@color/ap_black</item>
+        <item name="backgroundColor">@color/ap_black</item>
+        <item name="graphBackgroundColor">@color/ap_black</item>
+        <item name="gridBackgroundColor">@color/ap_black</item>
+        <item name="domainLineColor">@color/ap_transparent</item>
+        <item name="rangeLineColor">@color/ap_transparent</item>
+        <item name="domainOriginLineColor">@color/ap_transparent</item>
+        <item name="rangeOriginLineColor">@color/ap_transparent</item>
+        <item name="lineLabelTextColorTop">@color/ap_transparent</item>
+        <item name="lineLabelTextColorBottom">@color/ap_transparent</item>
+        <item name="lineLabelTextColorLeft">@color/ap_transparent</item>
+        <item name="lineLabelTextColorRight">@color/ap_transparent</item>
+        <item name="titleTextColor">@color/ap_transparent</item>
+        <item name="domainTitleTextColor">@color/ap_transparent</item>
+        <item name="rangeTitleTextColor">@color/ap_transparent</item>
+        <item name="legendTextColor">@color/ap_transparent</item>
+    </style>
+
 </resources>

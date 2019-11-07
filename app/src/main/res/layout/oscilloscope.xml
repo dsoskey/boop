@@ -6,18 +6,12 @@
 
     <com.androidplot.xy.XYPlot
             android:id="@+id/plot"
-            style="@style/APDefacto.Dark"
+            style="@style/OscDark"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:domainLineColor="@color/ap_transparent"
-            app:rangeLineColor="@color/ap_transparent"
-            app:domainOriginLineColor="@color/ap_transparent"
-            app:rangeOriginLineColor="@color/ap_transparent"
-            app:lineLabelTextColorBottom="@color/ap_transparent"
-            app:lineLabelTextColorLeft="@color/ap_transparent"
     />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,7 @@
 package wav.boop.waveform
 
+import wav.boop.DEFAULT_SAMPLE_RATE_IN_SECONDS
+
 class SquareEngine : WaveformEngine {
     override fun getWaveform(frequency: Double): () -> DoubleArray {
         return fun(): DoubleArray {

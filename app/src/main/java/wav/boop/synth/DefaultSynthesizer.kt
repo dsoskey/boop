@@ -8,7 +8,7 @@ import javax.inject.Singleton
 @Singleton
 class DefaultSynthesizer @Inject constructor(): Synthesizer {
 
-    override var waveformEngine: WaveformEngine = SawEngine(100)
+    override var waveformEngine: WaveformEngine = SineEngine()
     override var audioEngine: AudioEngine = AudioEngine(16)
 
     override fun play(frequency: Double, viewId: Int) {

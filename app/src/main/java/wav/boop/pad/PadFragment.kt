@@ -13,11 +13,11 @@ import androidx.fragment.app.FragmentActivity
 import wav.boop.R
 import wav.boop.synth.Synthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
-import wav.boop.visualisation.OscilloscopeFragment
+import wav.boop.visualisation.ClassicOscilloscopeFragment
 
 class PadFragment(
     private val parent: FragmentActivity,
-    private val oscilloscopeFragment: OscilloscopeFragment,
+    private val oscilloscopeFragment: ClassicOscilloscopeFragment,
     private val synthesizer: Synthesizer,
     private val colorScheme: ColorScheme,
     var actionMode: PadAction = PadAction.PLAY

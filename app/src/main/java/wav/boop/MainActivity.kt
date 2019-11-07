@@ -9,14 +9,14 @@ import androidx.appcompat.widget.Toolbar
 import wav.boop.pad.*
 import wav.boop.synth.DefaultSynthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import wav.boop.visualisation.OscilloscopeFragment
+import wav.boop.visualisation.ClassicOscilloscopeFragment
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
-    var colorScheme: ColorScheme = ColorScheme.diagonal(
-        Color.valueOf(Color.parseColor("#FFF549")),
-        Color.valueOf(Color.parseColor("#FFBF07"))
+    var colorScheme: ColorScheme = ColorScheme.piano(
+        Color.valueOf(Color.parseColor("#FFEC00")),
+        Color.valueOf(Color.parseColor("#AB00FF"))
     )
     @Inject lateinit var synthesizer: DefaultSynthesizer
     lateinit var padFragment: PadFragment
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         setSupportActionBar(toolbar)
 
         val oscilloscopeTransaction = supportFragmentManager.beginTransaction()
-        val oscilloscopeFragment = OscilloscopeFragment()
+        val oscilloscopeFragment = ClassicOscilloscopeFragment()
         oscilloscopeTransaction.add(R.id.side_action, oscilloscopeFragment)
         oscilloscopeTransaction.commit()
 
