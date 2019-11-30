@@ -9,10 +9,6 @@ class ThreadedTrack(private val waveform: () -> ShortArray, private val trackBui
     var isPlaying: Boolean = false
         private set
 
-    init {
-        isPlaying = false
-    }
-
     override fun run() {
         val track = trackBuilder.build()
         track.play()

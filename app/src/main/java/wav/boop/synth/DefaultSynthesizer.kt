@@ -1,6 +1,8 @@
 package wav.boop.synth
 
-import wav.boop.audio.AudioEngine
+import wav.boop.audio.DefaultAudioEngine
+import wav.boop.audio.ExperimentalAudioEngine
+import wav.boop.visualisation.HistoricalOscilloscope
 import wav.boop.waveform.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -9,7 +11,8 @@ import javax.inject.Singleton
 class DefaultSynthesizer @Inject constructor(): Synthesizer {
 
     override var waveformEngine: WaveformEngine = SineEngine()
-    override var audioEngine: AudioEngine = AudioEngine(16)
+    override val audioEngine = DefaultAudioEngine(16)
+    val oscilloscope = HistoricalOscilloscope()
 
     override fun play(frequency: Double, viewId: Int) {
         audioEngine.play(toShortArray(frequency), viewId)
@@ -22,6 +25,7 @@ class DefaultSynthesizer @Inject constructor(): Synthesizer {
     private fun toShortArray(frequency: Double): () -> ShortArray {
         return fun(): ShortArray{
             val wave: DoubleArray = waveformEngine.getWaveform(frequency)()
+            wave.forEach { oscilloscope.pushFutureEvent(it) }
             val shortWave = ShortArray(wave.size)
             for (i in wave.indices) {
                 shortWave[i] = (wave[i] * java.lang.Short.MAX_VALUE).toShort()

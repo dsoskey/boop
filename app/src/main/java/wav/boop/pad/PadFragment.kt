@@ -17,7 +17,7 @@ import wav.boop.visualisation.ClassicOscilloscopeFragment
 
 class PadFragment(
     private val parent: FragmentActivity,
-    private val oscilloscopeFragment: ClassicOscilloscopeFragment,
+//    private val oscilloscopeFragment: ClassicOscilloscopeFragment,
     private val synthesizer: Synthesizer,
     private val colorScheme: ColorScheme,
     var actionMode: PadAction = PadAction.PLAY
@@ -45,7 +45,7 @@ class PadFragment(
             PadAction.PLAY -> {
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     val frequency = frequencyMap[buttonId]!!
-                    oscilloscopeFragment.setPlot(synthesizer.waveformEngine.getWaveform(frequency)())
+//                    oscilloscopeFragment.setPlot(synthesizer.waveformEngine.getWaveform(frequency)())
                     synthesizer.play(frequency, buttonId)
                     brighten(buttonId)
                 } else if (event.action == MotionEvent.ACTION_UP ||
