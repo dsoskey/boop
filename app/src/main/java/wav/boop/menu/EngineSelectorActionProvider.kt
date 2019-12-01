@@ -14,6 +14,7 @@ import wav.boop.synth.DefaultSynthesizer
 import wav.boop.waveform.SawEngine
 import wav.boop.waveform.SineEngine
 import wav.boop.waveform.SquareEngine
+import wav.boop.waveform.TriangleEngine
 import javax.inject.Inject
 
 class EngineSelectorActionProvider (context: Context) : ActionProvider(context), AdapterView.OnItemSelectedListener {
@@ -21,6 +22,7 @@ class EngineSelectorActionProvider (context: Context) : ActionProvider(context),
         SINE,
         SAW,
         SQUARE,
+        TRIANGLE
     }
 
     @Inject lateinit var synthesizer: DefaultSynthesizer
@@ -29,6 +31,7 @@ class EngineSelectorActionProvider (context: Context) : ActionProvider(context),
         val newEngine = when (
             Engines.valueOf(adapterView?.getItemAtPosition(pos).toString())
         ) {
+            Engines.TRIANGLE -> TriangleEngine()
             Engines.SAW -> SawEngine(100)
             Engines.SINE -> SineEngine()
             Engines.SQUARE -> SquareEngine()

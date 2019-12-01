@@ -1,12 +1,16 @@
 package wav.boop.waveform
 
 import kotlin.math.sin
+import kotlin.math.pow
 import wav.boop.DEFAULT_SAMPLE_RATE_IN_SECONDS
 
-class SawEngine(var numVoices: Int = 4) : WaveformEngine {
-    private fun baseSineFunction(frequency: Double, amplitude: Double, time: Int): Double {
-        return amplitude * sin(2.0 * frequency * Math.PI * time.toDouble() / (DEFAULT_SAMPLE_RATE_IN_SECONDS))
-}
+class TriangleEngine(var numVoices: Int = 3) : WaveformEngine {
+//    sin((2n-1)*x)*(-1)^n/(2n-1)^2
+//    n = num harmonic OR harmonic * base freq
+//    x = time
+    private fun baseFunction (harmonic: Int, time: Int): Double {
+        return (sin((2 * harmonic - 1) * time.toDouble()) * (-1.0).pow(harmonic) / (2 * harmonic.toDouble() - 1).pow(2))
+    }
 
     override fun getWaveform(frequency: Double): () -> DoubleArray {
         return fun (): DoubleArray {
@@ -15,7 +19,7 @@ class SawEngine(var numVoices: Int = 4) : WaveformEngine {
             for (i in mSound.indices) {
                 mSound[i] = 0.0
                 for (harmonic in 1.rangeTo(numVoices)) {
-                    mSound[i] += baseSineFunction(frequency * harmonic, 1.0 / harmonic, i)
+                    mSound[i] += baseFunction(harmonic, i)
                 }
             }
             return mSound
