@@ -9,12 +9,14 @@ import com.androidplot.ui.HorizontalPositioning
 import com.androidplot.ui.Size
 import com.androidplot.ui.SizeMode
 import com.androidplot.ui.VerticalPositioning
+import com.androidplot.util.Redrawer
 import com.androidplot.xy.*
 import wav.boop.R
 
 class OscilloscopeFragment(private val oscilloscope: HistoricalOscilloscope): Fragment() {
     private lateinit var fragmentView: View
     private lateinit var plot: XYPlot
+    private lateinit var redrawer: Redrawer
 
 //    fun setPlot() {
 //        return { waveform: DoubleArray ->
@@ -45,27 +47,21 @@ class OscilloscopeFragment(private val oscilloscope: HistoricalOscilloscope): Fr
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         configurePlotLayout()
-//        oscilloscope.onHistoryChanged.add { waveform ->
-//            plot.clear()
-//            val waveformList = waveform.toList()
-//            val series = NormedXYSeries(
-//                SimpleXYSeries(
-//                    waveformList + waveformList + waveformList,
-//                    SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Waveform"
-//                ),
-//                NormedXYSeries.Norm(null, 0.0, false),
-//                NormedXYSeries.Norm(null, 0.0, false)
-//            )
-//            val seriesFormat = LineAndPointFormatter(context, R.xml.oscilloscope_line)
-//            seriesFormat.interpolationParams =
-//                CatmullRomInterpolator.Params(10, CatmullRomInterpolator.Type.Centripetal)
-//            plot.addSeries(series, seriesFormat)
-//            plot.redraw()
-//        }
+        println("Configured!")
+        val normedXYSeries = NormedXYSeries(
+            oscilloscope,
+            NormedXYSeries.Norm(null, 0.0, false),
+            NormedXYSeries.Norm(null, 0.0, false)
+        )
+        val seriesFormat = LineAndPointFormatter(context, R.xml.oscilloscope_line)
+        seriesFormat.interpolationParams =
+            CatmullRomInterpolator.Params(10, CatmullRomInterpolator.Type.Centripetal)
+        plot.addSeries(normedXYSeries, seriesFormat)
+        redrawer = Redrawer(plot, 30f, true)
+        println("Leggo fam!")
     }
 
     private fun configurePlotLayout() {
-        plot = fragmentView.findViewById(R.id.plot)
         plot = fragmentView.findViewById(R.id.plot)
         plot.legend.isVisible = false
         plot.legend.setHeight(0f)

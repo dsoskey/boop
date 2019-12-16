@@ -1,11 +1,11 @@
 package wav.boop.waveform
 
-import kotlin.math.cos
+import kotlin.math.sin
 import wav.boop.DEFAULT_SAMPLE_RATE_IN_SECONDS
 
 class SawEngine(var numVoices: Int = 4) : WaveformEngine {
     private fun baseSineFunction(frequency: Double, amplitude: Double, time: Int): Double {
-        return amplitude * cos(2.0 * frequency * Math.PI * time.toDouble() / (DEFAULT_SAMPLE_RATE_IN_SECONDS))
+        return amplitude * sin(2.0 * frequency * Math.PI * time.toDouble() / (DEFAULT_SAMPLE_RATE_IN_SECONDS))
 }
 
     override fun getWaveform(frequency: Double): () -> DoubleArray {
