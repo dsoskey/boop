@@ -21,12 +21,11 @@ class DefaultSynthesizer @Inject constructor(): Synthesizer {
 
     private fun toShortArray(frequency: Double): () -> ShortArray {
         return fun(): ShortArray{
-            val wave: DoubleArray = waveformEngine.getWaveform(frequency)()
-            val shortWave = ShortArray(wave.size)
-            for (i in wave.indices) {
-                shortWave[i] = (wave[i] * java.lang.Short.MAX_VALUE).toShort()
-            }
-            return shortWave
+            return waveformEngine
+                .getWaveform(frequency)()
+                .map { doubleVal ->
+                    (doubleVal * java.lang.Short.MAX_VALUE).toShort()
+                }.toShortArray()
         }
     }
 }

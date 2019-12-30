@@ -1,8 +1,5 @@
 package wav.boop.audio
 
-import android.media.AudioAttributes
-import android.media.AudioFormat
-import android.media.AudioTrack
 import java.util.HashMap
 import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.ThreadPoolExecutor
@@ -10,23 +7,15 @@ import java.util.concurrent.TimeUnit
 
 class AudioEngine(numThreads: Int) {
 
-    private val trackBuilder: AudioTrack.Builder
-    private val executor: ThreadPoolExecutor
-
-    private val playingTracks: MutableMap<Int, ThreadedTrack>
-
-    init {
-        trackBuilder = DEFAULT_TRACK_BUILDER
-        playingTracks = HashMap()
-        executor = ThreadPoolExecutor(
-            numThreads, numThreads,
-            5, TimeUnit.SECONDS,
-            SynchronousQueue()
-        )
-    }
+    private val executor: ThreadPoolExecutor = ThreadPoolExecutor(
+        numThreads, numThreads,
+        5, TimeUnit.SECONDS,
+        SynchronousQueue()
+    )
+    private val playingTracks: MutableMap<Int, ThreadedTrack> = HashMap()
 
     private fun startTrackThread(waveform: () -> ShortArray): ThreadedTrack {
-        val threadedTrack = ThreadedTrack(waveform, trackBuilder)
+        val threadedTrack = ThreadedTrack(waveform)
         executor.execute(threadedTrack)
         return threadedTrack
     }
@@ -46,32 +35,5 @@ class AudioEngine(numThreads: Int) {
                 playingTracks.remove(id)
             }
         }
-    }
-
-    companion object {
-
-        val DEFAULT_TRACK_BUILDER: AudioTrack.Builder = AudioTrack.Builder()
-            .setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            )
-            .setAudioFormat(
-                AudioFormat.Builder()
-                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                    .setSampleRate(44100)
-                    .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-                    .build()
-            )
-            .setBufferSizeInBytes(
-                AudioTrack.getMinBufferSize(
-                    44100,
-                    AudioFormat.CHANNEL_OUT_MONO,
-                    AudioFormat.ENCODING_PCM_8BIT
-                )
-            )
-            .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
-            .setTransferMode(AudioTrack.MODE_STREAM)
     }
 }
