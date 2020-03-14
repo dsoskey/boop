@@ -9,6 +9,8 @@ import androidx.appcompat.widget.Toolbar
 import wav.boop.pad.*
 import wav.boop.synth.DefaultSynthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import wav.boop.audio.SubscriberAudioEngine
+import wav.boop.synth.engine.DefaultSynthEngine
 import wav.boop.visualisation.ClassicOscilloscopeFragment
 import javax.inject.Inject
 
@@ -19,7 +21,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         Color.valueOf(Color.parseColor("#AB00FF"))
     )
     @Inject lateinit var synthesizer: DefaultSynthesizer
-    lateinit var padFragment: PadFragment
+    lateinit var padFragment: SubPadFragment
 
     override fun onDialogDismissed(dialogId: Int) {}
     override fun onColorSelected(dialogId: Int, colorInt: Int) {
@@ -29,7 +31,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun onOptionsMenuClosed(menu: Menu?) {
-        padFragment.actionMode = PadFragment.PadAction.PLAY
+        padFragment.actionMode = SubPadFragment.PadAction.PLAY
         super.onOptionsMenuClosed(menu)
     }
 
@@ -42,7 +44,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
 
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.PLAY
+                padFragment.actionMode = SubPadFragment.PadAction.PLAY
                 colorScheme.idList.forEach { id -> padFragment.darken(id) }
                 return true // Return true to expand action view
             }
@@ -52,13 +54,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         val colorPickerExpandListener = object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.PLAY
+                padFragment.actionMode = SubPadFragment.PadAction.PLAY
                 colorScheme.idList.forEach { id -> padFragment.darken(id) }
                 return true // Return true to collapse action view
             }
 
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.COLOR
+                padFragment.actionMode = SubPadFragment.PadAction.COLOR
                 colorScheme.idList.forEach { id -> padFragment.brighten(id) }
                 return true // Return true to expand action view
             }
@@ -72,6 +74,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         setContentView(R.layout.activity_main)
         (applicationContext as BoopApp).appGraph.inject(this)
 
+
+        val numThreads = 4
+        val synthEngine = DefaultSynthEngine(numThreads, 10L, DEFAULT_SAMPLE_RATE_IN_SECONDS / 100)
+        val audioEngine = SubscriberAudioEngine(numThreads)
+        synthEngine.subscribeToTrack(1, { waveform ->
+            waveform.forEach { j -> print(j) }
+            println()
+        })
+        synthEngine.getTrackIds().forEach { id ->
+            if (audioEngine.tracks.containsKey(id)) {
+                synthEngine.subscribeToTrack(id, audioEngine.tracks[id]!!.queueWave())
+            }
+        }
         val toolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(toolbar)
 
@@ -81,7 +96,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         oscilloscopeTransaction.commit()
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        padFragment = PadFragment(this, oscilloscopeFragment, synthesizer, colorScheme)
+        padFragment = SubPadFragment(this, synthEngine, colorScheme)
         fragmentTransaction.add(R.id.main_action, padFragment)
         fragmentTransaction.commit()
     }
