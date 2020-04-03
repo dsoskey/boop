@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
@@ -23,6 +21,7 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
+    ndkVersion "21.0.6113669"
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
@@ -32,6 +31,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++11"
+            }
+        }
     }
     buildTypes {
         debug {
@@ -42,6 +46,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.10.2"
         }
     }
 }

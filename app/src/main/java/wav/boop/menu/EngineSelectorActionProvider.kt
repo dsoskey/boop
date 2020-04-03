@@ -8,46 +8,26 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.core.view.ActionProvider
-import wav.boop.BoopApp
 import wav.boop.R
-import wav.boop.synth.DefaultSynthesizer
-import wav.boop.waveform.SawEngine
-import wav.boop.waveform.SineEngine
-import wav.boop.waveform.SquareEngine
-import wav.boop.waveform.TriangleEngine
-import javax.inject.Inject
 
 class EngineSelectorActionProvider (context: Context) : ActionProvider(context), AdapterView.OnItemSelectedListener {
-    enum class Engines {
-        SINE,
-        SAW,
-        SQUARE,
-        TRIANGLE
-    }
+    private val engines: List<String> = listOf("sin", "square", "saw")
 
-    @Inject lateinit var synthesizer: DefaultSynthesizer
+    private external fun setWaveform(waveformGenerator: String)
 
     override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-        val newEngine = when (
-            Engines.valueOf(adapterView?.getItemAtPosition(pos).toString())
-        ) {
-            Engines.TRIANGLE -> TriangleEngine()
-            Engines.SAW -> SawEngine(100)
-            Engines.SINE -> SineEngine()
-            Engines.SQUARE -> SquareEngine()
-        }
-        synthesizer.waveformEngine = newEngine
+        setWaveform(adapterView?.getItemAtPosition(pos).toString())
     }
+
     override fun onNothingSelected(adapterView: AdapterView<*>?) {}
 
     override fun onCreateActionView(): View {
-        (context.applicationContext as BoopApp).appGraph.inject(this)
         val inflater = LayoutInflater.from(context)
         val providerView = inflater.inflate(R.layout.pad_pattern_selector, null)
 
-        val options = listOf(*Engines.values())
+        setWaveform("sin")
         val spinner = providerView!!.findViewById<Spinner>(R.id.spinner)
-        val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, options)
+        val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, engines)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = this

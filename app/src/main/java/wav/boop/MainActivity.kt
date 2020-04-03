@@ -7,18 +7,18 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import wav.boop.pad.*
-import wav.boop.synth.DefaultSynthesizer
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import wav.boop.visualisation.ClassicOscilloscopeFragment
-import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
+    private external fun startEngine()
+    private external fun stopEngine()
+
     var colorScheme: ColorScheme = ColorScheme.piano(
         Color.valueOf(Color.parseColor("#FFEC00")),
         Color.valueOf(Color.parseColor("#AB00FF"))
     )
-    @Inject lateinit var synthesizer: DefaultSynthesizer
     lateinit var padFragment: PadFragment
 
     override fun onDialogDismissed(dialogId: Int) {}
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        (applicationContext as BoopApp).appGraph.inject(this)
+        startEngine()
 
         val toolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(toolbar)
@@ -81,8 +81,20 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         oscilloscopeTransaction.commit()
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        padFragment = PadFragment(this, oscilloscopeFragment, synthesizer, colorScheme)
+        padFragment = PadFragment(this, colorScheme)
         fragmentTransaction.add(R.id.main_action, padFragment)
         fragmentTransaction.commit()
+    }
+
+    override fun onDestroy() {
+        stopEngine()
+        super.onDestroy()
+    }
+
+    companion object {
+        // Used to load the 'native-lib' library on application startup.
+        init {
+            System.loadLibrary("native-lib")
+        }
     }
 }
