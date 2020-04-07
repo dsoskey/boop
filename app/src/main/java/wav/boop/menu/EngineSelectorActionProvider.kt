@@ -26,7 +26,7 @@ class EngineSelectorActionProvider (context: Context) : ActionProvider(context),
         val providerView = inflater.inflate(R.layout.pad_pattern_selector, null)
 
         setWaveform("sin")
-        val spinner = providerView!!.findViewById<Spinner>(R.id.spinner)
+        val spinner: Spinner = providerView!!.findViewById(R.id.engine_spinner)
         val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, engines)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter

@@ -54,7 +54,7 @@ class PadPatternSelector(private val colorSchemeManager: ColorSchemeManager) :
 
     private fun configureColorScheme() {
         val options = listOf(*PadPattern.values())
-        val spinner = fragmentView!!.findViewById<Spinner>(R.id.spinner)
+        val spinner = fragmentView!!.findViewById<Spinner>(R.id.engine_spinner)
         val adapter = ArrayAdapter(activity!!, android.R.layout.simple_spinner_item, options)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter

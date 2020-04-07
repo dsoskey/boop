@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/engine_spinner"
         android:layout_width="293dp"
         android:layout_height="24dp"
         app:layout_constraintEnd_toEndOf="parent"

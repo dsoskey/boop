@@ -12,13 +12,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import wav.boop.R
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
-import wav.boop.pitch.NoteLetter
-//import wav.boop.pitch.Scale
-//import wav.boop.pitch.getFrequenciesForScale
-import wav.boop.pitch.getFrequenciesFromTonic;
+import wav.boop.pitch.PitchContainer
+import wav.boop.pitch.getFrequenciesForChord
+
+val padIds: IntArray = intArrayOf(
+    R.id.grid_0, R.id.grid_1, R.id.grid_2, R.id.grid_3,
+    R.id.grid_4, R.id.grid_5, R.id.grid_6, R.id.grid_7,
+    R.id.grid_8, R.id.grid_9, R.id.grid_10, R.id.grid_11,
+    R.id.grid_12, R.id.grid_13, R.id.grid_14, R.id.grid_15
+)
 
 class PadFragment(
     private val parent: FragmentActivity,
+    private val pitchContainer: PitchContainer,
     private val colorScheme: ColorScheme,
     var actionMode: PadAction = PadAction.PLAY
 ) : Fragment(), View.OnTouchListener {
@@ -33,8 +39,7 @@ class PadFragment(
     enum class PadAction {
         COLOR, PLAY
     }
-    private var fragmentView: View? = null
-    private var frequencyMap: MutableMap<Int, Double> = HashMap()
+    lateinit var fragmentView: View
 
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         val buttonId = view.id
@@ -50,11 +55,10 @@ class PadFragment(
                 }
             }
             PadAction.PLAY -> {
-                val frequency = frequencyMap[buttonId]!!
-//                getFrequenciesForScale(frequency, Scale.MAJOR_7TH).forEach { gec ->
-//                    touchEvent(event.action, gec)
-//                }
-                touchEvent(event.action, frequency)
+                val frequency = pitchContainer.frequencyMap[buttonId]!!
+                getFrequenciesForChord(frequency, pitchContainer.chord).forEach { gec ->
+                    touchEvent(event.action, gec)
+                }
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     brighten(buttonId)
                 } else if (event.action == MotionEvent.ACTION_UP ||
@@ -74,15 +78,15 @@ class PadFragment(
         }
     }
     fun setPadColor(id: Int, color: Color) {
-        val pad = fragmentView!!.findViewById<Button>(id)
+        val pad = fragmentView.findViewById<Button>(id)
         pad.setBackgroundColor(color.toArgb())
     }
     fun darken(id: Int) {
-        val pad = fragmentView!!.findViewById<Button>(id)
+        val pad = fragmentView.findViewById<Button>(id)
         pad.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40000000"))
     }
     fun brighten(id: Int) {
-        val pad = fragmentView!!.findViewById<Button>(id)
+        val pad = fragmentView.findViewById<Button>(id)
         pad.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#00000000"))
     }
 
@@ -93,21 +97,10 @@ class PadFragment(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        configureFrequencies()
-        configureColors()
-    }
-
-    private fun configureFrequencies() {
-        // Setting up buttons for booping
-        val pitches: DoubleArray = getFrequenciesFromTonic(NoteLetter.C, 5, padIds.size)
-        padIds.forEachIndexed { i: Int, pad: Int ->
-            frequencyMap[pad] = pitches[i]
-            val grid = fragmentView!!.findViewById<Button>(pad)
+        padIds.forEach { pad: Int ->
+            val grid = fragmentView.findViewById<Button>(pad)
             grid.setOnTouchListener(this)
         }
-    }
-
-    private fun configureColors () {
         colorScheme.idList.forEach { id ->
             setPadColor(id, colorScheme.getColor(id))
             darken(id)

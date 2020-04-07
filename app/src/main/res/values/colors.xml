@@ -2,6 +2,14 @@
 <resources>
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#00574B</color>
+    <color name="seeds">#132513</color>
+
+    <color name="outerRind">#137E6D</color>
+    <color name="innerRind">#CFFDBC</color>
+    <color name="meat">#FF6163</color>
+    <color name="seedies">#2E2E2E</color>
+
+
     <color name="highContrastPrimary">#000000</color>
     <color name="highContrastDark">#000000</color>
     <color name="colorAccent">#D81B60</color>

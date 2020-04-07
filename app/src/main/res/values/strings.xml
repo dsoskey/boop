@@ -2,4 +2,14 @@
     <string name="app_name">boop</string>
     <string name="color_picker">Color Mode</string>
     <string name="engine_handler">Synth Engine</string>
+    <string name="pitch_control_title">Pitch Control</string>
+    <string name="tonic_description">Tonic Note</string>
+    <string name="wave1_description">Wave 1</string>
+    <string name="chord_description">Chord</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="hz">Hz</string>
+    <string name="left_arrow"><![CDATA[<]]></string>
+    <string name="right_arrow"><![CDATA[>]]></string>
+    <string name="oscillator_control_title">Oscillator Control</string>
 </resources>

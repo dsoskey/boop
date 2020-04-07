@@ -9,7 +9,7 @@
 #include "waveform/TriangleWaveGenerator.h"
 #include "Synthesizer.h"
 
-static Synthesizer *synthesizer = new Synthesizer(4);
+static Synthesizer *synthesizer = new Synthesizer(100);
 
 extern "C" {
     JNIEXPORT void JNICALL
@@ -32,6 +32,27 @@ extern "C" {
 
     JNIEXPORT void JNICALL
     Java_wav_boop_menu_EngineSelectorActionProvider_setWaveform(
+            JNIEnv* env,
+            jobject obj,
+            jstring waveform) {
+        WaveGenerator* gen;
+        std::string wf = env->GetStringUTFChars(waveform, NULL);
+        if (wf.compare("sin") == 0) {
+            gen = new SinWaveformGenerator();
+        } else if (wf.compare("square") == 0) {
+            gen = new SquareWaveGenerator();
+        } else if (wf.compare("saw") == 0) {
+            gen = new SawWaveGenerator(100);
+        } else if (wf.compare("triangle") == 0) {
+            gen = new TriangleWaveGenerator(10);
+        } else {
+            gen = new SinWaveformGenerator();
+        }
+        synthesizer->setWave(gen);
+    }
+
+    JNIEXPORT void JNICALL
+    Java_wav_boop_control_EngineSelectorFragment_setWaveform(
             JNIEnv* env,
             jobject obj,
             jstring waveform) {

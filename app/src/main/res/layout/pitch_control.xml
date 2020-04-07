@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Topmost element margins are not supported (ignored) hence the wrapping FrameLayout-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:ignore="UnusedAttribute">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|start"
+            tools:ignore="UselessParent">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:text="@string/pitch_control_title"
+                android:textColor="@color/outerRind"
+                android:background="@color/innerRind"
+                android:elevation="200dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/module_border"
+                android:elevation="150dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="5dp">
+
+            <TextView
+                    android:id="@+id/tonic_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/tonic_description"
+                    android:textColor="@color/seeds"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                    android:id="@+id/up_note"
+                    style="@style/ControlModuleButtons"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/plus"
+                    android:textSize="24sp"
+                    app:layout_constraintBottom_toTopOf="@id/note_spinner"
+                    app:layout_constraintEnd_toEndOf="@+id/note_spinner"
+                    app:layout_constraintStart_toStartOf="@+id/note_spinner" />
+
+            <Spinner
+                    android:id="@+id/note_spinner"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="48dp"
+                    android:textColor="@color/seeds"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tonic_description" />
+            <Button
+                    android:id="@+id/down_note"
+                    style="@style/ControlModuleButtons"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/minus"
+                    android:textSize="24sp"
+                    app:layout_constraintEnd_toEndOf="@+id/note_spinner"
+                    app:layout_constraintStart_toStartOf="@id/note_spinner"
+                    app:layout_constraintTop_toBottomOf="@+id/note_spinner" />
+
+            <Button
+                    android:id="@+id/up_octave"
+                    style="@style/ControlModuleButtons"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/plus"
+                    android:textSize="24sp"
+                    app:layout_constraintBottom_toTopOf="@id/octave_spinner"
+                    app:layout_constraintEnd_toEndOf="@+id/octave_spinner"
+                    app:layout_constraintStart_toStartOf="@+id/octave_spinner" />
+            <Spinner
+                    android:id="@+id/octave_spinner"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="48dp"
+                    android:textColor="@color/seeds"
+                    app:layout_constraintStart_toEndOf="@+id/note_spinner"
+                    app:layout_constraintTop_toBottomOf="@id/tonic_description" />
+            <Button
+                    android:id="@+id/down_octave"
+                    style="@style/ControlModuleButtons"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/minus"
+                    android:textSize="24sp"
+                    app:layout_constraintEnd_toEndOf="@+id/octave_spinner"
+                    app:layout_constraintStart_toStartOf="@id/octave_spinner"
+                    app:layout_constraintTop_toBottomOf="@+id/octave_spinner" />
+
+            <EditText
+                    android:id="@+id/tonic_frequency"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="48dp"
+                    android:background="@color/seeds"
+                    android:imeOptions="actionDone"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:textAlignment="center"
+                    android:textColor="@color/innerRind"
+                    app:layout_constraintStart_toEndOf="@+id/octave_spinner"
+                    app:layout_constraintTop_toBottomOf="@id/tonic_description"/>
+
+            <TextView
+                    android:id="@+id/frequency_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/seeds"
+                    android:text="@string/hz"
+                    app:layout_constraintBottom_toTopOf="@+id/tonic_frequency"
+                    app:layout_constraintEnd_toEndOf="@+id/tonic_frequency"
+                    app:layout_constraintStart_toEndOf="@+id/octave_spinner" />
+
+
+            <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="132dp"
+                    android:text="@string/chord_description"
+                    android:textColor="@color/seeds"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tonic_description" />
+
+            <Button
+                    android:id="@+id/down_chord"
+                    style="@style/ControlModuleButtons"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/left_arrow"
+                    android:textSize="24sp"
+                    android:layout_marginEnd="4dp"
+                    app:layout_constraintTop_toTopOf="@id/chord_spinner"
+                    app:layout_constraintEnd_toStartOf="@+id/chord_spinner"
+                    app:layout_constraintBottom_toBottomOf="@id/chord_spinner"
+                    />
+
+            <Spinner
+                    android:id="@+id/chord_spinner"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/seeds"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.467"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+            <Button
+                    android:id="@+id/up_chord"
+                    style="@style/ControlModuleButtons"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/right_arrow"
+                    android:textSize="24sp"
+                    android:layout_marginStart="4dp"
+                    app:layout_constraintTop_toTopOf="@id/chord_spinner"
+                    app:layout_constraintStart_toEndOf="@+id/chord_spinner"
+                    app:layout_constraintBottom_toBottomOf="@id/chord_spinner"
+                    />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

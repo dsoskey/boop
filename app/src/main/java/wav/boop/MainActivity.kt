@@ -8,17 +8,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import wav.boop.pad.*
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import wav.boop.visualisation.ClassicOscilloscopeFragment
+import wav.boop.control.ControlFragment
+import wav.boop.control.EngineSelectorFragment
+import wav.boop.control.PitchControlFragment
+import wav.boop.menu.TitleBarFragment
+import wav.boop.pitch.PitchContainer
 
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     private external fun startEngine()
     private external fun stopEngine()
 
-    var colorScheme: ColorScheme = ColorScheme.piano(
-        Color.valueOf(Color.parseColor("#FFEC00")),
-        Color.valueOf(Color.parseColor("#AB00FF"))
-    )
+    private val pitchContainer: PitchContainer = PitchContainer(padIds)
+    lateinit var colorScheme: ColorScheme
+    lateinit var controlFragment: ControlFragment
     lateinit var padFragment: PadFragment
 
     override fun onDialogDismissed(dialogId: Int) {}
@@ -33,55 +36,62 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         super.onOptionsMenuClosed(menu)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
-
-        val engineSelectorExpandListener = object: MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                return true // Return true to collapse action view
-            }
-
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.PLAY
-                colorScheme.idList.forEach { id -> padFragment.darken(id) }
-                return true // Return true to expand action view
-            }
-        }
-        val engineSelectorMenuItem = menu?.findItem(R.id.action_color_picker_mode)
-        engineSelectorMenuItem?.setOnActionExpandListener(engineSelectorExpandListener)
-
-        val colorPickerExpandListener = object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.PLAY
-                colorScheme.idList.forEach { id -> padFragment.darken(id) }
-                return true // Return true to collapse action view
-            }
-
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.COLOR
-                colorScheme.idList.forEach { id -> padFragment.brighten(id) }
-                return true // Return true to expand action view
-            }
-        }
-        val colorPickerMenuItem = menu?.findItem(R.id.action_color_picker_mode)
-        colorPickerMenuItem?.setOnActionExpandListener(colorPickerExpandListener)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.toolbar_menu, menu)
+//
+//        val engineSelectorExpandListener = object: MenuItem.OnActionExpandListener {
+//            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+//                return true // Return true to collapse action view
+//            }
+//
+//            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+//                padFragment.actionMode = PadFragment.PadAction.PLAY
+//                colorScheme.idList.forEach { id -> padFragment.darken(id) }
+//                return true // Return true to expand action view
+//            }
+//        }
+//        val engineSelectorMenuItem = menu?.findItem(R.id.action_bar_engine_handler)
+//        engineSelectorMenuItem?.setOnActionExpandListener(engineSelectorExpandListener)
+//        val colorPickerExpandListener = object : MenuItem.OnActionExpandListener {
+//            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+//                padFragment.actionMode = PadFragment.PadAction.PLAY
+//                colorScheme.idList.forEach { id -> padFragment.darken(id) }
+//                return true // Return true to collapse action view
+//            }
+//
+//            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+//                padFragment.actionMode = PadFragment.PadAction.COLOR
+//                colorScheme.idList.forEach { id -> padFragment.brighten(id) }
+//                return true // Return true to expand action view
+//            }
+//        }
+//        val colorPickerMenuItem = menu?.findItem(R.id.action_color_picker_mode)
+//        colorPickerMenuItem?.setOnActionExpandListener(colorPickerExpandListener)
+//        return true
+//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         startEngine()
+        colorScheme = ColorScheme.piano(
+            Color.valueOf(resources.getColor(R.color.meat)),
+            Color.valueOf(resources.getColor(R.color.seeds))
+        )
 
-        val toolbar: Toolbar = findViewById(R.id.my_toolbar)
-        setSupportActionBar(toolbar)
+        val pitchControlFragment = PitchControlFragment(pitchContainer)
+        val engineSelectorFragment = EngineSelectorFragment()
+        val controlTransaction = supportFragmentManager.beginTransaction()
+        controlFragment = ControlFragment(arrayOf(pitchControlFragment, engineSelectorFragment))
+        controlTransaction.add(R.id.side_action, controlFragment)
+        controlTransaction.commit()
 
-        val oscilloscopeTransaction = supportFragmentManager.beginTransaction()
-        val oscilloscopeFragment = ClassicOscilloscopeFragment()
-        oscilloscopeTransaction.add(R.id.side_action, oscilloscopeFragment)
-        oscilloscopeTransaction.commit()
+        val titleBarTransaction = supportFragmentManager.beginTransaction()
+        val titleBarFragment = TitleBarFragment({ controlFragment.toggleLockControl() })
+        titleBarTransaction.add(R.id.title_bar, titleBarFragment)
+        titleBarTransaction.commit()
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        padFragment = PadFragment(this, colorScheme)
+        padFragment = PadFragment(this, pitchContainer, colorScheme)
         fragmentTransaction.add(R.id.main_action, padFragment)
         fragmentTransaction.commit()
     }
