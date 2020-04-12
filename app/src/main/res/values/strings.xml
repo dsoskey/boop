@@ -12,4 +12,6 @@
     <string name="left_arrow"><![CDATA[<]]></string>
     <string name="right_arrow"><![CDATA[>]]></string>
     <string name="oscillator_control_title">Oscillator Control</string>
+    <string name="touch_a_pad">Touch a pad</string>
+    <string name="color_control">Color Control</string>
 </resources>

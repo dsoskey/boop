@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import wav.boop.R
+import wav.boop.model.LockedViewModel
 
-class TitleBarFragment(val toggleLock: () -> Unit): Fragment() {
+class TitleBarFragment: Fragment() {
     lateinit var fragmentView: View
-
-    private var locked: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,9 +27,13 @@ class TitleBarFragment(val toggleLock: () -> Unit): Fragment() {
 
         val button: ImageButton = fragmentView.findViewById(R.id.lock_button)
         button.setOnClickListener { v ->
-            toggleLock()
-            locked = !locked
-            val resId: Int = if (locked) R.drawable.outline_lock_24 else R.drawable.outline_lock_open_24
+            val lockedViewModel: LockedViewModel by activityViewModels()
+            lockedViewModel.toggleIsLocked()
+
+            val resId: Int = if (lockedViewModel.isLocked.value!!)
+                R.drawable.outline_lock_24
+            else
+                R.drawable.outline_lock_open_24
             button.setImageResource(resId)
         }
     }

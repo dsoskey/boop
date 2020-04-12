@@ -6,17 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import wav.boop.R
+import wav.boop.model.LockedViewModel
+import wav.boop.model.PadActionViewModel
+import wav.boop.pad.PadFragment
 import kotlin.math.max
 
 private const val MIN_SCALE = 0.85f
 private const val MIN_ALPHA = 0.5f
 
-class ControlFragment(val subFragments: Array<Fragment>): Fragment() {
+class ControlFragment: Fragment() {
     lateinit var fragmentView: View
-
+    private lateinit var subFragments: Array<Fragment>
     private lateinit var viewPager: ViewPager2
 
     override fun onCreateView(
@@ -30,7 +35,17 @@ class ControlFragment(val subFragments: Array<Fragment>): Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        val pitchControlFragment = PitchControlFragment()
+        val engineSelectorFragment = EngineSelectorFragment()
+        val colorControlFragment = ColorControlFragment()
+        subFragments = arrayOf(pitchControlFragment, engineSelectorFragment, colorControlFragment)
+
         viewPager = fragmentView.findViewById(R.id.control_pager)
+        val isLockedViewModel: LockedViewModel by activityViewModels()
+        isLockedViewModel.isLocked.observe(viewLifecycleOwner, Observer { isLocked ->
+            viewPager.isUserInputEnabled = !isLocked
+        })
         viewPager.setPageTransformer { view, position ->
             view.apply {
                 val pageWidth = width
@@ -66,15 +81,21 @@ class ControlFragment(val subFragments: Array<Fragment>): Fragment() {
                 }
             }
         }
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                val padAction: PadActionViewModel by activityViewModels()
+                super.onPageSelected(position)
+                if (subFragments[position] is ColorControlFragment) {
+                    padAction.setPadAction(PadFragment.PadAction.COLOR)
+                } else {
+                    padAction.setPadAction(PadFragment.PadAction.PLAY)
+                }
+            }
+        })
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount(): Int = subFragments.size
             override fun createFragment(position: Int): Fragment = subFragments[position]
-
         }
 
-    }
-
-    public fun toggleLockControl() {
-        viewPager.isUserInputEnabled = !viewPager.isUserInputEnabled
     }
 }

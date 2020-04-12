@@ -1,5 +1,6 @@
 package wav.boop.control
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,20 +10,23 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.pitch_control.*
 import wav.boop.R
 import wav.boop.pitch.Chord
 import wav.boop.pitch.NoteLetter
-import wav.boop.pitch.PitchContainer
+import wav.boop.model.PitchContainer
 
 
-class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment() {
+class PitchControlFragment: Fragment() {
     lateinit var fragmentView: View
     lateinit var tonicFrequencyEditText: EditText
+    lateinit var pitchContainer: PitchContainer
     private val minOctave = 1
     private val maxOctave = 8
 
 
+    @SuppressLint("SetTextI18n")
     private fun setTonicFrequencyEditText() {
         tonicFrequencyEditText.setText("%.2f".format(pitchContainer.tonicFrequency))
     }
@@ -34,6 +38,9 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val container: PitchContainer by activityViewModels()
+        pitchContainer = container
+
         configureNoteControls()
         configureOctaveControls()
         configureFrequencyControls()
@@ -42,7 +49,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
 
     private fun configureNoteControls() {
         val noteSpinner: Spinner = fragmentView.findViewById(R.id.note_spinner)
-        val noteAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, NoteLetter.values())
+        val noteAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, NoteLetter.values())
         noteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         noteSpinner.adapter = noteAdapter
         noteSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
@@ -58,7 +65,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
         noteSpinner.setSelection(0)
 
         val upButton: Button = fragmentView.findViewById(R.id.up_note)
-        upButton.setOnClickListener { v ->
+        upButton.setOnClickListener {
             if (pitchContainer.tonicNoteLetter == NoteLetter.B) {
                 if (pitchContainer.tonicOctave < maxOctave) {
                     pitchContainer.setTonic(NoteLetter.C, pitchContainer.tonicOctave + 1)
@@ -74,7 +81,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
         }
 
         val downButton: Button = fragmentView.findViewById(R.id.down_note)
-        downButton.setOnClickListener { _ ->
+        downButton.setOnClickListener {
             if (pitchContainer.tonicNoteLetter == NoteLetter.C) {
                 if (pitchContainer.tonicOctave > minOctave) {
                     pitchContainer.setTonic(NoteLetter.C, pitchContainer.tonicOctave - 1)
@@ -92,7 +99,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
 
     private fun configureOctaveControls() {
         val octaveSpinner: Spinner = fragmentView.findViewById(R.id.octave_spinner)
-        val octaveAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, (minOctave..maxOctave).toList())
+        val octaveAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, (minOctave..maxOctave).toList())
         octaveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         octaveSpinner.adapter = octaveAdapter
         octaveSpinner.onItemSelectedListener = object:AdapterView.OnItemSelectedListener {
@@ -108,7 +115,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
         octaveSpinner.setSelection(4)
 
         val upButton: Button = fragmentView.findViewById(R.id.up_octave)
-        upButton.setOnClickListener { _ ->
+        upButton.setOnClickListener {
             if (pitchContainer.tonicOctave < maxOctave) {
                 pitchContainer.setTonic(octave = pitchContainer.tonicOctave + 1)
                 octaveSpinner.setSelection(pitchContainer.tonicOctave - 1)
@@ -117,7 +124,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
         }
 
         val downButton: Button = fragmentView.findViewById(R.id.down_octave)
-        downButton.setOnClickListener { _ ->
+        downButton.setOnClickListener {
             if (pitchContainer.tonicOctave > minOctave) {
                 pitchContainer.setTonic(octave = pitchContainer.tonicOctave - 1)
                 octaveSpinner.setSelection(pitchContainer.tonicOctave - 1)
@@ -142,7 +149,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
 
     private fun configureChordControls() {
         val chordSpinner: Spinner = fragmentView.findViewById(R.id.chord_spinner)
-        val chordAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, Chord.values())
+        val chordAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Chord.values())
         chordAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         chordSpinner.adapter = chordAdapter
         chordSpinner.onItemSelectedListener = object:AdapterView.OnItemSelectedListener {
@@ -154,7 +161,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
         }
 
         val upButton: Button = fragmentView.findViewById(R.id.up_chord)
-        upButton.setOnClickListener { _ ->
+        upButton.setOnClickListener {
             val chords = Chord.values()
             val nextOrdinal = if (pitchContainer.chord.ordinal == chords.size - 1) {
                 0
@@ -166,7 +173,7 @@ class PitchControlFragment(private val pitchContainer: PitchContainer): Fragment
         }
 
         val downButton: Button = fragmentView.findViewById(R.id.down_chord)
-        downButton.setOnClickListener { _ ->
+        downButton.setOnClickListener {
             val chords = Chord.values()
             val nextOrdinal = if (pitchContainer.chord.ordinal == 0) {
                 chords.size - 1
