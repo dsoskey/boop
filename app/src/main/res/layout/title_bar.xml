@@ -2,8 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:background="@color/outerRind"
-        android:layout_width="match_parent" android:layout_height="?attr/actionBarSize">
+        android:background="?attr/colorSecondary"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+    >
 
     <TextView
             android:id="@+id/textView2"
@@ -13,9 +15,8 @@
             android:fontFamily="sans-serif-medium"
             android:gravity="center|start"
             android:text="@string/app_name"
-            android:textColor="@color/ap_white"
+            android:textColor="?attr/colorPrimary"
             android:textSize="24sp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             android:typeface="serif"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

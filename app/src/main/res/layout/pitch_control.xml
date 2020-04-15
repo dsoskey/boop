@@ -20,8 +20,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:text="@string/pitch_control_title"
-                android:textColor="@color/outerRind"
-                android:background="@color/innerRind"
+                android:textColor="?attr/colorSecondary"
+                android:background="?attr/colorPrimary"
                 android:elevation="200dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -42,18 +42,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="@string/tonic_description"
-                    android:textColor="@color/seeds"
+                    android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                     android:id="@+id/up_note"
-                    style="@style/ControlModuleButtons"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    style="@style/Widget.Boop.ControlModule.Button.Small"
                     android:text="@string/plus"
-                    android:textSize="24sp"
                     app:layout_constraintBottom_toTopOf="@id/note_spinner"
                     app:layout_constraintEnd_toEndOf="@+id/note_spinner"
                     app:layout_constraintStart_toStartOf="@+id/note_spinner" />
@@ -64,27 +61,21 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="48dp"
-                    android:textColor="@color/seeds"
+                    android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tonic_description" />
             <Button
                     android:id="@+id/down_note"
-                    style="@style/ControlModuleButtons"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    style="@style/Widget.Boop.ControlModule.Button.Small"
                     android:text="@string/minus"
-                    android:textSize="24sp"
                     app:layout_constraintEnd_toEndOf="@+id/note_spinner"
                     app:layout_constraintStart_toStartOf="@id/note_spinner"
                     app:layout_constraintTop_toBottomOf="@+id/note_spinner" />
 
             <Button
                     android:id="@+id/up_octave"
-                    style="@style/ControlModuleButtons"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    style="@style/Widget.Boop.ControlModule.Button.Small"
                     android:text="@string/plus"
-                    android:textSize="24sp"
                     app:layout_constraintBottom_toTopOf="@id/octave_spinner"
                     app:layout_constraintEnd_toEndOf="@+id/octave_spinner"
                     app:layout_constraintStart_toStartOf="@+id/octave_spinner" />
@@ -93,16 +84,13 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="48dp"
-                    android:textColor="@color/seeds"
+                    android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintStart_toEndOf="@+id/note_spinner"
                     app:layout_constraintTop_toBottomOf="@id/tonic_description" />
             <Button
                     android:id="@+id/down_octave"
-                    style="@style/ControlModuleButtons"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    style="@style/Widget.Boop.ControlModule.Button.Small"
                     android:text="@string/minus"
-                    android:textSize="24sp"
                     app:layout_constraintEnd_toEndOf="@+id/octave_spinner"
                     app:layout_constraintStart_toStartOf="@id/octave_spinner"
                     app:layout_constraintTop_toBottomOf="@+id/octave_spinner" />
@@ -112,12 +100,12 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="48dp"
-                    android:background="@color/seeds"
+                    android:background="?attr/colorOnPrimary"
                     android:imeOptions="actionDone"
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
                     android:textAlignment="center"
-                    android:textColor="@color/innerRind"
+                    android:textColor="?attr/colorPrimary"
                     app:layout_constraintStart_toEndOf="@+id/octave_spinner"
                     app:layout_constraintTop_toBottomOf="@id/tonic_description"/>
 
@@ -126,7 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:textColor="@color/seeds"
+                    android:textColor="?attr/colorOnPrimary"
                     android:text="@string/hz"
                     app:layout_constraintBottom_toTopOf="@+id/tonic_frequency"
                     app:layout_constraintEnd_toEndOf="@+id/tonic_frequency"
@@ -134,23 +122,20 @@
 
 
             <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/chord_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="132dp"
                     android:text="@string/chord_description"
-                    android:textColor="@color/seeds"
+                    android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tonic_description" />
 
             <Button
                     android:id="@+id/down_chord"
-                    style="@style/ControlModuleButtons"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    style="@style/Widget.Boop.ControlModule.Button.Small"
                     android:text="@string/left_arrow"
-                    android:textSize="24sp"
                     android:layout_marginEnd="4dp"
                     app:layout_constraintTop_toTopOf="@id/chord_spinner"
                     app:layout_constraintEnd_toStartOf="@+id/chord_spinner"
@@ -162,19 +147,16 @@
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textColor="@color/seeds"
+                    android:textColor="?attr/colorOnPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.467"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                    app:layout_constraintTop_toBottomOf="@+id/chord_description" />
 
             <Button
                     android:id="@+id/up_chord"
-                    style="@style/ControlModuleButtons"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    style="@style/Widget.Boop.ControlModule.Button.Small"
                     android:text="@string/right_arrow"
-                    android:textSize="24sp"
                     android:layout_marginStart="4dp"
                     app:layout_constraintTop_toTopOf="@id/chord_spinner"
                     app:layout_constraintStart_toEndOf="@+id/chord_spinner"
