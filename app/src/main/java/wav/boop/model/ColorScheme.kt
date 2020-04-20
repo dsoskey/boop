@@ -38,13 +38,11 @@ class ColorScheme: ViewModel() {
                 ca.padIds.removeAll(buttonIds)
             }
             newConfig.add(ca)
-            println(newConfig)
         }
         newConfig.removeIf { ca -> ca.padIds.size == 0 }
         if (!foundColor) {
             newConfig.add(ColorAssignment(color, buttonsClone))
         }
-        println(newConfig)
         colorAssignment.value = newConfig.toList()
     }
 

@@ -1,8 +1,10 @@
 package wav.boop
 
+import android.content.Context
 import android.graphics.Color
+import android.media.AudioManager
 import android.os.Bundle
-import android.view.Menu
+import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -17,8 +19,12 @@ import wav.boop.pad.padIds
 
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
-    private external fun startEngine()
+    private external fun startEngine(cpuIds: IntArray)
     private external fun stopEngine()
+    private external fun native_setDefaultStreamValues(
+        sampleRate: Int,
+        framesPerBurst: Int
+    )
 
     lateinit var colorScheme: ColorScheme
 
@@ -41,7 +47,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        startEngine()
+        startEngine(getExclusiveCores())
+        setDefaultStreamValues()
         colorScheme = ViewModelProvider(this)[ColorScheme::class.java]
 
         colorScheme.makePiano(
@@ -70,6 +77,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         super.onDestroy()
     }
 
+
+    private fun getExclusiveCores(): IntArray {
+        var exclusiveCores: IntArray = intArrayOf()
+
+        try {
+            exclusiveCores = Process.getExclusiveCores()
+        } catch (e: RuntimeException) {
+            println("getExclusiveCores() not supported on this device")
+//                Log.w(FragmentActivity.TAG, "getExclusiveCores() is not supported on this device.")
+        }
+        return exclusiveCores
+    }
+    private fun setDefaultStreamValues() {
+        val myAudioMgr = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val sampleRateStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
+        val defaultSampleRate = sampleRateStr.toInt()
+        val framesPerBurstStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)
+        val defaultFramesPerBurst = framesPerBurstStr.toInt()
+        native_setDefaultStreamValues(defaultSampleRate, defaultFramesPerBurst)
+    }
     companion object {
         // Used to load the 'native-lib' library on application startup.
         init {

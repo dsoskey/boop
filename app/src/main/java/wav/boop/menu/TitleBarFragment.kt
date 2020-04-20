@@ -26,7 +26,7 @@ class TitleBarFragment: Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         val button: ImageButton = fragmentView.findViewById(R.id.lock_button)
-        button.setOnClickListener { v ->
+        button.setOnClickListener {
             val lockedViewModel: LockedViewModel by activityViewModels()
             lockedViewModel.toggleIsLocked()
 

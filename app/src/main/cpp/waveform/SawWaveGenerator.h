@@ -1,20 +1,27 @@
-//
-// Created by yello on 3/28/2020.
-//
-
-#ifndef BOOPK_SAWWAVEGENERATOR_H
-#define BOOPK_SAWWAVEGENERATOR_H
-
+#ifndef BOOP_WAVEFORM_SAW_WAVE_GENERATOR_H
+#define BOOP_WAVEFORM_SAW_WAVE_GENERATOR_H
 
 #include "WaveGenerator.h"
 
 class SawWaveGenerator: public WaveGenerator {
 public:
-    SawWaveGenerator(int numVoices);
-    double getWaveform(double phase);
+    SawWaveGenerator(int numVoices) {
+        if (numVoices < 1) {
+            this->numVoices = 10;
+        } else {
+            this->numVoices = numVoices;
+        }
+    };
+    float getWaveform(float phase, float amplitude) {
+        float val = 0.0;
+        for (int i = 1; i <= this->numVoices; i++) {
+            val += sin(i * phase) / i;
+        }
+        return amplitude * val;
+    };
 private:
     int numVoices;
 };
 
 
-#endif //BOOPK_SAWWAVEGENERATOR_H
+#endif //BOOP_WAVEFORM_SAW_WAVE_GENERATOR_H

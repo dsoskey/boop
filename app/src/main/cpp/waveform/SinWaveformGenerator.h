@@ -1,16 +1,14 @@
-//
-// Created by yello on 3/26/2020.
-//
-
-#ifndef BOOPK_SINWAVEFORMGENERATOR_H
-#define BOOPK_SINWAVEFORMGENERATOR_H
+#ifndef BOOP_WAVEFORM_SIN_WAVE_GENERATOR_H
+#define BOOP_WAVEFORM_SIN_WAVE_GENERATOR_H
 
 #include "WaveGenerator.h"
 
 class SinWaveformGenerator: public WaveGenerator {
 public:
-    double getWaveform(double phase);
+    float getWaveform(float phase, float amplitude) {
+        return sin(phase) * amplitude;
+    };
 };
 
 
-#endif //BOOPK_SINWAVEFORMGENERATOR_H
+#endif //BOOP_WAVEFORM_SIN_WAVE_GENERATOR_H

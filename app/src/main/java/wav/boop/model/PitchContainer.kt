@@ -2,12 +2,15 @@ package wav.boop.model
 
 import androidx.lifecycle.ViewModel
 import wav.boop.pad.padIds
+import wav.boop.pad.padToOscillator
 import wav.boop.pitch.Chord
 import wav.boop.pitch.NoteLetter
 import wav.boop.pitch.getFrequenciesFromTonic
 import wav.boop.pitch.westernTuning
 
 class PitchContainer: ViewModel() {
+    private external fun setFrequency(oscIndex: Int, frequency: Double)
+
     var chord: Chord =
         Chord.MONO
     private val baseOctave: Int = 4
@@ -31,7 +34,11 @@ class PitchContainer: ViewModel() {
             getFrequenciesFromTonic(frequency, padIds.size)
         padIds.forEachIndexed { index, id ->
             frequencyMap[id] = pitches[index]
+            (padToOscillator[id] ?: error("")).forEach { oscIndex ->
+                setFrequency(oscIndex, pitches[index])
+            }
         }
+
     }
 
     fun setTonic(noteLetter: NoteLetter = tonicNoteLetter, octave: Int = tonicOctave) {

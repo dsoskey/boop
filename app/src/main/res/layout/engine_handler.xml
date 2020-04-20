@@ -15,13 +15,14 @@
             tools:ignore="UselessParent">
 
         <TextView
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:text="@string/oscillator_control_title"
-                android:textColor="?attr/colorSecondary"
                 android:background="?attr/colorPrimary"
                 android:elevation="200dp"
+                android:text="@string/oscillator_control_title"
+                android:textColor="?attr/colorSecondary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,43 +40,122 @@
                     android:id="@+id/wave1_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="40dp"
+                    android:fontFamily="monospace"
                     android:text="@string/wave1_description"
                     android:textColor="?attr/colorOnPrimary"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            
+                    android:textSize="45sp"
+                    app:layout_constraintBottom_toTopOf="@+id/guideline"
+                    app:layout_constraintStart_toStartOf="parent" />
+
             <Button
-                    android:id="@+id/square_button"
+                    android:id="@+id/square_button1"
                     style="@style/Widget.Boop.ControlModule.Button.Medium"
-                    android:text="Square"
                     android:layout_marginEnd="8dp"
+                    android:text="@string/square"
                     android:textColor="?attr/colorAccent"
-                    app:layout_constraintEnd_toStartOf="@+id/sin_button"
-                    app:layout_constraintTop_toTopOf="@+id/sin_button"
-            />
+                    app:layout_constraintEnd_toStartOf="@+id/sin_button1"
+                    app:layout_constraintTop_toTopOf="@+id/sin_button1" />
 
             <Button
-                    android:id="@+id/sin_button"
+                    android:id="@+id/sin_button1"
                     style="@style/Widget.Boop.ControlModule.Button.Medium"
-                    android:text="Sin"
+                    android:text="@string/sin"
                     android:textColor="?attr/colorAccent"
-                    android:layout_marginTop="12dp"
-                    app:layout_constraintTop_toBottomOf="@+id/wave1_description"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/wave1_description"
                     app:layout_constraintEnd_toEndOf="parent"
-            />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/wave1_description"
+                    app:layout_constraintVertical_bias="1.0" />
 
             <Button
-                    android:id="@+id/saw_button"
+                    android:id="@+id/saw_button1"
                     style="@style/Widget.Boop.ControlModule.Button.Medium"
                     android:layout_marginStart="8dp"
-                    android:text="Saw"
+                    android:text="@string/saw"
                     android:textColor="?attr/colorAccent"
-                    app:layout_constraintStart_toEndOf="@+id/sin_button"
-                    app:layout_constraintTop_toTopOf="@+id/sin_button"
-            />
+                    app:layout_constraintStart_toEndOf="@+id/sin_button1"
+                    app:layout_constraintTop_toTopOf="@+id/sin_button1" />
+
+            <SeekBar
+                    android:id="@+id/wave1_amplitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/ap_black"
+                    android:backgroundTint="@color/outerRind"
+                    android:clickable="false"
+                    android:minWidth="208dp"
+                    android:progressDrawable="@color/outerRind"
+                    app:layout_constraintEnd_toEndOf="@+id/sin_button1"
+                    app:layout_constraintStart_toStartOf="@+id/sin_button1"
+                    app:layout_constraintTop_toBottomOf="@+id/sin_button1" />
+
+            <TextView
+                    android:id="@+id/wave2_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/wave2_description"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="45sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+            <Button
+                    android:id="@+id/square_button2"
+                    style="@style/Widget.Boop.ControlModule.Button.Medium"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/square"
+                    android:textColor="?attr/colorAccent"
+                    app:layout_constraintEnd_toStartOf="@+id/sin_button2"
+                    app:layout_constraintTop_toTopOf="@+id/sin_button2" />
+
+            <Button
+                    android:id="@+id/sin_button2"
+                    style="@style/Widget.Boop.ControlModule.Button.Medium"
+                    android:text="@string/sin"
+                    android:textColor="?attr/colorAccent"
+                    app:layout_constraintBottom_toBottomOf="@+id/wave2_description"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/wave2_description"
+                    app:layout_constraintVertical_bias="1.0" />
+
+            <Button
+                    android:id="@+id/saw_button2"
+                    style="@style/Widget.Boop.ControlModule.Button.Medium"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/saw"
+                    android:textColor="?attr/colorAccent"
+                    app:layout_constraintStart_toEndOf="@+id/sin_button2"
+                    app:layout_constraintTop_toTopOf="@+id/sin_button2" />
+
+            <SeekBar
+                    android:id="@+id/wave2_amplitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/ap_black"
+                    android:backgroundTint="@color/outerRind"
+                    android:minWidth="208dp"
+                    android:progressDrawable="@color/outerRind"
+                    app:layout_constraintEnd_toEndOf="@+id/sin_button2"
+                    app:layout_constraintStart_toStartOf="@+id/sin_button2"
+                    app:layout_constraintTop_toBottomOf="@+id/sin_button2" />
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintGuide_begin="142dp"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

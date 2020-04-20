@@ -16,18 +16,9 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import wav.boop.model.ColorAssignment
 import wav.boop.model.ColorScheme
 import wav.boop.model.PadActionViewModel
-import wav.boop.model.PitchContainer
-import wav.boop.pitch.getFrequenciesForChord
-
-val padIds: IntArray = intArrayOf(
-    R.id.grid_0, R.id.grid_1, R.id.grid_2, R.id.grid_3,
-    R.id.grid_4, R.id.grid_5, R.id.grid_6, R.id.grid_7,
-    R.id.grid_8, R.id.grid_9, R.id.grid_10, R.id.grid_11,
-    R.id.grid_12, R.id.grid_13, R.id.grid_14, R.id.grid_15
-)
 
 class PadFragment : Fragment() {
-    private external fun touchEvent(action: Int, frequency: Double)
+    private external fun setWaveOn(oscIndex: Int, isOn: Boolean)
 
     var actionMode = PadAction.PLAY
         set(value) {
@@ -80,7 +71,6 @@ class PadFragment : Fragment() {
         actionMode = actionModel.padAction.value!!
         actionModel.padAction.observe(viewLifecycleOwner, Observer { actionMode -> this.actionMode = actionMode })
         padIds.forEach { pad: Int ->
-            val pitchContainer: PitchContainer by activityViewModels()
             val grid = fragmentView.findViewById<Button>(pad)
             grid.setOnTouchListener { view, event ->
                 val buttonId = view.id
@@ -96,16 +86,18 @@ class PadFragment : Fragment() {
                         }
                     }
                     PadAction.PLAY -> {
-                        val frequency = pitchContainer.frequencyMap[buttonId]!!
-                        getFrequenciesForChord(frequency, pitchContainer.chord).forEach { gec ->
-                            touchEvent(event.action, gec)
-                        }
                         if (event.action == MotionEvent.ACTION_DOWN) {
+                            (padToOscillator[buttonId] ?: error("")).forEach { oscId ->
+                                setWaveOn(oscId, true)
+                            }
                             brighten(buttonId)
                         } else if (event.action == MotionEvent.ACTION_UP ||
                             event.action == MotionEvent.ACTION_CANCEL ||
                             event.action == MotionEvent.ACTION_BUTTON_RELEASE
                         ) {
+                            (padToOscillator[buttonId] ?: error("")).forEach { oscId ->
+                                setWaveOn(oscId, false)
+                            }
                             darken(buttonId)
                         }
                     }

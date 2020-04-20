@@ -1,16 +1,17 @@
-//
-// Created by yello on 3/26/2020.
-//
-
-#ifndef BOOPK_SQUAREWAVEGENERATOR_H
-#define BOOPK_SQUAREWAVEGENERATOR_H
-
+#ifndef BOOP_WAVEFORM_SQUARE_WAVE_GENERATOR_H
+#define BOOP_WAVEFORM_SQUARE_WAVE_GENERATOR_H
 
 #include "WaveGenerator.h"
 
 class SquareWaveGenerator: public WaveGenerator {
-    double getWaveform(double phase);
+public:
+    float getWaveform(float phase, float amplitude) {
+        if (phase <= M_PI) {
+            return -amplitude;
+        } else {
+            return amplitude;
+        }
+    };
 };
 
-
-#endif //BOOPK_SQUAREWAVEGENERATOR_H
+#endif //BOOP_WAVEFORM_SQUARE_WAVE_GENERATOR_H

@@ -1,17 +1,17 @@
-//
-// Created by yello on 3/21/2020.
-//
+#ifndef BOOP_WAVEFORM_WAVE_GENERATOR_H
+#define BOOP_WAVEFORM_WAVE_GENERATOR_H
 
-#ifndef BOOPK_WAVEGENERATOR_H
-#define BOOPK_WAVEGENERATOR_H
-
-
-#include <jni.h>
+#define HIGH_PASS_DEFAULT 100.0
 
 class WaveGenerator {
 public:
-    virtual double getWaveform(double phase) = 0;
+    virtual float getWaveform(float phase, float amplitude) = 0;
+    void setCutoffFrequency(double frequency);
+    double getHighPassCutoff();
+    double getTimeConstant();
+private:
+    double timeConstant;// RC
+    double highPassCutoff = HIGH_PASS_DEFAULT;
 };
 
-
-#endif //BOOPK_WAVEGENERATOR_H
+#endif //BOOP_WAVEFORM_WAVE_GENERATOR_H

@@ -9,6 +9,7 @@
         <item name="colorOnPrimary">@color/seeds</item>
         <item name="colorPrimaryDark">@color/outerRind</item>
         <item name="colorAccent">@color/meat</item>
+        <item name="fontFamily">monospace</item>
     </style>
 
     <style name="Widget.Boop.ControlModule.Button" parent="">

@@ -1,84 +1,110 @@
 #include <jni.h>
 #include <list>
 #include <string>
-#include <android/input.h>
-#include "AudioEngine.h"
+#include <vector>
+
 #include "waveform/SquareWaveGenerator.h"
 #include "waveform/SawWaveGenerator.h"
 #include "waveform/SinWaveformGenerator.h"
-#include "waveform/TriangleWaveGenerator.h"
-#include "Synthesizer.h"
+#include "core/AudioEngine.h"
+#include "log.h"
 
-static Synthesizer *synthesizer = new Synthesizer(100);
+static AudioEngine *engine;
+static WaveGenerator* SQUARE = new SquareWaveGenerator();
+static WaveGenerator* SIN = new SinWaveformGenerator();
+static WaveGenerator* SAW = new SawWaveGenerator(69);
+
+std::vector<int> convertJavaArrayToVector(JNIEnv *env, jintArray intArray) {
+    std::vector<int> v;
+    jsize length = env->GetArrayLength(intArray);
+    if (length > 0) {
+        jint *elements = env->GetIntArrayElements(intArray, nullptr);
+        v.insert(v.end(), &elements[0], &elements[length]);
+        // Unpin the memory for the array, or free the copy.
+        env->ReleaseIntArrayElements(intArray, elements, 0);
+    }
+    return v;
+}
 
 extern "C" {
+    /**
+    * Start the audio engine
+    *
+    * @param env
+    * @param instance
+    * @param jCpuIds - CPU core IDs which the audio process should affine to
+    */
     JNIEXPORT void JNICALL
-    Java_wav_boop_pad_PadFragment_touchEvent(
-            JNIEnv* env,
-            jobject obj,
-            jint action,
-            jdouble frequency) {
-        switch (action) {
-            case AMOTION_EVENT_ACTION_DOWN:
-                synthesizer->setToneOn(frequency);
-                break;
-            case AMOTION_EVENT_ACTION_UP:
-                synthesizer->setToneOff(frequency);
-                break;
-            default:
-                break;
-        }
+    Java_wav_boop_MainActivity_startEngine(JNIEnv *env, jobject, jintArray jCpuIds) {
+        std::vector<int> cpuIds = convertJavaArrayToVector(env, jCpuIds);
+        LOGD("cpu ids size: %d", static_cast<int>(cpuIds.size()));
+        engine = new AudioEngine(std::move(cpuIds));
+        LOGD("Engine Started");
     }
 
     JNIEXPORT void JNICALL
-    Java_wav_boop_menu_EngineSelectorActionProvider_setWaveform(
-            JNIEnv* env,
-            jobject obj,
-            jstring waveform) {
-        WaveGenerator* gen;
-        std::string wf = env->GetStringUTFChars(waveform, NULL);
-        if (wf.compare("sin") == 0) {
-            gen = new SinWaveformGenerator();
-        } else if (wf.compare("square") == 0) {
-            gen = new SquareWaveGenerator();
-        } else if (wf.compare("saw") == 0) {
-            gen = new SawWaveGenerator(100);
-        } else if (wf.compare("triangle") == 0) {
-            gen = new TriangleWaveGenerator(10);
+    Java_wav_boop_MainActivity_stopEngine(JNIEnv *env, jobject instance) {
+        if (engine) {
+            delete engine;
         } else {
-            gen = new SinWaveformGenerator();
+            LOGD("Engine does not exist, call startEngine() to create");
         }
-        synthesizer->setWave(gen);
     }
 
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_EngineSelectorFragment_setWaveform(
-            JNIEnv* env,
-            jobject obj,
-            jstring waveform) {
-        WaveGenerator* gen;
-        std::string wf = env->GetStringUTFChars(waveform, NULL);
-        if (wf.compare("sin") == 0) {
-            gen = new SinWaveformGenerator();
-        } else if (wf.compare("square") == 0) {
-            gen = new SquareWaveGenerator();
-        } else if (wf.compare("saw") == 0) {
-            gen = new SawWaveGenerator(100);
-        } else if (wf.compare("triangle") == 0) {
-            gen = new TriangleWaveGenerator(10);
+    Java_wav_boop_pad_PadFragment_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isDown) {
+        if (engine) {
+            engine->setSourceOn(oscIndex, isDown);
         } else {
-            gen = new SinWaveformGenerator();
+            LOGE("Engine does not exist, call createEngine() to create a new one");
         }
-        synthesizer->setWave(gen);
     }
 
     JNIEXPORT void JNICALL
-    Java_wav_boop_MainActivity_startEngine(JNIEnv *env, jobject) {
-        synthesizer->startEngines();
+    Java_wav_boop_model_PitchContainer_setFrequency(JNIEnv *env, jobject instance, jint oscIndex, jdouble frequency) {
+        if (engine) {
+            engine->setFrequency(oscIndex, frequency);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
     }
 
     JNIEXPORT void JNICALL
-    Java_wav_boop_MainActivity_stopEngine(JNIEnv *env, jobject) {
-        synthesizer->stopEngines();
+    Java_wav_boop_control_EngineSelectorFragment_setWaveform(JNIEnv *env, jobject instance, jint oscIndex, jstring waveform) {
+        if (engine) {
+            WaveGenerator* gen;
+            std::string wf = env->GetStringUTFChars(waveform, NULL);
+            if (wf.compare("sin") == 0) {
+                gen = SIN;
+            } else if (wf.compare("square") == 0) {
+                gen = SQUARE;
+            } else if (wf.compare("saw") == 0) {
+                gen = SAW;
+            } else {
+                gen = SIN;
+            }
+            engine->setWaveform(oscIndex, gen);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    JNIEXPORT void JNICALL
+    Java_wav_boop_control_EngineSelectorFragment_setAmplitude(JNIEnv *env, jobject instance, jint oscIndex, jfloat amplitude) {
+        if (engine) {
+            engine->setAmplitude(oscIndex, amplitude);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+        JNIEXPORT void JNICALL
+    Java_wav_boop_MainActivity_native_1setDefaultStreamValues(
+            JNIEnv *env,
+            jobject type,
+            jint sampleRate,
+            jint framesPerBurst) {
+        oboe::DefaultStreamValues::SampleRate = (int32_t) sampleRate;
+        oboe::DefaultStreamValues::FramesPerBurst = (int32_t) framesPerBurst;
     }
 }

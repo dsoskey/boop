@@ -19,17 +19,11 @@ add_library(
 
         # Provides a relative path to your source file(s).
         native-lib.cpp
-        Oscillator.cpp
-        AudioEngine.cpp
-        Synthesizer.cpp
-
-        # Waveforms to choose from
+        log.h
+        core
+        core/AudioEngine.cpp
         waveform/WaveGenerator.cpp
-        waveform/SinWaveformGenerator.cpp
-        waveform/SquareWaveGenerator.cpp
-        waveform/SawWaveGenerator.cpp
-        waveform/TriangleWaveGenerator.cpp
-        )
+)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -37,21 +31,48 @@ add_library(
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
-find_library( # Sets the name of the path variable.
-              log-lib
+find_library(
+        # Sets the name of the path variable.
+        log-lib
+        # Specifies the name of the NDK library that
+        # you want CMake to locate.
+        log
+)
 
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
+
+# Set the path to the Oboe directory.
+
+set (OBOE_DIR ../../../../oboe)
+
+# Add the Oboe library as a subdirectory in your project.
+# add_subdirectory tells CMake to look in this directory to
+# compile oboe source files using oboe's CMake file.
+# ./oboe specifies where the compiled binaries will be stored
+
+add_subdirectory (${OBOE_DIR} ./oboe)
+
+# Specify the path to the Oboe header files.
+# This allows targets compiled with this CMake (application code)
+# to see public Oboe headers, in order to access its API.
+
+include_directories (${OBOE_DIR}/include)
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
-target_link_libraries( # Specifies the target library.
-                       native-lib
+target_link_libraries(
+        # Specifies the target library.
+        native-lib
 
-                       # Links the target library to the log library
-                       # included in the NDK.
-                       ${log-lib}
-                        aaudio)
+        #Links the target library to the log library
+        # included in the NDK.
+        ${log-lib}
+        aaudio
+        oboe
+)
+
+# Enable optimization flags: if having problems with source level debugging,
+# disable -Ofast ( and debug ), re-enable it after done debugging.
+
+target_compile_options(native-lib PRIVATE -Wall -Werror -Ofast)

@@ -16,6 +16,7 @@ import wav.boop.R
 import wav.boop.pitch.Chord
 import wav.boop.pitch.NoteLetter
 import wav.boop.model.PitchContainer
+import wav.boop.pad.padToOscillator
 
 
 class PitchControlFragment: Fragment() {
@@ -24,7 +25,6 @@ class PitchControlFragment: Fragment() {
     lateinit var pitchContainer: PitchContainer
     private val minOctave = 1
     private val maxOctave = 8
-
 
     @SuppressLint("SetTextI18n")
     private fun setTonicFrequencyEditText() {

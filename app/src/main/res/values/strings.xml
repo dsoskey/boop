@@ -4,7 +4,8 @@
     <string name="engine_handler">Synth Engine</string>
     <string name="pitch_control_title">Pitch Control</string>
     <string name="tonic_description">Tonic Note</string>
-    <string name="wave1_description">Wave 1</string>
+    <string name="wave1_description">00</string>
+    <string name="wave2_description">01</string>
     <string name="chord_description">Chord</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
@@ -14,4 +15,7 @@
     <string name="oscillator_control_title">Oscillator Control</string>
     <string name="touch_a_pad">Touch a pad</string>
     <string name="color_control">Color Control</string>
+    <string name="square">Square</string>
+    <string name="sin">Sin</string>
+    <string name="saw">Saw</string>
 </resources>
