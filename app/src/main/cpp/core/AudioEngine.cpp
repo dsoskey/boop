@@ -57,3 +57,19 @@ void AudioEngine::start() {
 void AudioEngine::setAmplitude(int oscIndex, float amplitude) {
     audioSource->setAmplitude(oscIndex, amplitude);
 }
+
+void AudioEngine::setAttackLength(int millis) {
+    audioSource->setAttackLength(millis);
+}
+
+void AudioEngine::setDecayLength(int millis) {
+    audioSource->setDecayLength(millis);
+}
+
+void AudioEngine::setSustainedLevel(float amplitude){
+    audioSource->setSustainedLevel(amplitude);
+}
+
+void AudioEngine::setReleaseLength(int millis) {
+    audioSource->setReleaseLength(millis);
+}

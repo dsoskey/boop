@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="2698.656"
+    android:viewportHeight="2698.656">
+  <group android:translateX="-26.98656"
+      android:translateY="-26.98656">
+    <group android:translateX="89.46045"
+        android:translateY="140.43506">
+      <group android:translateX="484.71503"
+          android:translateY="746.852">
+        <group android:translateX="302.13904"
+            android:translateY="435.8289">
+        
+            <path android:name="b-stick"
+                    android:strokeColor="@color/outerRind"
+                    android:fillType="evenOdd"
+                    android:strokeWidth="65"
+                    android:pathData="M 101.00,-1000.00 C 101.00,0.00 101.00,500.00 101.00,500.00"
+            />
+            <path android:name="B"
+                    android:fillColor="@color/outerRind"
+                    android:fillAlpha="85"
+                    android:pathData="M 900.00,500.00 C 790.00,900.00 220.00,900.00 100.00,500.00 220.00,100.00 790.00,110.00 900.00,500.00"
+            />
+            <path android:name="over-wave"
+                    android:strokeColor="@color/outerRind"
+                    android:strokeWidth="65"
+                    android:pathData="M -300.00,802.00 C 2.00,800.00 100.00,588.00 100.00,500.00 210.00,100.00 780.00,100.00 900.00,500.00 899.00,638.00 1078.00,800.00 1350.00,802.00"
+            />
+            <path android:name="under-wave"
+                    android:strokeColor="@color/meat"
+                    android:strokeWidth="65"
+                    android:pathData="M 1300.00,198.00 C 998.00,200.00 900.00,412.00 900.00,500.00 790.00,900.00 220.00,900.00 100.00,500.00 101.00,362.00 -78.00,200.00 -350.00,198.00"
+            />
+        </group>
+      </group>
+    </group>
+  </group>
+</vector>

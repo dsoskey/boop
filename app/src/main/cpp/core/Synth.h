@@ -15,60 +15,83 @@ constexpr float kOscBaseFrequency = 116.0;
 constexpr float kOscDivisor = 33;
 constexpr float kOscAmplitude = 0.3;
 
-
-class Synth : IRenderableAudio {
+class Synth : public IRenderableAudio {
 public:
 
     Synth(int32_t sr, int32_t cc) : sampleRate(sr), channelCount(cc) {
         for (int i = 0; i < kMaxTracks; ++i) {
-            mOscs[i].setSampleRate(sampleRate);
-            mOscs[i].setFrequency(kOscBaseFrequency + (static_cast<float>(i) / kOscDivisor));
-            mOscs[i].setAmplitude(kOscAmplitude);
-            mOscs[i].setWave(new SinWaveformGenerator());
-            mMixer.addTrack(&mOscs[i]);
+            oscillators[i].setSampleRate(sampleRate);
+            oscillators[i].setFrequency(kOscBaseFrequency + (static_cast<float>(i) / kOscDivisor));
+            oscillators[i].setAmplitude(kOscAmplitude);
+            oscillators[i].setWave(new SinWaveformGenerator());
+            oscillators[i].setEnvelope(new ADSREnvelope());
+            mixer.addTrack(&oscillators[i]);
         }
         if (channelCount == oboe::ChannelCount::Stereo) {
-            mOutputStage =  &mConverter;
+            outputStage =  &converter;
         } else {
-            mOutputStage = &mMixer;
+            outputStage = &mixer;
         }
     }
 
     void setWaveOn(int oscIndex, bool isOn) {
-        if (oscIndex >= 0 && oscIndex < mOscs.size()) {
-            mOscs[oscIndex].setWaveOn(isOn);
+        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+            oscillators[oscIndex].setWaveOn(isOn);
         }
     }
 
     void setFrequency(int oscIndex, double frequency) {
-        if (oscIndex >= 0 && oscIndex < mOscs.size()) {
-            mOscs[oscIndex].setFrequency(frequency);
+        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+            oscillators[oscIndex].setFrequency(frequency);
         }
     }
 
     void setWave(int oscIndex, WaveGenerator* waveGenerator) {
-        if (oscIndex >= 0 && oscIndex < mOscs.size()) {
-            mOscs[oscIndex].setWave(waveGenerator);
+        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+            oscillators[oscIndex].setWave(waveGenerator);
         }
     }
 
     void setAmplitude(int oscIndex, float amplitude) {
-        mOscs[oscIndex].setAmplitude(amplitude);
+        oscillators[oscIndex].setAmplitude(amplitude);
     }
 
     // From IRenderableAudio
     void renderAudio(float *audioData, int32_t numFrames) override {
-        mOutputStage->renderAudio(audioData, numFrames);
+        outputStage->renderAudio(audioData, numFrames);
     };
 
+    void setAttackLength(int millis) {
+        for (int i = 0; i < kMaxTracks; ++i) {
+            oscillators[i].setAttackLength(millis);
+        }
+    }
+
+    void setDecayLength(int millis) {
+        for (int i = 0; i < kMaxTracks; ++i) {
+            oscillators[i].setDecayLength(millis);
+        }
+    }
+
+    void setSustainedLevel(float amplitude) {
+        for (int i = 0; i < kMaxTracks; ++i) {
+            oscillators[i].setSustainedLevel(amplitude);
+        }
+    }
+
+    void setReleaseLength(int millis) {
+        for (int i = 0; i < kMaxTracks; ++i) {
+            oscillators[i].setReleaseLength(millis);
+        }
+    }
     virtual ~Synth() {
     }
 private:
     // Rendering objects
-    std::array<Oscillator, kMaxTracks> mOscs;
-    Mixer mMixer;
-    MonoToStereo mConverter = MonoToStereo(&mMixer);
-    IRenderableAudio *mOutputStage; // This will point to either the mixer or converter, so it needs to be raw
+    std::array<Oscillator, kMaxTracks> oscillators;
+    Mixer mixer;
+    MonoToStereo converter = MonoToStereo(&mixer);
+    IRenderableAudio *outputStage; // This will point to either the mixer or converter, so it needs to be raw
     int32_t sampleRate;
     int32_t channelCount;
 };

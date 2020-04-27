@@ -13,9 +13,11 @@
     <string name="left_arrow"><![CDATA[<]]></string>
     <string name="right_arrow"><![CDATA[>]]></string>
     <string name="oscillator_control_title">Oscillator Control</string>
+    <string name="adsr_control_title">A·D·S·R Control</string>
     <string name="touch_a_pad">Touch a pad</string>
     <string name="color_control">Color Control</string>
     <string name="square">Square</string>
     <string name="sin">Sin</string>
     <string name="saw">Saw</string>
+    <string name="emptyADSRdescription">0.0</string>
 </resources>

@@ -9,11 +9,12 @@
 #include <math.h>
 #include <memory>
 #include "IRenderableAudio.h"
+#include "../waveform/WaveGenerator.h"
+#include "../waveform/ADSREnvelope.h"
 
 constexpr double kDefaultFrequency = 440.0;
 constexpr int32_t kDefaultSampleRate = 48000;
-constexpr double kPi = M_PI;
-constexpr double kTwoPi = kPi * 2;
+constexpr double kTwoPi = M_PI * 2;
 
 class Oscillator : public IRenderableAudio {
 
@@ -22,32 +23,47 @@ public:
     ~Oscillator() = default;
 
     void setWaveOn(bool isWaveOn) {
-        mIsWaveOn.store(isWaveOn);
-        /* IDEA one approach to handling ADSR or other time-based signal processing functions
-         *
-         */
+        currentBurst.store(0);
         if (isWaveOn) {
-            // start timer
-            // store current time
+            this->isWaveOn.store(true);
+            isWaveReleasing.store(false);
         } else {
-            // stop and reset timer
-            // clear current time
+            isWaveReleasing.store(true);
         }
     };
 
     void setSampleRate(int32_t sampleRate) {
-        mSampleRate = sampleRate;
+        this->sampleRate = sampleRate;
         updatePhaseIncrement();
     };
 
     void setFrequency(double frequency) {
-        mFrequency = frequency;
+        this->frequency = frequency;
         updatePhaseIncrement();
     };
 
     void setAmplitude(float amplitude) {
-        mAmplitude = amplitude;
+        this->amplitude = amplitude;
     };
+
+    void setAttackLength(int numMillis) {
+        int frames = numMillis * (sampleRate / 1000);
+        this->adsrEnvelope->setAttackLength(frames);
+    }
+
+    void setDecayLength(int numMillis) {
+        int frames = numMillis * (sampleRate / 1000);
+        this->adsrEnvelope->setDecayLength(frames);
+    }
+
+    void setSustainedLevel(float amplitude) {
+        this->adsrEnvelope->setSustainedAmplitude(amplitude);
+    }
+
+    void setReleaseLength(int numMillis) {
+        int frames = numMillis * (sampleRate / 1000);
+        this->adsrEnvelope->setReleaseLength(frames);
+    }
 
     // From IRenderableAudio
     // TODO: How long does numFramesTake. Just start a timer when isWaveOn is set to true
@@ -58,22 +74,32 @@ public:
         //    double dt = (double) numFrames / (double) sampleRate;
         //    double alpha = waveGenerator->getTimeConstant() / (waveGenerator->getTimeConstant() + dt);
 
-        if (mIsWaveOn){
+        if (isWaveOn){
             for (int i = 0; i < numFrames; ++i) {
+                float currentAmplitude = amplitude.load();
+                if (isWaveReleasing.load()) {
+                    currentAmplitude *= adsrEnvelope->getOnReleaseAmplitude(i + numFrames * currentBurst.load());
+                } else {
+                    currentAmplitude *= adsrEnvelope->getOnPressedAmplitude(i + numFrames * currentBurst.load());
+                }
+                if (currentAmplitude < 0) {
+                    isWaveOn.store(false);
+                    audioData[i] = 0;
+                } else {
+                    audioData[i] = waveGenerator->getWaveform(phase, currentAmplitude);
+                }
 //            if (i == 0) {
-                audioData[i] = waveGenerator->getWaveform(mPhase, mAmplitude);
 //            } else {
 //                audioData[i] = (float) (alpha * (audioData[i-1] + initialWaveform[i] - initialWaveform[i-1]));
 //                audioData[i] = (float) ((audioData[i-1] + alpha * (initialWaveform[i] - audioData[i-1])) * AMPLITUDE);
 //            }
-//            audioData[i] = (float) (waveGenerator->getWaveform(phase_) * AMPLITUDE); //TODO: Get the amplitude from the ADSR here
                 // Sin is the arbitrary waveform generation function passed in
                 // Could be an abstraction for an array of static values a.k.a. a wavetable
                 // WavetableGenerator
-                // Cyclical? Modulo division
-                mPhase += mPhaseIncrement;
-                if (mPhase > kTwoPi) mPhase -= kTwoPi;
+                phase += phaseIncrement;
+                if (phase > kTwoPi) phase -= kTwoPi;
             }
+            currentBurst.store(currentBurst.load() + 1);
         } else {
             memset(audioData, 0, sizeof(float) * numFrames);
         }
@@ -83,18 +109,24 @@ public:
         this->waveGenerator = waveGenerator;
     }
 
+    void setEnvelope(ADSREnvelope* generator) {
+        adsrEnvelope = generator;
+    }
 
 private:
-    std::atomic<bool> mIsWaveOn { false };
-    float mPhase = 0.0;
-    std::atomic<float> mAmplitude { 0 };
-    std::atomic<double> mPhaseIncrement { 0.0 };
-    double mFrequency = kDefaultFrequency;
-    int32_t mSampleRate = kDefaultSampleRate;
+    std::atomic<bool> isWaveOn {false };
+    float phase = 0.0;
+    std::atomic<float> amplitude { 0 };
+    std::atomic<double> phaseIncrement { 0.0 };
+    double frequency = kDefaultFrequency;
+    int32_t sampleRate = kDefaultSampleRate;
     WaveGenerator* waveGenerator;
+    ADSREnvelope* adsrEnvelope;
+    std::atomic<int> currentBurst { 0 };
+    std::atomic<bool> isWaveReleasing { false };
 
     void updatePhaseIncrement(){
-        mPhaseIncrement.store((kTwoPi * mFrequency) / static_cast<double>(mSampleRate));
+        phaseIncrement.store((kTwoPi * frequency) / static_cast<double>(sampleRate));
     };
 };
 

@@ -38,8 +38,9 @@ class ControlFragment: Fragment() {
 
         val pitchControlFragment = PitchControlFragment()
         val engineSelectorFragment = EngineSelectorFragment()
+        val adsrControlFragment = ADSRControlFragment()
         val colorControlFragment = ColorControlFragment()
-        subFragments = arrayOf(pitchControlFragment, engineSelectorFragment, colorControlFragment)
+        subFragments = arrayOf(pitchControlFragment, engineSelectorFragment, adsrControlFragment, colorControlFragment)
 
         viewPager = fragmentView.findViewById(R.id.control_pager)
         val isLockedViewModel: LockedViewModel by activityViewModels()

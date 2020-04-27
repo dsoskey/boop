@@ -98,7 +98,43 @@ extern "C" {
         }
     }
 
-        JNIEXPORT void JNICALL
+    JNIEXPORT void JNICALL
+    Java_wav_boop_control_ADSRControlFragment_setAttackLength(JNIEnv *env, jobject instance, jint numMillis) {
+        if (engine) {
+            engine->setAttackLength(numMillis);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    JNIEXPORT void JNICALL
+    Java_wav_boop_control_ADSRControlFragment_setDecayLength(JNIEnv *env, jobject instance, jint numMillis) {
+        if (engine) {
+            engine->setDecayLength(numMillis);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    JNIEXPORT void JNICALL
+    Java_wav_boop_control_ADSRControlFragment_setSustainLevel(JNIEnv *env, jobject instance, jfloat amplitude) {
+        if (engine) {
+            engine->setSustainedLevel(amplitude);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    JNIEXPORT void JNICALL
+    Java_wav_boop_control_ADSRControlFragment_setReleaseLength(JNIEnv *env, jobject instance, jint numMillis) {
+        if (engine) {
+            engine->setReleaseLength(numMillis);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    JNIEXPORT void JNICALL
     Java_wav_boop_MainActivity_native_1setDefaultStreamValues(
             JNIEnv *env,
             jobject type,

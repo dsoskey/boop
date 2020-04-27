@@ -19,6 +19,11 @@ public:
     void setWaveform(int oscIndex, WaveGenerator *waveGenerator);
     void setAmplitude(int oscIndex, float amplitude);
 
+    void setAttackLength(int millis);
+    void setDecayLength(int millis);
+    void setSustainedLevel(float amplitude);
+    void setReleaseLength(int millis);
+
     virtual void restart() override;
 
 private:

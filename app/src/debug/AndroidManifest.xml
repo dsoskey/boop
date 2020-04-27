@@ -6,12 +6,10 @@
     <application
             tools:replace="android:label"
             android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/boop"
             android:label="boop dev mode"
-            android:roundIcon="@mipmap/ic_launcher_round"
+            android:roundIcon="@mipmap/boop_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme"
-            android:name="wav.boop.BoopApp"
         >
         <activity android:name="wav.boop.MainActivity">
             <intent-filter>

@@ -23,6 +23,7 @@ add_library(
         core
         core/AudioEngine.cpp
         waveform/WaveGenerator.cpp
+        waveform
 )
 
 # Searches for a specified prebuilt library and stores the path as a
