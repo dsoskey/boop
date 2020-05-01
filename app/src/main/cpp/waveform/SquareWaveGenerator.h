@@ -3,6 +3,9 @@
 
 #include "WaveGenerator.h"
 
+/**
+ * Creates a basic
+ */
 class SquareWaveGenerator: public WaveGenerator {
 public:
     float getWaveform(float phase, float amplitude) {

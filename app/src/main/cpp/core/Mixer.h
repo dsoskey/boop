@@ -17,8 +17,8 @@ constexpr uint8_t kMaxTracks = 128;
  * The inputs to the mixer are not owned by the mixer, they should not be deleted while rendering.
  */
 class Mixer : public IRenderableAudio {
-
 public:
+    // From IRenderableAudio
     void renderAudio(float *audioData, int32_t numFrames) {
 
         // Zero out the incoming container array
@@ -33,10 +33,18 @@ public:
         }
     }
 
+    /**
+     * Adds a renderable track to the mixer
+     * @param renderer
+     */
     void addTrack(IRenderableAudio *renderer){
         mTracks[mNextFreeTrackIndex++] = renderer;
     }
 
+    /**
+     * Sets mono or stereo
+     * @param channelCount
+     */
     void setChannelCount(int32_t channelCount){ mChannelCount = channelCount; }
 
 private:

@@ -14,20 +14,21 @@ import wav.boop.control.colorButtonIds
 import wav.boop.menu.TitleBarFragment
 import wav.boop.model.ColorAssignment
 import wav.boop.model.ColorScheme
+import wav.boop.model.PitchContainer
 import wav.boop.pad.PadFragment
 import wav.boop.pad.padIds
 
-
+/**
+ * Root activity for boop.
+ */
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
+    // Native interface for AudioEngine controls
     private external fun startEngine(cpuIds: IntArray)
     private external fun stopEngine()
-    private external fun native_setDefaultStreamValues(
-        sampleRate: Int,
-        framesPerBurst: Int
-    )
+    private external fun setDefaultStreamValues(sampleRate: Int, framesPerBurst: Int)
 
+    // ColorPicker Dialog management
     lateinit var colorScheme: ColorScheme
-
     override fun onDialogDismissed(dialogId: Int) {}
     override fun onColorSelected(dialogId: Int, colorInt: Int) {
         val color = Color.valueOf(colorInt)
@@ -41,16 +42,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     colorScheme.setColorForButtons(color, assignment.padIds)
                 }
             }
-            else -> println("Called from nowhere!")
+            else -> error("Dialog ID (${dialogId}) not recognized as either a pad or a color button")
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         startEngine(getExclusiveCores())
         setDefaultStreamValues()
-        colorScheme = ViewModelProvider(this)[ColorScheme::class.java]
 
+        colorScheme = ViewModelProvider(this)[ColorScheme::class.java]
         colorScheme.makePiano(
             Color.valueOf(ContextCompat.getColor(applicationContext, R.color.meat)),
             Color.valueOf(ContextCompat.getColor(applicationContext, R.color.seeds))
@@ -72,11 +74,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         titleBarTransaction.commit()
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
         stopEngine()
-        super.onDestroy()
+        super.onStop()
     }
 
+    override fun onRestart() {
+        val pitchContainer = ViewModelProvider(this)[PitchContainer::class.java]
+        startEngine(getExclusiveCores())
+        pitchContainer.setTonic(pitchContainer.tonicFrequency)
+        super.onRestart()
+    }
 
     private fun getExclusiveCores(): IntArray {
         var exclusiveCores: IntArray = intArrayOf()
@@ -85,18 +93,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             exclusiveCores = Process.getExclusiveCores()
         } catch (e: RuntimeException) {
             println("getExclusiveCores() not supported on this device")
-//                Log.w(FragmentActivity.TAG, "getExclusiveCores() is not supported on this device.")
         }
         return exclusiveCores
     }
+
     private fun setDefaultStreamValues() {
         val myAudioMgr = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val sampleRateStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
         val defaultSampleRate = sampleRateStr.toInt()
         val framesPerBurstStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)
         val defaultFramesPerBurst = framesPerBurstStr.toInt()
-        native_setDefaultStreamValues(defaultSampleRate, defaultFramesPerBurst)
+        setDefaultStreamValues(defaultSampleRate, defaultFramesPerBurst)
     }
+
     companion object {
         // Used to load the 'native-lib' library on application startup.
         init {

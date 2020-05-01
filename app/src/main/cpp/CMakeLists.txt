@@ -22,7 +22,6 @@ add_library(
         log.h
         core
         core/AudioEngine.cpp
-        waveform/WaveGenerator.cpp
         waveform
 )
 

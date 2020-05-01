@@ -8,11 +8,14 @@ import wav.boop.pitch.NoteLetter
 import wav.boop.pitch.getFrequenciesFromTonic
 import wav.boop.pitch.westernTuning
 
+/**
+ * ViewModel that manages the pitches of the synthesizer.
+ */
 class PitchContainer: ViewModel() {
+    // Native interface
     private external fun setFrequency(oscIndex: Int, frequency: Double)
 
-    var chord: Chord =
-        Chord.MONO
+    var chord: Chord = Chord.MONO
     private val baseOctave: Int = 4
     private val baseNoteLetter: NoteLetter = NoteLetter.A
     private val baseFrequency: Double = 440.0

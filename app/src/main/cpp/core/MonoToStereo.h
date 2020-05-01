@@ -6,18 +6,25 @@
 
 #include "IRenderableAudio.h"
 
-
+/**
+ * Renderable audio that translates mono input data to stereo
+ */
 class MonoToStereo : public IRenderableAudio {
 
 public:
 
-    MonoToStereo(IRenderableAudio *input) : mInput(input){};
+    /**
+     * Constructor
+     * @param i - input source
+     */
+    MonoToStereo(IRenderableAudio *i) : input(i){};
 
+    // From IRenderableAudio
     void renderAudio(float *audioData, int32_t numFrames) override {
 
         constexpr int kChannelCountStereo = 2;
 
-        mInput->renderAudio(audioData, numFrames);
+        input->renderAudio(audioData, numFrames);
 
         // We assume that audioData has sufficient frames to hold the stereo output, so copy each
         // frame in the input to the output twice, working our way backwards through the input array
@@ -29,7 +36,7 @@ public:
         }
     }
 
-    IRenderableAudio *mInput;
+    IRenderableAudio *input;
 };
 
 

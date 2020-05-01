@@ -9,6 +9,7 @@
 #include "core/AudioEngine.h"
 #include "log.h"
 
+// TODO: Decouple creation of engine from starting of engine
 static AudioEngine *engine;
 static WaveGenerator* SQUARE = new SquareWaveGenerator();
 static WaveGenerator* SIN = new SinWaveformGenerator();
@@ -29,7 +30,6 @@ std::vector<int> convertJavaArrayToVector(JNIEnv *env, jintArray intArray) {
 extern "C" {
     /**
     * Start the audio engine
-    *
     * @param env
     * @param instance
     * @param jCpuIds - CPU core IDs which the audio process should affine to
@@ -42,6 +42,11 @@ extern "C" {
         LOGD("Engine Started");
     }
 
+    /**
+     * Stop the audio engine
+     * @param env
+     * @param instance
+     */
     JNIEXPORT void JNICALL
     Java_wav_boop_MainActivity_stopEngine(JNIEnv *env, jobject instance) {
         if (engine) {
@@ -51,15 +56,29 @@ extern "C" {
         }
     }
 
+    /**
+     * Sets the oscillator at oscIndex to on or off. Requires engine to be on to work
+     * @param env
+     * @param instance
+     * @param oscIndex - index of oscillator in synthesizer to affect
+     * @param isOn - should oscillator be on or off
+     */
     JNIEXPORT void JNICALL
-    Java_wav_boop_pad_PadFragment_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isDown) {
+    Java_wav_boop_pad_PadFragment_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isOn) {
         if (engine) {
-            engine->setSourceOn(oscIndex, isDown);
+            engine->setSourceOn(oscIndex, isOn);
         } else {
             LOGE("Engine does not exist, call createEngine() to create a new one");
         }
     }
 
+    /**
+     * Sets frequency of oscillator at oscIndex. Requires engine to be on to work
+     * @param env
+     * @param instance
+     * @param oscIndex - index of oscillator in synthesizer to affect
+     * @param frequency - new frequency of oscillator
+     */
     JNIEXPORT void JNICALL
     Java_wav_boop_model_PitchContainer_setFrequency(JNIEnv *env, jobject instance, jint oscIndex, jdouble frequency) {
         if (engine) {
@@ -69,8 +88,15 @@ extern "C" {
         }
     }
 
+    /**
+     * Sets waveform generator for oscillator at oscIndex. Requires engine to be on to work
+     * @param env
+     * @param instance
+     * @param oscIndex - index of oscillator in synthesizer to affect
+     * @param waveform - sin, square, or saw
+     */
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_EngineSelectorFragment_setWaveform(JNIEnv *env, jobject instance, jint oscIndex, jstring waveform) {
+    Java_wav_boop_control_OscillatorControlFragment_setWaveform(JNIEnv *env, jobject instance, jint oscIndex, jstring waveform) {
         if (engine) {
             WaveGenerator* gen;
             std::string wf = env->GetStringUTFChars(waveform, NULL);
@@ -89,8 +115,15 @@ extern "C" {
         }
     }
 
+    /**
+     * Sets amplitude for oscillator at oscIndex. Requires engine to be on to work
+     * @param env
+     * @param instance
+     * @param oscIndex - index of oscillator in synthesizer to affect
+     * @param amplitude - new amplitude
+     */
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_EngineSelectorFragment_setAmplitude(JNIEnv *env, jobject instance, jint oscIndex, jfloat amplitude) {
+    Java_wav_boop_control_OscillatorControlFragment_setAmplitude(JNIEnv *env, jobject instance, jint oscIndex, jfloat amplitude) {
         if (engine) {
             engine->setAmplitude(oscIndex, amplitude);
         } else {
@@ -98,6 +131,12 @@ extern "C" {
         }
     }
 
+    /**
+     * Sets attack length in milliseconds for all oscillators. Requires an engine to be on to work
+     * @param env
+     * @param instance - index of oscillator in synthesizer to affect
+     * @param numMillis - length of attack
+     */
     JNIEXPORT void JNICALL
     Java_wav_boop_control_ADSRControlFragment_setAttackLength(JNIEnv *env, jobject instance, jint numMillis) {
         if (engine) {
@@ -107,6 +146,12 @@ extern "C" {
         }
     }
 
+    /**
+     * Sets decay length in milliseconds for all oscillators. Requires an engine to be on to work
+     * @param env
+     * @param instance - index of oscillator in synthesizer to affect
+     * @param numMillis - length of decay
+     */
     JNIEXPORT void JNICALL
     Java_wav_boop_control_ADSRControlFragment_setDecayLength(JNIEnv *env, jobject instance, jint numMillis) {
         if (engine) {
@@ -116,6 +161,12 @@ extern "C" {
         }
     }
 
+    /**
+     * Sets sustain level amplitude for all oscillators. Requires an engine to be on to work
+     * @param env
+     * @param instance
+     * @param amplitude
+     */
     JNIEXPORT void JNICALL
     Java_wav_boop_control_ADSRControlFragment_setSustainLevel(JNIEnv *env, jobject instance, jfloat amplitude) {
         if (engine) {
@@ -125,6 +176,12 @@ extern "C" {
         }
     }
 
+    /**
+     * Sets attack length in milliseconds for all oscillators. Requires an engine to be on to work
+     * @param env
+     * @param instance - index of oscillator in synthesizer to affect
+     * @param numMillis - length of attack
+     */
     JNIEXPORT void JNICALL
     Java_wav_boop_control_ADSRControlFragment_setReleaseLength(JNIEnv *env, jobject instance, jint numMillis) {
         if (engine) {
@@ -134,8 +191,15 @@ extern "C" {
         }
     }
 
+    /**
+     * Globally sets sample rate and frames per burst
+     * @param env
+     * @param type
+     * @param sampleRate
+     * @param framesPerBurst
+     */
     JNIEXPORT void JNICALL
-    Java_wav_boop_MainActivity_native_1setDefaultStreamValues(
+    Java_wav_boop_MainActivity_setDefaultStreamValues(
             JNIEnv *env,
             jobject type,
             jint sampleRate,

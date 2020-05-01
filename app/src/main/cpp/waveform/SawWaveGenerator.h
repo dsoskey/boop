@@ -3,6 +3,10 @@
 
 #include "WaveGenerator.h"
 
+/**
+ * Creates a basic saw wave with the given number of voices.
+ * Note - Until caching is done at the WaveGenerator level don't use more than 69 voices.
+ */
 class SawWaveGenerator: public WaveGenerator {
 public:
     SawWaveGenerator(int numVoices) {
@@ -12,7 +16,7 @@ public:
             this->numVoices = numVoices;
         }
     };
-    float getWaveform(float phase, float amplitude) {
+    float getWaveform(float phase, float amplitude) override {
         float val = 0.0;
         for (int i = 1; i <= this->numVoices; i++) {
             val += sin(i * phase) / i;

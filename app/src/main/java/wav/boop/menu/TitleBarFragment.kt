@@ -7,26 +7,19 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import kotlinx.android.synthetic.main.title_bar.*
 import wav.boop.R
 import wav.boop.model.LockedViewModel
 
 class TitleBarFragment: Fragment() {
-    lateinit var fragmentView: View
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        fragmentView = inflater.inflate(R.layout.title_bar, container, false)
-        return fragmentView
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.title_bar, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val button: ImageButton = fragmentView.findViewById(R.id.lock_button)
-        button.setOnClickListener {
+        lock_button.setOnClickListener {
             val lockedViewModel: LockedViewModel by activityViewModels()
             lockedViewModel.toggleIsLocked()
 
@@ -34,7 +27,7 @@ class TitleBarFragment: Fragment() {
                 R.drawable.outline_lock_24
             else
                 R.drawable.outline_lock_open_24
-            button.setImageResource(resId)
+            lock_button.setImageResource(resId)
         }
     }
 }

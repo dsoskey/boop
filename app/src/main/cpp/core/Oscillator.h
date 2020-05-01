@@ -20,51 +20,6 @@ class Oscillator : public IRenderableAudio {
 
 public:
 
-    ~Oscillator() = default;
-
-    void setWaveOn(bool isWaveOn) {
-        currentBurst.store(0);
-        if (isWaveOn) {
-            this->isWaveOn.store(true);
-            isWaveReleasing.store(false);
-        } else {
-            isWaveReleasing.store(true);
-        }
-    };
-
-    void setSampleRate(int32_t sampleRate) {
-        this->sampleRate = sampleRate;
-        updatePhaseIncrement();
-    };
-
-    void setFrequency(double frequency) {
-        this->frequency = frequency;
-        updatePhaseIncrement();
-    };
-
-    void setAmplitude(float amplitude) {
-        this->amplitude = amplitude;
-    };
-
-    void setAttackLength(int numMillis) {
-        int frames = numMillis * (sampleRate / 1000);
-        this->adsrEnvelope->setAttackLength(frames);
-    }
-
-    void setDecayLength(int numMillis) {
-        int frames = numMillis * (sampleRate / 1000);
-        this->adsrEnvelope->setDecayLength(frames);
-    }
-
-    void setSustainedLevel(float amplitude) {
-        this->adsrEnvelope->setSustainedAmplitude(amplitude);
-    }
-
-    void setReleaseLength(int numMillis) {
-        int frames = numMillis * (sampleRate / 1000);
-        this->adsrEnvelope->setReleaseLength(frames);
-    }
-
     // From IRenderableAudio
     // TODO: How long does numFramesTake. Just start a timer when isWaveOn is set to true
     void renderAudio(float *audioData, int32_t numFrames) override {
@@ -93,9 +48,6 @@ public:
 //                audioData[i] = (float) (alpha * (audioData[i-1] + initialWaveform[i] - initialWaveform[i-1]));
 //                audioData[i] = (float) ((audioData[i-1] + alpha * (initialWaveform[i] - audioData[i-1])) * AMPLITUDE);
 //            }
-                // Sin is the arbitrary waveform generation function passed in
-                // Could be an abstraction for an array of static values a.k.a. a wavetable
-                // WavetableGenerator
                 phase += phaseIncrement;
                 if (phase > kTwoPi) phase -= kTwoPi;
             }
@@ -105,16 +57,101 @@ public:
         }
     };
 
+    /**
+     * Sets oscillator on or off and state of ADSR
+     * @param isWaveOn
+     */
+    void setWaveOn(bool isWaveOn) {
+        currentBurst.store(0);
+        if (isWaveOn) {
+            this->isWaveOn.store(true);
+            isWaveReleasing.store(false);
+        } else {
+            isWaveReleasing.store(true);
+        }
+    };
+
+    /**
+     * Sets sample rate of oscillator
+     * @param sampleRate
+     */
+    void setSampleRate(int32_t sampleRate) {
+        this->sampleRate = sampleRate;
+        updatePhaseIncrement();
+    };
+
+    /**
+     * Sets frequency of oscillator
+     * @param frequency
+     */
+    void setFrequency(double frequency) {
+        this->frequency = frequency;
+        updatePhaseIncrement();
+    };
+
+    /**
+     * Sets wave generator component of oscillator
+     * @param waveGenerator
+     */
     void setWave(WaveGenerator* waveGenerator) {
         this->waveGenerator = waveGenerator;
     }
 
+    /**
+     * Sets ADSR envelope component on oscillator
+     * @param generator
+     */
     void setEnvelope(ADSREnvelope* generator) {
         adsrEnvelope = generator;
     }
 
+    /**
+     * Sets base amplitude of wave being generated
+     * @param amplitude
+     */
+    void setAmplitude(float amplitude) {
+        this->amplitude = amplitude;
+    };
+
+    /**
+     * Sets attack length of ADSR
+     * @param numMillis
+     */
+    void setAttackLength(int numMillis) {
+        int frames = numMillis * (sampleRate / 1000);
+        this->adsrEnvelope->setAttackLength(frames);
+    }
+
+    /**
+     * Sets decay length of ADSR
+     * @param numMillis
+     */
+    void setDecayLength(int numMillis) {
+        int frames = numMillis * (sampleRate / 1000);
+        this->adsrEnvelope->setDecayLength(frames);
+    }
+
+    /**
+     * Sets sustain amplitude of ADSR
+     * @param amplitude
+     */
+    void setSustainedLevel(float amplitude) {
+        this->adsrEnvelope->setSustainedAmplitude(amplitude);
+    }
+
+    /**
+     * Sets release length of ADSR
+     * @param numMillis
+     */
+    void setReleaseLength(int numMillis) {
+        int frames = numMillis * (sampleRate / 1000);
+        this->adsrEnvelope->setReleaseLength(frames);
+    }
+
+    ~Oscillator() = default;
+
 private:
-    std::atomic<bool> isWaveOn {false };
+    std::atomic<bool> isWaveOn { false };
     float phase = 0.0;
     std::atomic<float> amplitude { 0 };
     std::atomic<double> phaseIncrement { 0.0 };

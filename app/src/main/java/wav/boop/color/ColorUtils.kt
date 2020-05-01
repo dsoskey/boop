@@ -6,7 +6,6 @@ import android.graphics.Color
  * Calculates the colors needed for a gradient between two colors within step steps including them.
  * Note: returned color list will have length step
  */
-//TODO("Rewrite to be more kotlin-y")
 fun gradient(color1: Color, color2: Color, step: Int): List<Color> {
     val redStep = (color2.red() - color1.red()) / step
     val greenStep = (color2.green() - color1.green()) / step

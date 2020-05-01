@@ -17,10 +17,14 @@ import wav.boop.model.ColorAssignment
 import wav.boop.model.ColorScheme
 import wav.boop.model.PadActionViewModel
 
+/**
+ * Contains the pads used to play sounds.
+ */
 class PadFragment : Fragment() {
+    // Native interface
     private external fun setWaveOn(oscIndex: Int, isOn: Boolean)
 
-    var actionMode = PadAction.PLAY
+    private var actionMode = PadAction.PLAY
         set(value) {
             padIds.forEach { id ->
                 when(value) {
@@ -33,31 +37,29 @@ class PadFragment : Fragment() {
     enum class PadAction {
         COLOR, PLAY
     }
-    lateinit var fragmentView: View
 
-    fun setPadColors(assignments: List<ColorAssignment>) {
+    private fun setPadColors(assignments: List<ColorAssignment>) {
         assignments.forEach { assignment ->
             assignment.padIds.forEach { padId ->
                 setPadColor(padId, assignment.color)
             }
         }
     }
-    fun setPadColor(id: Int, color: Color) {
-        val pad = fragmentView.findViewById<Button>(id)
-        pad.setBackgroundColor(color.toArgb())
+    private fun setPadColor(id: Int, color: Color) {
+        requireView().findViewById<Button>(id).setBackgroundColor(color.toArgb())
     }
-    fun darken(id: Int) {
-        val pad = fragmentView.findViewById<Button>(id)
-        pad.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40000000"))
+    // TODO: Make alpha a color resource
+    private fun darken(id: Int) {
+        requireView().findViewById<Button>(id).backgroundTintList =
+            ColorStateList.valueOf(Color.parseColor("#40000000"))
     }
-    fun brighten(id: Int) {
-        val pad = fragmentView.findViewById<Button>(id)
-        pad.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#00000000"))
+    private fun brighten(id: Int) {
+        requireView().findViewById<Button>(id).backgroundTintList =
+            ColorStateList.valueOf(Color.parseColor("#00000000"))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saveInstanceState: Bundle?): View? {
-        fragmentView = inflater.inflate(R.layout.pad_grid, container, false)
-        return fragmentView
+        return inflater.inflate(R.layout.pad_grid, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -67,12 +69,14 @@ class PadFragment : Fragment() {
         scheme.colorAssignment.observe(viewLifecycleOwner, Observer { assignments ->
             setPadColors(assignments)
         })
+
         val actionModel: PadActionViewModel by activityViewModels()
         actionMode = actionModel.padAction.value!!
         actionModel.padAction.observe(viewLifecycleOwner, Observer { actionMode -> this.actionMode = actionMode })
-        padIds.forEach { pad: Int ->
-            val grid = fragmentView.findViewById<Button>(pad)
-            grid.setOnTouchListener { view, event ->
+
+        padIds.forEach { padId: Int ->
+            val pad: Button = requireView().findViewById(padId)
+            pad.setOnTouchListener { view, event ->
                 val buttonId = view.id
                 when (actionMode) {
                     PadAction.COLOR -> {
@@ -104,13 +108,12 @@ class PadFragment : Fragment() {
                 }
                 true
             }
-        }
-        padIds.forEach { id ->
-            val color = scheme.getColor(id)
+
+            val color = scheme.getColor(padId)
             if (color != null) {
-                setPadColor(id, color)
+                setPadColor(padId, color)
             }
-            darken(id)
+            darken(padId)
         }
     }
 }

@@ -9,6 +9,10 @@ import wav.boop.pad.padIds
 
 data class ColorAssignment(var color: Color, val padIds: MutableSet<Int>)
 
+/**
+ * ViewModel that handles the color scheme for the pads.
+ * In the future this might hold the color scheme for the entire app.
+ */
 class ColorScheme: ViewModel() {
     enum class Preset {
         PIANO,

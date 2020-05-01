@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
+import kotlinx.android.synthetic.main.pad_color_control.*
 import wav.boop.R
 import wav.boop.model.ColorAssignment
 import wav.boop.model.ColorScheme
@@ -20,12 +21,14 @@ val colorButtonIds: IntArray = intArrayOf(
     R.id.color_button10, R.id.color_button11, R.id.color_button12, R.id.color_button13
 )
 
+/**
+ * Handles pad color selection. Contained within ControlFragment.
+ */
 class ColorControlFragment : Fragment() {
-    lateinit var fragmentView: View
 
     private fun setPadColors(assignments: List<ColorAssignment>) {
         colorButtonIds.forEachIndexed { index, buttonId ->
-            val button: Button = fragmentView.findViewById(buttonId)
+            val button: Button = requireView().findViewById(buttonId)
             val colorAssignment = assignments.getOrNull(index)
             if (colorAssignment != null) {
                 button.setBackgroundColor(colorAssignment.color.toArgb())
@@ -37,9 +40,9 @@ class ColorControlFragment : Fragment() {
             }
         }
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saveInstanceState: Bundle?): View? {
-        fragmentView = inflater.inflate(R.layout.pad_color_control, container, false)
-        return fragmentView
+        return inflater.inflate(R.layout.pad_color_control, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -50,11 +53,10 @@ class ColorControlFragment : Fragment() {
     }
 
     private fun configurePresetSelector() {
-        val presetSpinner: Spinner = fragmentView.findViewById(R.id.preset_spinner)
         val presetAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, ColorScheme.Preset.values())
         presetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        presetSpinner.adapter = presetAdapter
-        presetSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+        preset_spinner.adapter = presetAdapter
+        preset_spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                 val preset: ColorScheme.Preset = ColorScheme.Preset.valueOf(adapterView?.getItemAtPosition(pos).toString())
                 val scheme: ColorScheme by activityViewModels()
@@ -73,11 +75,12 @@ class ColorControlFragment : Fragment() {
             override fun onNothingSelected(adapterView: AdapterView<*>?) {}
         }
     }
+
     private fun configureColorButtons() {
         val scheme: ColorScheme by activityViewModels()
         scheme.colorAssignment.observe(viewLifecycleOwner, Observer { assignments -> setPadColors(assignments) })
         colorButtonIds.forEachIndexed { index, buttonId ->
-            val button: Button = fragmentView.findViewById(buttonId)
+            val button: Button = requireView().findViewById(buttonId)
             button.setOnClickListener {
                 ColorPickerDialog.newBuilder()
                     .setDialogType(ColorPickerDialog.TYPE_CUSTOM)

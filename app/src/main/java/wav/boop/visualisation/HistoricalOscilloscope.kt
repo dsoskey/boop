@@ -1,6 +1,5 @@
 package wav.boop.visualisation
 
-import wav.boop.DEFAULT_SAMPLE_RATE_IN_SECONDS
 import java.util.*
 
 // TODO If needed: Move details of queue management to different object

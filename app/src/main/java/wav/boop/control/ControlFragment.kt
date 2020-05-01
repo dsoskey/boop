@@ -10,39 +10,40 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import kotlinx.android.synthetic.main.control_container.*
 import wav.boop.R
 import wav.boop.model.LockedViewModel
 import wav.boop.model.PadActionViewModel
 import wav.boop.pad.PadFragment
 import kotlin.math.max
 
-private const val MIN_SCALE = 0.85f
-private const val MIN_ALPHA = 0.5f
-
+/**
+ * Top level fragment for control panel.
+ */
 class ControlFragment: Fragment() {
-    lateinit var fragmentView: View
+    private companion object {
+        private const val MIN_SCALE = 0.85f
+        private const val MIN_ALPHA = 0.5f
+    }
+
     private lateinit var subFragments: Array<Fragment>
+    // TODO: Test if you can configure and call viewPager from synthetic id
     private lateinit var viewPager: ViewPager2
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        fragmentView = inflater.inflate(R.layout.control_container, container, false)
-        return fragmentView
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.control_container, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         val pitchControlFragment = PitchControlFragment()
-        val engineSelectorFragment = EngineSelectorFragment()
+        val oscillatorControlFragment = OscillatorControlFragment()
         val adsrControlFragment = ADSRControlFragment()
         val colorControlFragment = ColorControlFragment()
-        subFragments = arrayOf(pitchControlFragment, engineSelectorFragment, adsrControlFragment, colorControlFragment)
+        subFragments = arrayOf(pitchControlFragment, oscillatorControlFragment, adsrControlFragment, colorControlFragment)
 
-        viewPager = fragmentView.findViewById(R.id.control_pager)
+        viewPager = control_pager
         val isLockedViewModel: LockedViewModel by activityViewModels()
         isLockedViewModel.isLocked.observe(viewLifecycleOwner, Observer { isLocked ->
             viewPager.isUserInputEnabled = !isLocked

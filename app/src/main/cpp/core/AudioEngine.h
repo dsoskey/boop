@@ -9,16 +9,21 @@
 #include "DefaultAudioStreamCallback.h"
 #include "Synth.h"
 
-class AudioEngine: public IRestartable {
+/**
+ * Oboe-based Audio Engine. TODO: Flatten oscillator out of the AudioEngine
+ */
+class AudioEngine : public IRestartable {
 public:
     AudioEngine(std::vector<int> cpuIds);
     virtual ~AudioEngine() = default;
 
+    // Oscillator Interface
     void setSourceOn(int oscIndex, bool isOn);
     void setFrequency(int oscIndex, double frequency);
     void setWaveform(int oscIndex, WaveGenerator *waveGenerator);
     void setAmplitude(int oscIndex, float amplitude);
 
+    // ADSR Interface
     void setAttackLength(int millis);
     void setDecayLength(int millis);
     void setSustainedLevel(float amplitude);

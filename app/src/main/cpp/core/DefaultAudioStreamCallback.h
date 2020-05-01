@@ -83,8 +83,8 @@ private:
     std::shared_ptr<IRenderableAudio> renderable;
     IRestartable &parent;
     std::vector<int> cpuIds; // IDs of CPU cores which the audio callback should be bound to
-    std::atomic<bool> isThreadAffinityEnabled {false };
-    std::atomic<bool> isThreadAffinitySet {false };
+    std::atomic<bool> isThreadAffinityEnabled { false };
+    std::atomic<bool> isThreadAffinitySet { false };
 
     /**
      * Set the thread affinity for the current thread to mCpuIds. This can be useful to call on the

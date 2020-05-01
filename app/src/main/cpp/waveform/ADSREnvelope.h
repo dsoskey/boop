@@ -1,46 +1,76 @@
 #ifndef BOOPK_ADSRENVELOPE_H
 #define BOOPK_ADSRENVELOPE_H
 
-#include "AmplitudeGenerator.h"
+#include "IAmplitudeGenerator.h"
 
-class ADSREnvelope : public AmplitudeGenerator {
+/**
+ * Time-based ADSR envelope. Time is measured in frames.
+ */
+class ADSREnvelope : public IAmplitudeGenerator {
 public:
+
+    /**
+     * Returns the amplitude for a given frame for Attack, Decay, and Sustain
+     * @param frame number
+     * @return amplitude at frame
+     */
     float getOnPressedAmplitude(int frame) override {
         float amp;
-        if (frame <= decayStartFrame) {
+        if (frame <= decayStartFrame) { // Attack
             amp = maxAmplitude * frame / decayStartFrame;
-        } else if (frame <= sustainStartFrame) {
+        } else if (frame <= sustainStartFrame) { // Decay
             amp = maxAmplitude + (sustainedAmplitude - maxAmplitude) * (((float)(frame - decayStartFrame)) / ((float)( sustainStartFrame - decayStartFrame)));
-        } else {
+        } else { // Sustain
             amp = sustainedAmplitude;
         }
         lastPressedAmplitude.store(amp);
         return amp;
     }
 
+    /**
+     * Returns the amplitude for a given frame for Release
+     * @param frame number
+     * @return amplitude at frame
+     */
     float getOnReleaseAmplitude(int frame) override {
-        if (frame <= finalReleaseFrame) {
+        if (frame <= finalReleaseFrame) { // Release
             float releaseAmplitude = lastPressedAmplitude.load();
             return releaseAmplitude - releaseAmplitude * frame / finalReleaseFrame;
-        } else {
+        } else { // End
             // Indicates that envelope is done returning values
             return -1;
         }
     }
 
+    /**
+     * Sets length of attack in frames
+     * @param numFrames - length of attack
+     */
     void setAttackLength(int numFrames) {
         sustainStartFrame = sustainStartFrame + numFrames - decayStartFrame;
         decayStartFrame = numFrames;
     }
 
+    /**
+     * Sets length of decay in frames
+     * @param numFrames - length of decay
+     */
     void setDecayLength(int numFrames) {
         sustainStartFrame = numFrames + decayStartFrame;
     }
 
+    /**
+     * Sets amplitude to be used after decay finishes
+     * @param amplitude - sustained amplitude
+     */
     void setSustainedAmplitude(float amplitude) {
         sustainedAmplitude = amplitude;
     }
 
+    /**
+     * Sets length of release in frames
+     * @param numFrames - length of release
+     */
     void setReleaseLength(int numFrames) {
         finalReleaseFrame = numFrames;
     }
