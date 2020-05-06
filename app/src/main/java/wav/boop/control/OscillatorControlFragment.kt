@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.engine_handler.*
 import wav.boop.R
+import wav.boop.color.getThemeColor
 import wav.boop.pad.padToOscillator
 
 /**
@@ -38,8 +39,8 @@ class OscillatorControlFragment : Fragment() {
     }
 
     private fun configureButtons(squareId: Int, sinId: Int, sawId: Int, waveNum: Int) {
-        val offTextColor: Int = ContextCompat.getColor(requireContext(), R.color.meat)
-        val onTextColor: Int = ContextCompat.getColor(requireContext(), R.color.innerRind)
+        val offTextColor: Int = getThemeColor(requireActivity().theme, R.attr.colorSecondary)
+        val onTextColor: Int = getThemeColor(requireActivity().theme, R.attr.colorAccent)
 
         val squareButton = requireView().findViewById<Button>(squareId)
         val sinButton = requireView().findViewById<Button>(sinId)
@@ -48,7 +49,7 @@ class OscillatorControlFragment : Fragment() {
         squareButton.apply {
             setTextColor(offTextColor)
 
-            setOnTouchListener({ view, _ ->
+            setOnTouchListener { view, _ ->
                 squareButton.setTextColor(onTextColor)
                 sinButton.setTextColor(offTextColor)
                 sawButton.setTextColor(offTextColor)
@@ -58,13 +59,13 @@ class OscillatorControlFragment : Fragment() {
                     }
                 }
                 view.performClick()
-            })
+            }
         }
 
         sinButton.apply {
             setTextColor(onTextColor)
 
-            setOnTouchListener({ view, _ ->
+            setOnTouchListener { view, _ ->
                 squareButton.setTextColor(offTextColor)
                 sinButton.setTextColor(onTextColor)
                 sawButton.setTextColor(offTextColor)
@@ -74,13 +75,13 @@ class OscillatorControlFragment : Fragment() {
                     }
                 }
                 view.performClick()
-            })
+            }
         }
 
         sawButton.apply {
             setTextColor(offTextColor)
 
-            setOnTouchListener({ view, _ ->
+            setOnTouchListener { view, _ ->
                 squareButton.setTextColor(offTextColor)
                 sinButton.setTextColor(offTextColor)
                 sawButton.setTextColor(onTextColor)
@@ -90,7 +91,7 @@ class OscillatorControlFragment : Fragment() {
                     }
                 }
                 view.performClick()
-            })
+            }
         }
 
         padToOscillator.forEach{ (_, oscIndices) ->

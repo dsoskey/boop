@@ -1,7 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<!--    OG Test schemes   -->
     <color name="outerRind">#137E6D</color>
     <color name="innerRind">#CFFDBC</color>
     <color name="meat">#FF6163</color>
     <color name="seeds">#132513</color>
+
+    <color name="boyBlue">#2C70BB</color>
+    <color name="electricBlue">#A8D0FF</color>
+    <color name="electricOrange">#FF9408</color>
+    <color name="electricYellow">#F2F33F</color>
+
+<!--    Red scheme   -->
+    <color name="temperedSienna">#ec2e06</color>
+    <color name="valentinaPink">#eca697</color>
+    <color name="itsBlack">#000000</color>
+    <color name="numberTwoYellow">#fbd913</color>
+
+<!--    Green scheme -->
+    <color name="melonRind">#67a006</color>
+    <color name="melonSkin">#cce0a8</color>
+    <color name="melonSeed">#253a02</color>
+    <color name="melonMeat">#ff69be</color>
+
+<!--    Blue scheme -->
+    <color name="lakeBlue">#0649cc</color>
+    <color name="semiPeriwinkle">#96b5cc</color>
+    <color name="sunbeamYellow">#F2F33F</color>
+    <color name="sunbeamOrange">#FF9408</color>
+
 </resources>

@@ -22,7 +22,7 @@
                 android:background="?attr/colorPrimary"
                 android:elevation="200dp"
                 android:text="@string/oscillator_control_title"
-                android:textColor="?attr/colorSecondary"
+                android:textColor="?attr/colorOnPrimary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,10 +83,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@color/ap_black"
-                    android:backgroundTint="@color/outerRind"
+                    android:backgroundTint="?attr/colorOnSurface"
                     android:clickable="false"
                     android:minWidth="208dp"
-                    android:progressDrawable="@color/outerRind"
+                    android:progressDrawable="?attr/colorOnSurface"
                     app:layout_constraintEnd_toEndOf="@+id/sin_button1"
                     app:layout_constraintStart_toStartOf="@+id/sin_button1"
                     app:layout_constraintTop_toBottomOf="@+id/sin_button1" />
@@ -138,9 +138,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@color/ap_black"
-                    android:backgroundTint="@color/outerRind"
+                    android:backgroundTint="?attr/colorOnSurface"
                     android:minWidth="208dp"
-                    android:progressDrawable="@color/outerRind"
+                    android:progressDrawable="?attr/colorOnSurface"
                     app:layout_constraintEnd_toEndOf="@+id/sin_button2"
                     app:layout_constraintStart_toStartOf="@+id/sin_button2"
                     app:layout_constraintTop_toBottomOf="@+id/sin_button2" />

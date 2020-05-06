@@ -1,19 +1,58 @@
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/innerRind</item>
-        <item name="colorSecondary">@color/outerRind</item>
+        <item name="colorOnPrimary">@color/outerRind</item>
+        <item name="colorSecondary">@color/seeds</item>
         <item name="colorSurface">@color/innerRind</item>
         <item name="colorOnSurface">@color/seeds</item>
-        <item name="colorOnPrimary">@color/seeds</item>
         <item name="colorPrimaryDark">@color/outerRind</item>
         <item name="colorAccent">@color/meat</item>
         <item name="fontFamily">monospace</item>
     </style>
 
+    <style name="AppThemeYuh" parent="AppTheme">
+        <item name="colorPrimary">@color/electricBlue</item>
+        <item name="colorPrimaryDark">@color/boyBlue</item>
+        <item name="colorOnPrimary">@color/boyBlue</item>
+        <item name="colorSecondary">@color/electricYellow</item>
+        <item name="colorSurface">@color/electricBlue</item>
+        <item name="colorOnSurface">@color/electricYellow</item>
+        <item name="colorAccent">@color/electricOrange</item>
+    </style>
+
+    <style name="AppThemeRed" parent="AppTheme">
+        <item name="colorPrimary">@color/numberTwoYellow</item>
+        <item name="colorPrimaryDark">@color/temperedSienna</item>
+        <item name="colorOnPrimary">@color/temperedSienna</item>
+        <item name="colorSecondary">@color/itsBlack</item>
+        <item name="colorSurface">@color/numberTwoYellow</item>
+        <item name="colorOnSurface">@color/itsBlack</item>
+        <item name="colorAccent">@color/valentinaPink</item>
+    </style>
+
+    <style name="AppThemeGreen" parent="AppTheme">
+        <item name="colorPrimary">@color/meat</item>
+        <item name="colorPrimaryDark">@color/melonRind</item>
+        <item name="colorOnPrimary">@color/melonRind</item>
+        <item name="colorSecondary">@color/melonSeed</item>
+        <item name="colorSurface">@color/meat</item>
+        <item name="colorOnSurface">@color/melonSeed</item>
+        <item name="colorAccent">@color/melonSkin</item>
+    </style>
+
+    <style name="AppThemeBlue" parent="AppTheme">
+        <item name="colorPrimary">@color/semiPeriwinkle</item>
+        <item name="colorPrimaryDark">@color/lakeBlue</item>
+        <item name="colorOnPrimary">@color/lakeBlue</item>
+        <item name="colorSecondary">@color/sunbeamYellow</item>
+        <item name="colorSurface">@color/semiPeriwinkle</item>
+        <item name="colorOnSurface">@color/sunbeamYellow</item>
+        <item name="colorAccent">@color/sunbeamOrange</item>
+    </style>
+
     <style name="Widget.Boop.ControlModule.Button" parent="">
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
         <item name="android:background">?attr/colorOnPrimary</item>
 
     </style>

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
           package="wav.boop">
 
     <application
-            android:allowBackup="true"
-            android:theme="@style/AppTheme"
-            android:icon="@mipmap/boop"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/boop_round"
-            android:supportsRtl="true"
-        >
+        tools:replace="android:theme"
+        android:allowBackup="true"
+        android:theme="@style/AppThemeGreen"
+        android:icon="@mipmap/boop"
+        android:roundIcon="@mipmap/boop_round"
+        android:supportsRtl="true"
+    >
         <activity android:name="wav.boop.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

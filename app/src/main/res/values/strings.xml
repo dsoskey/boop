@@ -20,4 +20,5 @@
     <string name="sin">Sin</string>
     <string name="saw">Saw</string>
     <string name="emptyADSRdescription">0.0</string>
+    <string name="preset">Preset</string>
 </resources>

@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:text="@string/pitch_control_title"
-                android:textColor="?attr/colorSecondary"
+                android:textColor="?attr/colorOnPrimary"
                 android:background="?attr/colorPrimary"
                 android:elevation="200dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -105,7 +105,7 @@
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
                     android:textAlignment="center"
-                    android:textColor="?attr/colorPrimary"
+                    android:textColor="?attr/colorSecondary"
                     app:layout_constraintStart_toEndOf="@+id/octave_spinner"
                     app:layout_constraintTop_toBottomOf="@id/tonic_description"/>
 

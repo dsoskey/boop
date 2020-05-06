@@ -24,6 +24,7 @@ android {
     ndkVersion "21.0.6113669"
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+    flavorDimensions "default"
     defaultConfig {
         applicationId "wav.boop"
         minSdkVersion 26
@@ -54,6 +55,17 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+    }
+    productFlavors {
+        red {
+            applicationId "wav.boop.flavor.red"
+        }
+        green {
+            applicationId "wav.boop.flavor.green"
+        }
+        blue {
+            applicationId "wav.boop.flavor.blue"
         }
     }
     externalNativeBuild {

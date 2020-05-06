@@ -1,6 +1,9 @@
 package wav.boop.color
 
+import android.content.res.Resources
 import android.graphics.Color
+import android.util.TypedValue
+import wav.boop.R
 
 /*
  * Calculates the colors needed for a gradient between two colors within step steps including them.
@@ -25,4 +28,13 @@ fun gradient(color1: Color, color2: Color, step: Int): List<Color> {
     gradient.add(color2)
 
     return gradient
+}
+
+fun getThemeColor(theme: Resources.Theme, resourceId: Int): Int {
+    val tv = TypedValue()
+    return if (theme.resolveAttribute(resourceId, tv, true)) {
+        tv.data
+    } else {
+        R.color.meat
+    }
 }

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.pitch_control.*
 import wav.boop.R
+import wav.boop.color.getThemeColor
 import wav.boop.pitch.Chord
 import wav.boop.pitch.NoteLetter
 import wav.boop.model.PitchContainer
@@ -62,7 +63,7 @@ class PitchControlFragment: Fragment() {
                         noteLetter = NoteLetter.valueOf(adapterView?.getItemAtPosition(pos).toString())
                     )
                     setTonicFrequencyEditText()
-                    (adapterView?.getChildAt(0) as TextView).setTextColor(resources.getColor(R.color.seeds))
+                    (adapterView?.getChildAt(0) as TextView).setTextColor(getThemeColor(requireActivity().theme, R.attr.colorOnSurface))
                 }
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {}
             }
@@ -112,7 +113,7 @@ class PitchControlFragment: Fragment() {
                         octave = adapterView?.getItemAtPosition(pos).toString().toInt()
                     )
                     setTonicFrequencyEditText()
-                    (adapterView?.getChildAt(0) as TextView).setTextColor(resources.getColor(R.color.seeds))
+                    (adapterView?.getChildAt(0) as TextView).setTextColor(getThemeColor(requireActivity().theme, R.attr.colorOnSurface))
                 }
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {}
             }

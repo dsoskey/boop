@@ -6,9 +6,9 @@ import android.media.AudioManager
 import android.os.Bundle
 import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import wav.boop.color.getThemeColor
 import wav.boop.control.ControlFragment
 import wav.boop.control.colorButtonIds
 import wav.boop.menu.TitleBarFragment
@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         colorScheme = ViewModelProvider(this)[ColorScheme::class.java]
         colorScheme.makePiano(
-            Color.valueOf(ContextCompat.getColor(applicationContext, R.color.meat)),
-            Color.valueOf(ContextCompat.getColor(applicationContext, R.color.seeds))
+            Color.valueOf(getThemeColor(theme, R.attr.colorAccent)),
+            Color.valueOf(getThemeColor(theme, R.attr.colorOnPrimary))
         )
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onRestart() {
         val pitchContainer = ViewModelProvider(this)[PitchContainer::class.java]
         startEngine(getExclusiveCores())
+        // TODO: Restore all settings stored in ViewModels
         pitchContainer.setTonic(pitchContainer.tonicFrequency)
         super.onRestart()
     }
