@@ -17,6 +17,7 @@ import wav.boop.model.ColorScheme
 import wav.boop.model.PitchContainer
 import wav.boop.pad.PadFragment
 import wav.boop.pad.padIds
+import wav.boop.pitch.Scale
 
 /**
  * Root activity for boop.
@@ -53,9 +54,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         setDefaultStreamValues()
 
         colorScheme = ViewModelProvider(this)[ColorScheme::class.java]
-        colorScheme.makePiano(
+        colorScheme.makeMode(
             Color.valueOf(getThemeColor(theme, R.attr.colorAccent)),
-            Color.valueOf(getThemeColor(theme, R.attr.colorOnPrimary))
+            Color.valueOf(getThemeColor(theme, R.attr.colorOnPrimary)),
+            Scale.IONIAN
         )
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()

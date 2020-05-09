@@ -1,11 +1,13 @@
 package wav.boop.model
 
 import android.graphics.Color
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import wav.boop.R
 import wav.boop.color.gradient
 import wav.boop.pad.padIds
+import wav.boop.pitch.Scale
 
 data class ColorAssignment(var color: Color, val padIds: MutableSet<Int>)
 
@@ -14,22 +16,27 @@ data class ColorAssignment(var color: Color, val padIds: MutableSet<Int>)
  * In the future this might hold the color scheme for the entire app.
  */
 class ColorScheme: ViewModel() {
-    enum class Preset {
-        PIANO,
-        GRADIENT,
-        CHECKER,
-        VERTICAL_STRIPE,
-        HORIZONTAL_STRIPE,
-        MONOCHROME
+    enum class Preset(val spinnerText: String) {
+        IONIAN("major (C)"),
+        DORIAN("dorian (D)"),
+        PHRYGIAN("phrygian (E)"),
+        LYDIAN("lydian (F)"),
+        MIXOLYDIAN("mixolydian (G)"),
+        AEOLIAN("minor (A)"),
+        LOCRIAN("locrian (B)"),
+        DIAG_GRADIENT("diagonal gradient"),
+        CHECKER("checkerboard"),
+        VERTICAL_STRIPE("vertical stripe"),
+        HORIZONTAL_STRIPE("horizontal stripe"),
+        MONOCHROME("monochrome")
     }
     val colorAssignment = MutableLiveData<List<ColorAssignment>>(listOf())
 
     fun getColor(padId: Int): Color? = colorAssignment.value!!.find { ca -> ca.padIds.contains(padId) }?.color
     fun getAssignment(index: Int): ColorAssignment? = colorAssignment.value!!.getOrNull(index)
     fun getColorAtIndex(index: Int): Color? = colorAssignment.value!!.getOrNull(index)?.color
-    fun setColorForButtons(color: Color, vararg buttonIds: Int) {
-        setColorForButtons(color, buttonIds.toSet())
-    }
+    fun setColorForButtons(color: Color, buttonIds: List<Int>) { setColorForButtons(color, buttonIds.toSet()) }
+    fun setColorForButtons(color: Color, vararg buttonIds: Int) { setColorForButtons(color, buttonIds.toSet()) }
     fun setColorForButtons(color: Color, buttonIds: Set<Int>) {
         val buttonsClone = buttonIds.toMutableSet()
         val newConfig = mutableListOf<ColorAssignment>()
@@ -51,9 +58,9 @@ class ColorScheme: ViewModel() {
     }
 
     // Preset functions
-    fun makePiano(whiteKey: Color, blackKey: Color) {
-        setColorForButtons(whiteKey, R.id.grid_0, R.id.grid_2, R.id.grid_4, R.id.grid_5, R.id.grid_7, R.id.grid_9, R.id.grid_11, R.id.grid_12, R.id.grid_14)
-        setColorForButtons(blackKey, R.id.grid_1, R.id.grid_3, R.id.grid_6, R.id.grid_8, R.id.grid_10, R.id.grid_13, R.id.grid_15)
+    fun makeMode(whiteKey: Color, blackKey: Color, scale: Scale) {
+        setColorForButtons(whiteKey, padIds.filterIndexed { index, _ -> scale.steps.contains(index % 12) })
+        setColorForButtons(blackKey, padIds.filterIndexed { index, _ -> !scale.steps.contains(index.rem(12)) })
     }
     fun makeDiagonalGrandient(bottomColor: Color, topColor:Color) {
         val gradient = gradient(bottomColor, topColor, 7)
