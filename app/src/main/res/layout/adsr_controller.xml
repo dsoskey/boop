@@ -37,111 +37,164 @@
                 android:layout_marginBottom="5dp">
 
             <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vertical_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent=".01"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vertical_left_mid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent=".255"/>
+
+            <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/vertical_center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent=".5"/>
 
-            <TextView
-                    android:id="@+id/attack_description"
-                    android:layout_width="98dp"
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vertical_right_mid"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:elevation="100dp"
-                    android:text="@string/emptyADSRdescription"
-                    android:textAlignment="center"
-                    android:textColor="?attr/colorSecondary"
-                    android:textSize="45sp"
-                    app:layout_constraintEnd_toEndOf="@+id/attack_bar"
-                    app:layout_constraintStart_toStartOf="@+id/attack_bar"
-                    app:layout_constraintTop_toTopOf="@+id/attack_bar" />
-            <com.lukelorusso.verticalseekbar.VerticalSeekBar
-                    android:id="@+id/attack_bar"
-                    android:layout_width="98dp"
-                    android:layout_height="match_parent"
-                    app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
-                    app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
-                    app:vsb_bar_background="?attr/colorPrimary"
-                    app:vsb_thumb_container_tint="?attr/colorOnPrimary"
-                    app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/decay_bar"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent=".745"/>
 
-            <TextView
-                    android:id="@+id/decay_description"
-                    android:layout_width="98dp"
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vertical_right"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:elevation="100dp"
-                    android:text="@string/emptyADSRdescription"
-                    android:textAlignment="center"
-                    android:textColor="?attr/colorSecondary"
-                    android:textSize="45sp"
-                    app:layout_constraintEnd_toEndOf="@+id/decay_bar"
-                    app:layout_constraintStart_toStartOf="@+id/decay_bar"
-                    app:layout_constraintTop_toTopOf="@+id/decay_bar" />
-            <com.lukelorusso.verticalseekbar.VerticalSeekBar
-                    android:id="@+id/decay_bar"
-                    android:layout_width="98dp"
-                    android:layout_height="match_parent"
-                    app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
-                    app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
-                    app:vsb_bar_background="?attr/colorPrimary"
-                    app:vsb_thumb_container_tint="?attr/colorOnPrimary"
-                    app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/vertical_center"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent=".99"/>
 
-            <TextView
-                    android:id="@+id/sustain_description"
-                    android:layout_width="98dp"
-                    android:layout_height="wrap_content"
-                    android:elevation="100dp"
-                    android:text="@string/emptyADSRdescription"
-                    android:textAlignment="center"
-                    android:textColor="?attr/colorSecondary"
-                    android:textSize="45sp"
-                    app:layout_constraintEnd_toEndOf="@+id/sustain_bar"
-                    app:layout_constraintStart_toStartOf="@+id/sustain_bar"
-                    app:layout_constraintTop_toTopOf="@+id/sustain_bar" />
-            <com.lukelorusso.verticalseekbar.VerticalSeekBar
-                    android:id="@+id/sustain_bar"
-                    android:layout_width="98dp"
-                    android:layout_height="match_parent"
-                    app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
-                    app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
-                    app:vsb_bar_background="?attr/colorPrimary"
-                    app:vsb_thumb_container_tint="?attr/colorOnPrimary"
-                    app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/vertical_left_mid"
+                    app:layout_constraintStart_toStartOf="@+id/vertical_left"
+                    app:layout_constraintTop_toTopOf="parent"
+            >
+                <TextView
+                        android:id="@+id/attack_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:elevation="100dp"
+                        android:text="@string/emptyADSRdescription"
+                        android:textAlignment="center"
+                        android:textColor="?attr/colorSecondary"
+                        android:textSize="45sp"
+                        app:layout_constraintTop_toTopOf="@+id/attack_bar"
+                />
+                <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/attack_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:vsb_bar_background="?attr/colorPrimary"
+                        app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
+                        app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
+                        app:vsb_thumb_container_tint="?attr/colorOnPrimary"
+                        app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
+                />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/vertical_left_mid"
+                    app:layout_constraintEnd_toEndOf="@+id/vertical_center"
+                    app:layout_constraintTop_toTopOf="parent"
+            >
+                <TextView
+                        android:id="@+id/decay_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:elevation="100dp"
+                        android:text="@string/emptyADSRdescription"
+                        android:textAlignment="center"
+                        android:textColor="?attr/colorSecondary"
+                        android:textSize="45sp"
+                        app:layout_constraintTop_toTopOf="@+id/decay_bar"
+                />
+                <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/decay_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
+                        app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
+                        app:vsb_bar_background="?attr/colorPrimary"
+                        app:vsb_thumb_container_tint="?attr/colorOnPrimary"
+                        app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
+                />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/vertical_center"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintEnd_toEndOf="@+id/vertical_right_mid"
+                    app:layout_constraintTop_toTopOf="parent"
+            >
+                <TextView
+                        android:id="@+id/sustain_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:elevation="100dp"
+                        android:text="@string/emptyADSRdescription"
+                        android:textAlignment="center"
+                        android:textColor="?attr/colorSecondary"
+                        android:textSize="45sp"
+                        app:layout_constraintTop_toTopOf="@+id/sustain_bar"
+                />
+                <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/sustain_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
+                        app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
+                        app:vsb_bar_background="?attr/colorPrimary"
+                        app:vsb_thumb_container_tint="?attr/colorOnPrimary"
+                        app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
+                />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                    android:id="@+id/release_description"
-                    android:layout_width="98dp"
-                    android:layout_height="wrap_content"
-                    android:elevation="100dp"
-                    android:text="@string/emptyADSRdescription"
-                    android:textAlignment="center"
-                    android:textColor="?attr/colorSecondary"
-                    android:textSize="45sp"
-                    app:layout_constraintEnd_toEndOf="@+id/release_bar"
-                    app:layout_constraintStart_toStartOf="@+id/release_bar"
-                    app:layout_constraintTop_toTopOf="@+id/release_bar" />
-            <com.lukelorusso.verticalseekbar.VerticalSeekBar
-                    android:id="@+id/release_bar"
-                    android:layout_width="98dp"
-                    android:layout_height="match_parent"
-                    app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
-                    app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
-                    app:vsb_bar_background="?attr/colorPrimary"
-                    app:vsb_thumb_container_tint="?attr/colorOnPrimary"
-                    app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/sustain_bar"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toStartOf="@+id/vertical_right_mid"
+                    app:layout_constraintEnd_toEndOf="@+id/vertical_right"
+                    app:layout_constraintTop_toTopOf="parent"
+                    >
+                <TextView
+                        android:id="@+id/release_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:elevation="100dp"
+                        android:text="@string/emptyADSRdescription"
+                        android:textAlignment="center"
+                        android:textColor="?attr/colorSecondary"
+                        android:textSize="45sp"
+                        app:layout_constraintTop_toTopOf="@+id/release_bar"
+                />
+                <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/release_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
+                        app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
+                        app:vsb_bar_background="?attr/colorPrimary"
+                        app:vsb_thumb_container_tint="?attr/colorOnPrimary"
+                        app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
+                />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

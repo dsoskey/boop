@@ -4,7 +4,7 @@
 
     <application
             android:allowBackup="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppThemeContrast"
             android:icon="@mipmap/boop"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/boop_round"

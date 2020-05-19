@@ -8,243 +8,239 @@
 >
 
     <Button
-            android:id="@+id/grid-0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:width="98dp"
-            android:height="98dp"
+            android:id="@+id/grid_0"
             android:background="#FFF549"
-            app:layout_constraintEnd_toStartOf="@+id/grid-1"
-            app:layout_constraintTop_toBottomOf="@+id/grid-4"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_left"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_left_mid"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_bottom_mid"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_bottom"
     />
 
     <Button
-            android:id="@+id/grid-1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:width="98dp"
-            android:height="98dp"
+            android:id="@+id/grid_1"
             android:background="#FFEC3E"
-            app:layout_constraintEnd_toStartOf="@+id/grid-left-guideline"
-            app:layout_constraintTop_toBottomOf="@+id/grid-5"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_left_mid"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_center"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_bottom_mid"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_bottom"
     />
 
     <Button
-            android:id="@+id/grid-2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:width="98dp"
-            android:height="98dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:id="@+id/grid_2"
             android:background="#FFE333"
-            app:layout_constraintStart_toEndOf="@+id/grid-1"
-            app:layout_constraintTop_toBottomOf="@+id/grid-6"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_center"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_right_mid"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_bottom_mid"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_bottom"
     />
 
     <Button
-            android:id="@+id/grid-3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:width="98dp"
-            android:height="98dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:id="@+id/grid_3"
             android:background="#FFDA28"
-            app:layout_constraintStart_toEndOf="@+id/grid-2"
-            app:layout_constraintTop_toBottomOf="@+id/grid-7"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_right_mid"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_right"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_bottom_mid"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_bottom"
     />
 
     <Button
-            android:id="@+id/grid-4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:width="98dp"
-            android:height="98dp"
+            android:id="@+id/grid_4"
             android:background="#FFEC3E"
-            app:layout_constraintEnd_toStartOf="@+id/grid-5"
-            app:layout_constraintTop_toBottomOf="@+id/grid-8"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_left"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_left_mid"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_center"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_bottom_mid"
     />
 
     <Button
-            android:id="@+id/grid-5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:width="98dp"
-            android:height="98dp"
+            android:id="@+id/grid_5"
             android:background="#FFE333"
-            app:layout_constraintEnd_toStartOf="@+id/grid-left-guideline"
-            app:layout_constraintTop_toBottomOf="@+id/grid-9"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_left_mid"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_center"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_center"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_bottom_mid"
     />
 
     <Button
-            android:id="@+id/grid-6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:width="98dp"
-            android:height="98dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:id="@+id/grid_6"
             android:background="#FFDA28"
-            app:layout_constraintStart_toEndOf="@+id/grid-5"
-            app:layout_constraintTop_toBottomOf="@+id/grid-10"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_center"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_right_mid"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_center"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_bottom_mid"
     />
 
     <Button
-            android:id="@+id/grid-7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:width="98dp"
-            android:height="98dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:id="@+id/grid_7"
             android:background="#FFD11D"
-            app:layout_constraintStart_toEndOf="@+id/grid-6"
-            app:layout_constraintTop_toBottomOf="@+id/grid-11"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_right_mid"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_right"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_center"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_bottom_mid"
     />
 
     <Button
-            android:id="@+id/grid-8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:width="98dp"
-            android:height="98dp"
+            android:id="@+id/grid_8"
             android:background="#FFE333"
-            app:layout_constraintEnd_toStartOf="@+id/grid-9"
-            app:layout_constraintTop_toBottomOf="@+id/grid-12"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_left"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_left_mid"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_top_mid"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_center"
     />
 
     <Button
-            android:id="@+id/grid-9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:width="98dp"
-            android:height="98dp"
+            android:id="@+id/grid_9"
             android:background="#FFDA28"
-            app:layout_constraintEnd_toStartOf="@+id/grid-left-guideline"
-            app:layout_constraintTop_toBottomOf="@+id/grid-13"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_left_mid"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_center"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_top_mid"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_center"
     />
 
     <Button
-            android:id="@+id/grid-10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:width="98dp"
-            android:height="98dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:id="@+id/grid_10"
             android:background="#FFD11D"
-            app:layout_constraintStart_toEndOf="@+id/grid-9"
-            app:layout_constraintTop_toBottomOf="@+id/grid-14"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_center"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_right_mid"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_top_mid"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_center"
     />
 
     <Button
-            android:id="@+id/grid-11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:width="98dp"
-            android:height="98dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:id="@+id/grid_11"
             android:background="#FFC812"
-            app:layout_constraintStart_toEndOf="@+id/grid-10"
-            app:layout_constraintTop_toBottomOf="@+id/grid-15"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_right_mid"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_right"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_top_mid"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_center"
     />
 
     <Button
-            android:id="@+id/grid-12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:width="98dp"
-            android:height="98dp"
+            android:id="@+id/grid_12"
             android:background="#FFDA28"
-            app:layout_constraintEnd_toStartOf="@+id/grid-13"
-            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_left"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_left_mid"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_top"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_top_mid"
     />
 
     <Button
-            android:id="@+id/grid-13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
-            android:width="98dp"
-            android:height="98dp"
+            android:id="@+id/grid_13"
             android:background="#FFD11D"
-            app:layout_constraintEnd_toStartOf="@+id/grid-left-guideline"
-            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_left_mid"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_center"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_top"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_top_mid"
     />
 
     <Button
-            android:id="@+id/grid-14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:width="98dp"
-            android:height="98dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:id="@+id/grid_14"
             android:background="#FFC812"
-            app:layout_constraintStart_toEndOf="@+id/grid-13"
-            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_center"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_right_mid"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_top"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_top_mid"
     />
 
     <Button
-            android:id="@+id/grid-15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:width="98dp"
-            android:height="98dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:id="@+id/grid_15"
             android:background="#FFBF07"
-            app:layout_constraintStart_toEndOf="@+id/grid-14"
-            app:layout_constraintTop_toTopOf="@+id/grid-top-guideline"
-            android:backgroundTintMode="src_over"
+            style="@style/Widget.Boop.PadGrid.Pad"
+            app:layout_constraintStart_toEndOf="@+id/vertical_right_mid"
+            app:layout_constraintEnd_toEndOf="@+id/vertical_right"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_top"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_top_mid"
     />
 
     <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/grid-left-guideline"
+            android:id="@+id/vertical_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".02"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vertical_left_mid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".26"/>
+    
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vertical_center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent=".5"/>
 
     <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/grid-top-guideline"
+            android:id="@+id/vertical_right_mid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="84dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".74"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vertical_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".98"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="1dp"
+            app:layout_constraintGuide_percent=".02"
             app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_top_mid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".26"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".5"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_bottom_mid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".74"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".98"
+            app:layout_constraintTop_toTopOf="parent"/>
+    
 
 </androidx.constraintlayout.widget.ConstraintLayout>

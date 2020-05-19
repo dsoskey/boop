@@ -53,14 +53,14 @@ class PitchControlFragment: Fragment() {
 
     private fun configureNoteControls() {
         note_spinner.apply {
-            val noteAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, NoteLetter.values())
+            val noteAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, NoteLetter.values().map { it.text })
             noteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             adapter = noteAdapter
 
             onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                     pitchContainer.setTonic(
-                        noteLetter = NoteLetter.valueOf(adapterView?.getItemAtPosition(pos).toString())
+                        noteLetter = NoteLetter.values().find { it.text == adapterView?.getItemAtPosition(pos) } ?: NoteLetter.C
                     )
                     setTonicFrequencyEditText()
                     (adapterView?.getChildAt(0) as TextView).setTextColor(getThemeColor(requireActivity().theme, R.attr.colorOnSurface))

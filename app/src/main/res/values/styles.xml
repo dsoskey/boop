@@ -11,6 +11,16 @@
         <item name="fontFamily">monospace</item>
     </style>
 
+    <style name="AppThemeContrast" parent="AppTheme">
+        <item name="colorPrimary">@color/itsBlack</item>
+        <item name="colorPrimaryDark">@color/itsBlack</item>
+        <item name="colorOnPrimary">@color/ap_white</item>
+        <item name="colorSecondary">@color/ap_gray</item>
+        <item name="colorSurface">@color/itsBlack</item>
+        <item name="colorOnSurface">@color/ap_white</item>
+        <item name="colorAccent">@color/temperedSienna</item>
+    </style>
+
     <style name="AppThemeYuh" parent="AppTheme">
         <item name="colorPrimary">@color/electricBlue</item>
         <item name="colorPrimaryDark">@color/boyBlue</item>
@@ -57,6 +67,15 @@
 
     </style>
 
+    <style name="Widget.Boop.PadGrid.Pad" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">1dp</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:backgroundTintMode">src_over</item>
+    </style>
     <style name="Widget.Boop.ControlModule.Button.Small">
         <item name="android:textSize">24sp</item>
         <item name="android:layout_width">40dp</item>

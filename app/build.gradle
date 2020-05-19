@@ -67,6 +67,9 @@ android {
         blue {
             applicationId "wav.boop.flavor.blue"
         }
+        black {
+            applicationId "wav.boop.flavor.black"
+        }
     }
     externalNativeBuild {
         cmake {
