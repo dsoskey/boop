@@ -6,12 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.SeekBar
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.engine_handler.*
 import wav.boop.R
 import wav.boop.color.getThemeColor
-import wav.boop.pad.padToOscillator
+import wav.boop.model.OscillatorModel
 
 /**
  * Handles configuring the 2 oscillators. Contained within ControlFragment.
@@ -22,10 +23,6 @@ class OscillatorControlFragment : Fragment() {
         private const val SIN = "sin"
         private const val SAW = "saw"
     }
-
-    // Native interface for configuring waveforms
-    private external fun setWaveform(oscIndex: Int, waveform: String)
-    private external fun setAmplitude(oscIndex: Int, amplitude: Float)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saveInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.engine_handler, container, false)
@@ -46,18 +43,22 @@ class OscillatorControlFragment : Fragment() {
         val sinButton = requireView().findViewById<Button>(sinId)
         val sawButton = requireView().findViewById<Button>(sawId)
 
+        val oscillatorModel: OscillatorModel by activityViewModels()
+        oscillatorModel.oscillators.observe(viewLifecycleOwner, Observer { oscillators ->
+            squareButton.setTextColor(offTextColor)
+            sinButton.setTextColor(offTextColor)
+            sawButton.setTextColor(offTextColor)
+            when (oscillators[waveNum].baseWave) {
+                SQUARE -> squareButton
+                SIN -> sinButton
+                else -> sawButton
+            }.setTextColor(onTextColor)
+        })
         squareButton.apply {
             setTextColor(offTextColor)
 
             setOnTouchListener { view, _ ->
-                squareButton.setTextColor(onTextColor)
-                sinButton.setTextColor(offTextColor)
-                sawButton.setTextColor(offTextColor)
-                padToOscillator.forEach{ (_, oscIndices) ->
-                    oscIndices.forEach { oscIndex ->
-                        if (oscIndex % 2 == waveNum) setWaveform(oscIndex, SQUARE)
-                    }
-                }
+                oscillatorModel.setWaveform(waveNum, SQUARE)
                 view.performClick()
             }
         }
@@ -66,14 +67,7 @@ class OscillatorControlFragment : Fragment() {
             setTextColor(onTextColor)
 
             setOnTouchListener { view, _ ->
-                squareButton.setTextColor(offTextColor)
-                sinButton.setTextColor(onTextColor)
-                sawButton.setTextColor(offTextColor)
-                padToOscillator.forEach { (_, oscIndices) ->
-                    oscIndices.forEach { oscIndex ->
-                        if (oscIndex % 2 == waveNum) setWaveform(oscIndex, SIN)
-                    }
-                }
+                oscillatorModel.setWaveform(waveNum, SIN)
                 view.performClick()
             }
         }
@@ -82,25 +76,18 @@ class OscillatorControlFragment : Fragment() {
             setTextColor(offTextColor)
 
             setOnTouchListener { view, _ ->
-                squareButton.setTextColor(offTextColor)
-                sinButton.setTextColor(offTextColor)
-                sawButton.setTextColor(onTextColor)
-                padToOscillator.forEach { (_, oscIndices) ->
-                    oscIndices.forEach { oscIndex ->
-                        if (oscIndex % 2 == waveNum) setWaveform(oscIndex, SAW)
-                    }
-                }
+                oscillatorModel.setWaveform(waveNum, SAW)
                 view.performClick()
             }
         }
-
-        padToOscillator.forEach{ (_, oscIndices) ->
-            oscIndices.forEach { oscIndex ->
-                if (oscIndex % 2 == waveNum) setWaveform(oscIndex, SIN)
-            }
-        }
     }
+
     private fun configureSliders() {
+        val oscillatorModel: OscillatorModel by activityViewModels()
+        oscillatorModel.oscillators.observe(viewLifecycleOwner, Observer { oscillators ->
+            wave1_amplitude.progress = (100 * oscillators[0].amplitude).toInt()
+            wave2_amplitude.progress = (100 * oscillators[1].amplitude).toInt()
+        })
         wave1_amplitude.apply {
             progress = 50
 
@@ -110,11 +97,7 @@ class OscillatorControlFragment : Fragment() {
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    padToOscillator.forEach{ (_, oscIndices) ->
-                        oscIndices.forEach { oscIndex ->
-                            if (oscIndex % 2 == 0) setAmplitude(oscIndex, progress / 100.0f)
-                        }
-                    }
+                    oscillatorModel.setAmplitude(0, progress / 100.0f)
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -131,11 +114,7 @@ class OscillatorControlFragment : Fragment() {
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    padToOscillator.forEach{ (_, oscIndices) ->
-                        oscIndices.forEach { oscIndex ->
-                            if (oscIndex % 2 == 1) setAmplitude(oscIndex, progress / 100.0f)
-                        }
-                    }
+                    oscillatorModel.setAmplitude(1, progress / 100.0f)
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -143,10 +122,7 @@ class OscillatorControlFragment : Fragment() {
             })
         }
 
-        padToOscillator.forEach{ (_, oscIndices) ->
-            oscIndices.forEach { oscIndex ->
-                setAmplitude(oscIndex, .5f)
-            }
-        }
+        oscillatorModel.setAmplitude(0, .5f)
+        oscillatorModel.setAmplitude(1, .5f)
     }
 }

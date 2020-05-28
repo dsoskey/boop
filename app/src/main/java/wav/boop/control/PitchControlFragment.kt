@@ -1,23 +1,19 @@
 package wav.boop.control
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.pitch_control.*
 import wav.boop.R
 import wav.boop.color.getThemeColor
-import wav.boop.pitch.Chord
 import wav.boop.pitch.NoteLetter
-import wav.boop.model.PitchContainer
+import wav.boop.model.PitchModel
 
 
 /**
@@ -29,11 +25,11 @@ class PitchControlFragment: Fragment() {
         private const val MAX_OCTAVE = 8
     }
     private lateinit var tonicFrequencyEditText: EditText
-    private lateinit var pitchContainer: PitchContainer
+    private lateinit var pitchModel: PitchModel
 
     @SuppressLint("SetTextI18n")
     private fun setTonicFrequencyEditText() {
-        tonicFrequencyEditText.setText("%.2f".format(pitchContainer.tonicFrequency))
+        tonicFrequencyEditText.setText("%.2f".format(pitchModel.tonicFrequency))
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saveInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.pitch_control, container, false)
@@ -42,8 +38,8 @@ class PitchControlFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val container: PitchContainer by activityViewModels()
-        pitchContainer = container
+        val model: PitchModel by activityViewModels()
+        pitchModel = model
 
         configureNoteControls()
         configureOctaveControls()
@@ -59,7 +55,7 @@ class PitchControlFragment: Fragment() {
 
             onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                    pitchContainer.setTonic(
+                    pitchModel.setTonic(
                         noteLetter = NoteLetter.values().find { it.text == adapterView?.getItemAtPosition(pos) } ?: NoteLetter.C
                     )
                     setTonicFrequencyEditText()
@@ -71,30 +67,30 @@ class PitchControlFragment: Fragment() {
         }
 
         up_note.setOnClickListener {
-            if (pitchContainer.tonicNoteLetter == NoteLetter.B) {
-                if (pitchContainer.tonicOctave < MAX_OCTAVE) {
-                    pitchContainer.setTonic(NoteLetter.C, pitchContainer.tonicOctave + 1)
+            if (pitchModel.tonicNoteLetter == NoteLetter.B) {
+                if (pitchModel.tonicOctave < MAX_OCTAVE) {
+                    pitchModel.setTonic(NoteLetter.C, pitchModel.tonicOctave + 1)
                     note_spinner.setSelection(0)
                     octave_spinner.setSelection(octave_spinner.selectedItemPosition + 1)
                 }
             } else {
-                val nextNoteLetter = NoteLetter.values()[pitchContainer.tonicNoteLetter.ordinal + 1]
-                pitchContainer.setTonic(nextNoteLetter)
+                val nextNoteLetter = NoteLetter.values()[pitchModel.tonicNoteLetter.ordinal + 1]
+                pitchModel.setTonic(nextNoteLetter)
                 note_spinner.setSelection(nextNoteLetter.ordinal)
             }
             setTonicFrequencyEditText()
         }
 
         down_note.setOnClickListener {
-            if (pitchContainer.tonicNoteLetter == NoteLetter.C) {
-                if (pitchContainer.tonicOctave > MIN_OCTAVE) {
-                    pitchContainer.setTonic(NoteLetter.C, pitchContainer.tonicOctave - 1)
+            if (pitchModel.tonicNoteLetter == NoteLetter.C) {
+                if (pitchModel.tonicOctave > MIN_OCTAVE) {
+                    pitchModel.setTonic(NoteLetter.C, pitchModel.tonicOctave - 1)
                     note_spinner.setSelection(NoteLetter.values().size - 1)
                     octave_spinner.setSelection(octave_spinner.selectedItemPosition - 1)
                 }
             } else {
-                val nextNoteLetter = NoteLetter.values()[pitchContainer.tonicNoteLetter.ordinal - 1]
-                pitchContainer.setTonic(nextNoteLetter)
+                val nextNoteLetter = NoteLetter.values()[pitchModel.tonicNoteLetter.ordinal - 1]
+                pitchModel.setTonic(nextNoteLetter)
                 note_spinner.setSelection(nextNoteLetter.ordinal)
             }
             setTonicFrequencyEditText()
@@ -109,7 +105,7 @@ class PitchControlFragment: Fragment() {
 
             onItemSelectedListener = object:AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                    pitchContainer.setTonic(
+                    pitchModel.setTonic(
                         octave = adapterView?.getItemAtPosition(pos).toString().toInt()
                     )
                     setTonicFrequencyEditText()
@@ -121,17 +117,17 @@ class PitchControlFragment: Fragment() {
         }
 
         up_octave.setOnClickListener {
-            if (pitchContainer.tonicOctave < MAX_OCTAVE) {
-                pitchContainer.setTonic(octave = pitchContainer.tonicOctave + 1)
-                octave_spinner.setSelection(pitchContainer.tonicOctave - 1)
+            if (pitchModel.tonicOctave < MAX_OCTAVE) {
+                pitchModel.setTonic(octave = pitchModel.tonicOctave + 1)
+                octave_spinner.setSelection(pitchModel.tonicOctave - 1)
                 setTonicFrequencyEditText()
             }
         }
 
         down_octave.setOnClickListener {
-            if (pitchContainer.tonicOctave > MIN_OCTAVE) {
-                pitchContainer.setTonic(octave = pitchContainer.tonicOctave - 1)
-                octave_spinner.setSelection(pitchContainer.tonicOctave - 1)
+            if (pitchModel.tonicOctave > MIN_OCTAVE) {
+                pitchModel.setTonic(octave = pitchModel.tonicOctave - 1)
+                octave_spinner.setSelection(pitchModel.tonicOctave - 1)
                 setTonicFrequencyEditText()
             }
         }

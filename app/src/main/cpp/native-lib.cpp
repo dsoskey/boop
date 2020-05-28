@@ -80,7 +80,7 @@ extern "C" {
      * @param frequency - new frequency of oscillator
      */
     JNIEXPORT void JNICALL
-    Java_wav_boop_model_PitchContainer_setFrequency(JNIEnv *env, jobject instance, jint oscIndex, jdouble frequency) {
+    Java_wav_boop_model_PitchModel_setFrequency(JNIEnv *env, jobject instance, jint oscIndex, jdouble frequency) {
         if (engine) {
             engine->setFrequency(oscIndex, frequency);
         } else {
@@ -89,14 +89,46 @@ extern "C" {
     }
 
     /**
-     * Sets waveform generator for oscillator at oscIndex. Requires engine to be on to work
+     * Sets the oscillator at oscIndex to on or off. Requires engine to be on to work
      * @param env
      * @param instance
      * @param oscIndex - index of oscillator in synthesizer to affect
-     * @param waveform - sin, square, or saw
+     * @param isOn - should oscillator be on or off
      */
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_OscillatorControlFragment_setWaveform(JNIEnv *env, jobject instance, jint oscIndex, jstring waveform) {
+    Java_wav_boop_pad_TestPad_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isOn) {
+        if (engine) {
+            engine->setSourceOn(oscIndex, isOn);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    /**
+     * Sets frequency of oscillator at oscIndex. Requires engine to be on to work
+     * @param env
+     * @param instance
+     * @param oscIndex - index of oscillator in synthesizer to affect
+     * @param frequency - new frequency of oscillator
+     */
+    JNIEXPORT void JNICALL
+    Java_wav_boop_pad_TestPad_setFrequency(JNIEnv *env, jobject instance, jint oscIndex, jdouble frequency) {
+        if (engine) {
+            engine->setFrequency(oscIndex, frequency);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    /**
+    * Sets waveform generator for oscillator at oscIndex. Requires engine to be on to work
+    * @param env
+    * @param instance
+    * @param oscIndex - index of oscillator in synthesizer to affect
+    * @param waveform - sin, square, or saw
+    */
+    JNIEXPORT void JNICALL
+    Java_wav_boop_model_OscillatorModel_ndkSetWaveform(JNIEnv *env, jobject instance, jint oscIndex, jstring waveform) {
         if (engine) {
             WaveGenerator* gen;
             std::string wf = env->GetStringUTFChars(waveform, NULL);
@@ -123,7 +155,7 @@ extern "C" {
      * @param amplitude - new amplitude
      */
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_OscillatorControlFragment_setAmplitude(JNIEnv *env, jobject instance, jint oscIndex, jfloat amplitude) {
+    Java_wav_boop_model_OscillatorModel_ndkSetAmplitude(JNIEnv *env, jobject instance, jint oscIndex, jfloat amplitude) {
         if (engine) {
             engine->setAmplitude(oscIndex, amplitude);
         } else {
@@ -132,13 +164,13 @@ extern "C" {
     }
 
     /**
-     * Sets attack length in milliseconds for all oscillators. Requires an engine to be on to work
-     * @param env
-     * @param instance - index of oscillator in synthesizer to affect
-     * @param numMillis - length of attack
-     */
+    * Sets attack length in milliseconds for all oscillators. Requires an engine to be on to work
+    * @param env
+    * @param instance - index of oscillator in synthesizer to affect
+    * @param numMillis - length of attack
+    */
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_ADSRControlFragment_setAttackLength(JNIEnv *env, jobject instance, jint numMillis) {
+    Java_wav_boop_model_ADSRModel_ndkSetAttackLength(JNIEnv *env, jobject instance, jint numMillis) {
         if (engine) {
             engine->setAttackLength(numMillis);
         } else {
@@ -153,7 +185,7 @@ extern "C" {
      * @param numMillis - length of decay
      */
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_ADSRControlFragment_setDecayLength(JNIEnv *env, jobject instance, jint numMillis) {
+    Java_wav_boop_model_ADSRModel_ndkSetDecayLength(JNIEnv *env, jobject instance, jint numMillis) {
         if (engine) {
             engine->setDecayLength(numMillis);
         } else {
@@ -168,7 +200,7 @@ extern "C" {
      * @param amplitude
      */
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_ADSRControlFragment_setSustainLevel(JNIEnv *env, jobject instance, jfloat amplitude) {
+    Java_wav_boop_model_ADSRModel_ndkSetSustainLevel(JNIEnv *env, jobject instance, jfloat amplitude) {
         if (engine) {
             engine->setSustainedLevel(amplitude);
         } else {
@@ -183,7 +215,7 @@ extern "C" {
      * @param numMillis - length of attack
      */
     JNIEXPORT void JNICALL
-    Java_wav_boop_control_ADSRControlFragment_setReleaseLength(JNIEnv *env, jobject instance, jint numMillis) {
+    Java_wav_boop_model_ADSRModel_ndkSetReleaseLength(JNIEnv *env, jobject instance, jint numMillis) {
         if (engine) {
             engine->setReleaseLength(numMillis);
         } else {

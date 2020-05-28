@@ -30,6 +30,11 @@ class ControlFragment: Fragment() {
     // TODO: Test if you can configure and call viewPager from synthetic id
     private lateinit var viewPager: ViewPager2
 
+    fun setPage(index: Int) {
+        viewPager.currentItem = index
+//        setLRVisibility()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.control_container, container, false)
     }
@@ -37,11 +42,12 @@ class ControlFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val presetControlFragment = PresetControlFragment()
         val pitchControlFragment = PitchControlFragment()
         val oscillatorControlFragment = OscillatorControlFragment()
         val adsrControlFragment = ADSRControlFragment()
         val colorControlFragment = ColorControlFragment()
-        subFragments = arrayOf(pitchControlFragment, oscillatorControlFragment, adsrControlFragment, colorControlFragment)
+        subFragments = arrayOf(presetControlFragment, pitchControlFragment, oscillatorControlFragment, adsrControlFragment, colorControlFragment)
 
         viewPager = control_pager
         val isLockedViewModel: LockedViewModel by activityViewModels()
@@ -92,6 +98,7 @@ class ControlFragment: Fragment() {
                 } else {
                     padAction.setPadAction(PadFragment.PadAction.PLAY)
                 }
+                setLRVisibility()
             }
         })
         viewPager.adapter = object : FragmentStateAdapter(this) {
@@ -99,5 +106,29 @@ class ControlFragment: Fragment() {
             override fun createFragment(position: Int): Fragment = subFragments[position]
         }
 
+        left.setOnClickListener {
+            if (viewPager.currentItem > 0) {
+                setPage(viewPager.currentItem - 1)
+            }
+        }
+        right.setOnClickListener {
+            if (viewPager.currentItem < subFragments.size - 1) {
+                setPage(viewPager.currentItem + 1)
+            }
+        }
+        setLRVisibility()
+    }
+
+    private fun setLRVisibility() {
+        left.visibility = if (viewPager.currentItem == 0) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+        right.visibility = if (viewPager.currentItem == subFragments.size - 1) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
     }
 }

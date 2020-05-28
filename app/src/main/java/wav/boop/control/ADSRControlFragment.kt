@@ -5,19 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.adsr_controller.*
 import wav.boop.R
+import wav.boop.model.ADSRModel
 
 /**
  * Handles interactions with ADSR. Contained within ControlFragment.
  */
 class ADSRControlFragment : Fragment() {
-    // NDK library interface
-    private external fun setAttackLength(milliseconds: Int)
-    private external fun setDecayLength(milliseconds: Int)
-    private external fun setSustainLevel(amplitude: Float)
-    private external fun setReleaseLength(milliseconds: Int)
-
     private companion object {
         private const val MAX_MILLIS: Int = 5000
         private const val MIN_MILLIS: Int = 50
@@ -39,68 +36,56 @@ class ADSRControlFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val adsrModel: ADSRModel by activityViewModels()
+        adsrModel.attack.observe(viewLifecycleOwner, Observer { milliseconds -> attack_description.text = DESCRIPTION_FORMAT
+            .format(milliseconds.toDouble() / 1000.0) })
         attack_bar.apply {
             maxValue = MAX_MILLIS
-            progress = DEFAULT_ATTACK
+            progress = adsrModel.attack.value!!
             clickToSetProgress = false
 
             setOnProgressChangeListener { numMillis ->
                 val milliseconds = if (numMillis > MIN_MILLIS) numMillis else MIN_MILLIS
-                attack_description.text = DESCRIPTION_FORMAT
-                    .format(milliseconds.toDouble() / 1000.0)
-                setAttackLength(milliseconds)
+                adsrModel.setAttackLength(milliseconds)
             }
-
         }
-        setAttackLength(attack_bar.progress)
-        attack_description.text = DESCRIPTION_FORMAT
-            .format(attack_bar.progress.toDouble() / 1000.0)
 
+        adsrModel.decay.observe(viewLifecycleOwner, Observer { milliseconds -> decay_description.text = DESCRIPTION_FORMAT
+            .format(milliseconds.toDouble() / 1000.0) })
         decay_bar.apply {
             maxValue = MAX_MILLIS
-            progress = DEFAULT_DECAY
+            progress = adsrModel.decay.value!!
             clickToSetProgress = false
 
             setOnProgressChangeListener { numMillis ->
                 val milliseconds = if (numMillis > MIN_MILLIS) numMillis else MIN_MILLIS
-                decay_description.text = DESCRIPTION_FORMAT
-                    .format(milliseconds.toDouble() / 1000.0)
-                setDecayLength(milliseconds)
+                adsrModel.setDecayLength(milliseconds)
             }
         }
-        setDecayLength(decay_bar.progress)
-        decay_description.text = DESCRIPTION_FORMAT
-            .format(decay_bar.progress.toDouble() / 1000.0)
 
+        adsrModel.sustain.observe(viewLifecycleOwner, Observer { rawAmplitude -> sustain_description.text = DESCRIPTION_FORMAT
+            .format(rawAmplitude.toDouble()) })
         sustain_bar.apply {
             maxValue = MAX_AMPLITUDE
-            progress = DEFAULT_SUSTAIN
+            progress = (adsrModel.sustain.value!! * 100).toInt()
             clickToSetProgress = false
 
             setOnProgressChangeListener { rawAmplitude ->
-                sustain_description.text = DESCRIPTION_FORMAT
-                    .format(rawAmplitude.toDouble() / 100.0)
-                setSustainLevel(rawAmplitude.toFloat() / 100.0f)
+                adsrModel.setSustainLevel(rawAmplitude.toFloat() / 100.0f)
             }
         }
-        setSustainLevel(sustain_bar.progress.toFloat() / 100.0f)
-        sustain_description.text = DESCRIPTION_FORMAT
-            .format(sustain_bar.progress.toDouble() / 100.0)
 
+        adsrModel.release.observe(viewLifecycleOwner, Observer { milliseconds -> release_description.text = DESCRIPTION_FORMAT
+            .format(milliseconds / 1000.0) })
         release_bar.apply {
             maxValue = MAX_MILLIS
-            progress = DEFAULT_RELEASE
+            progress = adsrModel.release.value!!
             clickToSetProgress = false
 
             setOnProgressChangeListener { numMillis ->
                 val milliseconds = if (numMillis > MIN_MILLIS) numMillis else MIN_MILLIS
-                release_description.text = DESCRIPTION_FORMAT
-                    .format(milliseconds / 1000.0)
-                setReleaseLength(milliseconds)
+                adsrModel.setReleaseLength(milliseconds)
             }
         }
-        setReleaseLength(release_bar.progress)
-        release_description.text = DESCRIPTION_FORMAT
-            .format(release_bar.progress.toDouble() / 1000.0)
     }
 }

@@ -77,7 +77,8 @@ class ColorControlFragment : Fragment() {
                     ColorScheme.Preset.HORIZONTAL_STRIPE -> scheme.makeHorizontalStripe(color1, color2)
                     else -> scheme.makeMonochrome(color1)
                 }
-                (adapterView?.getChildAt(0) as TextView).setTextColor(getThemeColor(requireActivity().theme, R.attr.colorOnSurface))
+                // TODO: Change themes to set text color implicitly instead of programmatically
+                (adapterView?.getChildAt(0) as TextView?)?.setTextColor(getThemeColor(requireActivity().theme, R.attr.colorOnSurface))
             }
             override fun onNothingSelected(adapterView: AdapterView<*>?) {}
         }

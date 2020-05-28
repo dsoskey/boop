@@ -10,7 +10,10 @@
             android:roundIcon="@mipmap/boop_round"
             android:supportsRtl="true"
         >
-        <activity android:name="wav.boop.MainActivity">
+        <activity
+            android:name="wav.boop.MainActivity"
+            android:windowSoftInputMode="adjustPan"
+        >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

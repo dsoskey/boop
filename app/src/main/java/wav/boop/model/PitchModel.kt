@@ -3,15 +3,13 @@ package wav.boop.model
 import androidx.lifecycle.ViewModel
 import wav.boop.pad.padIds
 import wav.boop.pad.padToOscillator
-import wav.boop.pitch.Chord
-import wav.boop.pitch.NoteLetter
-import wav.boop.pitch.getFrequenciesFromTonic
-import wav.boop.pitch.westernTuning
+import wav.boop.pitch.*
+import wav.boop.preset.TonicController
 
 /**
  * ViewModel that manages the pitches of the synthesizer.
  */
-class PitchContainer: ViewModel() {
+class PitchModel: ViewModel(), TonicController {
     // Native interface
     private external fun setFrequency(oscIndex: Int, frequency: Double)
 
@@ -32,7 +30,7 @@ class PitchContainer: ViewModel() {
         setTonic(baseFrequency)
     }
 
-    fun setTonic(frequency: Double) {
+    override fun setTonic(frequency: Double) {
         val pitches: DoubleArray =
             getFrequenciesFromTonic(frequency, padIds.size)
         padIds.forEachIndexed { index, id ->
@@ -44,7 +42,15 @@ class PitchContainer: ViewModel() {
 
     }
 
-    fun setTonic(noteLetter: NoteLetter = tonicNoteLetter, octave: Int = tonicOctave) {
+    override fun setTonic(octave: Int) {
+        setTonic(tonicNoteLetter, octave)
+    }
+
+    override fun setTonic(noteLetter: NoteLetter) {
+        setTonic(noteLetter, tonicOctave)
+    }
+
+    override fun setTonic(noteLetter: NoteLetter, octave: Int) {
         tonicNoteLetter = noteLetter
         tonicOctave = octave
         tonicFrequency = westernTuning(
