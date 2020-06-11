@@ -32,7 +32,6 @@ class ControlFragment: Fragment() {
 
     fun setPage(index: Int) {
         viewPager.currentItem = index
-//        setLRVisibility()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

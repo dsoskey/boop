@@ -5,18 +5,20 @@ import android.graphics.Color
 import android.media.AudioManager
 import android.os.Bundle
 import android.os.Process
-import android.view.Gravity
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.transition.Slide
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import wav.boop.color.getThemeColor
-import wav.boop.control.ControlFragment
 import wav.boop.control.colorButtonIds
-import wav.boop.menu.TitleBarFragment
 import wav.boop.model.*
 import wav.boop.pad.PadFragment
 import wav.boop.pad.padIds
@@ -25,7 +27,6 @@ import wav.boop.preset.DefaultPresetLoader
 import wav.boop.model.SynthesizerModel
 import wav.boop.model.SynthesizerModel.Companion.AUTOSAVE_PREFIX
 import wav.boop.model.SynthesizerModelFactory
-import wav.boop.pad.TestPad
 
 /**
  * Root activity for boop.
@@ -36,10 +37,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     private external fun stopEngine()
     private external fun setDefaultStreamValues(sampleRate: Int, framesPerBurst: Int)
 
+    // Gotten from https://www.youtube.com/watch?v=2k8x8V77CrU
+    private val navController by lazy { findNavController(R.id.nav_host_fragment) }
+    private val appBarConfig by lazy { AppBarConfiguration(navController.graph, drawer_layout) }
+
     // ColorPicker Dialog management
     lateinit var colorScheme: ColorScheme
-
-    lateinit var controlFragment: ControlFragment
 
     lateinit var synthModel: SynthesizerModel
     override fun onDialogDismissed(dialogId: Int) {}
@@ -59,14 +62,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfig) || super.onSupportNavigateUp()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(findViewById(R.id.title_bar))
-        title_bar.setNavigationOnClickListener {
-            drawer_layout.openDrawer(Gravity.LEFT)
-        }
+        setupActionBarWithNavController(navController, appBarConfig)
+        app_navigation.setupWithNavController(navController)
 
         startEngine(getExclusiveCores())
         setDefaultStreamValues()
@@ -88,14 +94,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         val padFragment = PadFragment()
-//        val padFragment = TestPad()
         fragmentTransaction.add(R.id.main_action, padFragment)
         fragmentTransaction.commit()
-
-        val controlTransaction = supportFragmentManager.beginTransaction()
-        controlFragment = ControlFragment()
-        controlTransaction.add(R.id.side_action, controlFragment)
-        controlTransaction.commit()
 
         app_navigation.setNavigationItemSelectedListener { item ->
             val index = when (item.itemId) {
@@ -106,15 +106,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 R.id.pad_color_option -> 4
                 else -> 0
             }
-            controlFragment.setPage(index)
-            drawer_layout.closeDrawer(Gravity.LEFT)
+            findNavController(R.id.nav_host_fragment).navigate(R.id.synthesizerControlFragment)
+            drawer_layout.closeDrawer(GravityCompat.START)
             true
         }
-
-//        val titleBarTransaction = supportFragmentManager.beginTransaction()
-//        val titleBarFragment = TitleBarFragment()
-//        titleBarTransaction.add(R.id.title_bar, titleBarFragment)
-//        titleBarTransaction.commit()
 
         synthModel.loadPreset(AUTOSAVE_PREFIX)
     }
