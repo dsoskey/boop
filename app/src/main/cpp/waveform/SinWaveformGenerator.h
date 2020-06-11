@@ -11,6 +11,8 @@ public:
     float getWaveform(float phase, float amplitude) {
         return sin(phase) * amplitude;
     };
+
+    virtual ~SinWaveformGenerator() = default;
 };
 
 

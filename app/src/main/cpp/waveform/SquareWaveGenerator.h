@@ -15,6 +15,8 @@ public:
             return amplitude;
         }
     };
+
+    virtual ~SquareWaveGenerator() = default;
 };
 
 #endif //BOOP_WAVEFORM_SQUARE_WAVE_GENERATOR_H

@@ -15,7 +15,7 @@ void AudioEngine::setFrequency(int oscIndex, double frequency) {
     audioSource->setFrequency(oscIndex, frequency);
 }
 
-void AudioEngine::setWaveform(int oscIndex, WaveGenerator *waveGenerator) {
+void AudioEngine::setWaveform(int oscIndex, std::shared_ptr<WaveGenerator> waveGenerator) {
     audioSource->setWave(oscIndex, waveGenerator);
 }
 

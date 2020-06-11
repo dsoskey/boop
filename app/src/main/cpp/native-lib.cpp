@@ -11,9 +11,9 @@
 
 // TODO: Decouple creation of engine from starting of engine
 static AudioEngine *engine;
-static WaveGenerator* SQUARE = new SquareWaveGenerator();
-static WaveGenerator* SIN = new SinWaveformGenerator();
-static WaveGenerator* SAW = new SawWaveGenerator(69);
+static std::shared_ptr<WaveGenerator> SQUARE = std::make_shared<SquareWaveGenerator>();
+static std::shared_ptr<WaveGenerator> SIN = std::make_shared<SinWaveformGenerator>();
+static std::shared_ptr<WaveGenerator> SAW = std::make_shared<SawWaveGenerator>(69);
 
 std::vector<int> convertJavaArrayToVector(JNIEnv *env, jintArray intArray) {
     std::vector<int> v;
@@ -130,7 +130,7 @@ extern "C" {
     JNIEXPORT void JNICALL
     Java_wav_boop_model_OscillatorModel_ndkSetWaveform(JNIEnv *env, jobject instance, jint oscIndex, jstring waveform) {
         if (engine) {
-            WaveGenerator* gen;
+            std::shared_ptr<WaveGenerator> gen;
             std::string wf = env->GetStringUTFChars(waveform, NULL);
             if (wf.compare("sin") == 0) {
                 gen = SIN;

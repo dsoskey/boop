@@ -1,3 +1,4 @@
+// TODO: Remove once all code and ideas have been migrated to Signal Chain
 // Based on sample from oboe library
 // https://github.com/google/oboe/blob/master/samples/shared/Oscillator.h
 
@@ -21,7 +22,6 @@ class Oscillator : public IRenderableAudio {
 public:
 
     // From IRenderableAudio
-    // TODO: How long does numFramesTake. Just start a timer when isWaveOn is set to true
     void renderAudio(float *audioData, int32_t numFrames) override {
         // IDEA Code used in original lo/hi-pass filter
         //    double* initialWaveform = NULL;
@@ -57,6 +57,7 @@ public:
         }
     };
 
+    // -> SignalChain
     /**
      * Sets oscillator on or off and state of ADSR
      * @param isWaveOn
@@ -71,7 +72,7 @@ public:
         }
     };
 
-    /**
+    /** -> WaveformProcessor
      * Sets sample rate of oscillator
      * @param sampleRate
      */
@@ -80,7 +81,7 @@ public:
         updatePhaseIncrement();
     };
 
-    /**
+    /** -> WaveformProcessor
      * Sets frequency of oscillator
      * @param frequency
      */
@@ -89,7 +90,7 @@ public:
         updatePhaseIncrement();
     };
 
-    /**
+    /** -> WaveformProcessor
      * Sets wave generator component of oscillator
      * @param waveGenerator
      */
@@ -97,7 +98,7 @@ public:
         this->waveGenerator = waveGenerator;
     }
 
-    /**
+    /** -> ADSRProcessor
      * Sets ADSR envelope component on oscillator
      * @param generator
      */
@@ -105,7 +106,10 @@ public:
         adsrEnvelope = generator;
     }
 
-    /**
+    // What to do with you?
+    // - Move it to its own ISignalProcessor
+    // - Move it to SignalChain for the memset in renderAudio
+    /** -> SignalChain
      * Sets base amplitude of wave being generated
      * @param amplitude
      */
@@ -113,7 +117,7 @@ public:
         this->amplitude = amplitude;
     };
 
-    /**
+    /** -> ADSRProcessor. Note: numMillis is now frames
      * Sets attack length of ADSR
      * @param numMillis
      */
@@ -122,7 +126,7 @@ public:
         this->adsrEnvelope->setAttackLength(frames);
     }
 
-    /**
+    /** -> ADSRProcessor. Note: numMillis is now frames
      * Sets decay length of ADSR
      * @param numMillis
      */
@@ -131,7 +135,7 @@ public:
         this->adsrEnvelope->setDecayLength(frames);
     }
 
-    /**
+    /** -> ADSRProcessor. Note: numMillis is now frames
      * Sets sustain amplitude of ADSR
      * @param amplitude
      */
@@ -139,7 +143,7 @@ public:
         this->adsrEnvelope->setSustainedAmplitude(amplitude);
     }
 
-    /**
+    /** -> ADSRProcessor. Note: numMillis is now frames
      * Sets release length of ADSR
      * @param numMillis
      */
@@ -151,18 +155,18 @@ public:
     ~Oscillator() = default;
 
 private:
-    std::atomic<bool> isWaveOn { false };
-    float phase = 0.0;
-    std::atomic<float> amplitude { 0 };
-    std::atomic<double> phaseIncrement { 0.0 };
-    double frequency = kDefaultFrequency;
-    int32_t sampleRate = kDefaultSampleRate;
-    WaveGenerator* waveGenerator;
-    ADSREnvelope* adsrEnvelope;
-    std::atomic<int> currentBurst { 0 };
-    std::atomic<bool> isWaveReleasing { false };
+    std::atomic<bool> isWaveOn { false }; // -> SignalChain
+    float phase = 0.0; // -> WaveformProcessor
+    std::atomic<float> amplitude { 0 }; // -> SignalChain
+    std::atomic<double> phaseIncrement { 0.0 }; // -> WaveformProcessor
+    double frequency = kDefaultFrequency; // -> WaveformProcessor
+    int32_t sampleRate = kDefaultSampleRate; // -> WaveformProcessor
+    WaveGenerator* waveGenerator; // -> WaveformProcessor
+    ADSREnvelope* adsrEnvelope; // -> ADSRProcessor
+    std::atomic<int> currentBurst { 0 };  // -> SignalChain
+    std::atomic<bool> isWaveReleasing { false }; // -> SignalChain
 
-    void updatePhaseIncrement(){
+    void updatePhaseIncrement(){ // -> WaveformProcessor
         phaseIncrement.store((kTwoPi * frequency) / static_cast<double>(sampleRate));
     };
 };

@@ -75,6 +75,7 @@ public:
         finalReleaseFrame = numFrames;
     }
 
+    virtual ~ADSREnvelope() = default;
 private:
     int decayStartFrame    {  50000 };
     int sustainStartFrame  { 100000 };

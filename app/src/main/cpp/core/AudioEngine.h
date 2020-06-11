@@ -20,7 +20,7 @@ public:
     // Oscillator Interface
     void setSourceOn(int oscIndex, bool isOn);
     void setFrequency(int oscIndex, double frequency);
-    void setWaveform(int oscIndex, WaveGenerator *waveGenerator);
+    void setWaveform(int oscIndex, std::shared_ptr<WaveGenerator> waveGenerator);
     void setAmplitude(int oscIndex, float amplitude);
 
     // ADSR Interface

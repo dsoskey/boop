@@ -22,6 +22,7 @@ add_library(
         log.h
         core
         core/AudioEngine.cpp
+        core/SignalChain.h
         waveform
 )
 
@@ -75,4 +76,4 @@ target_link_libraries(
 # Enable optimization flags: if having problems with source level debugging,
 # disable -Ofast ( and debug ), re-enable it after done debugging.
 
-target_compile_options(native-lib PRIVATE -Wall -Werror -Ofast)
+target_compile_options(native-lib PRIVATE -Wall -Werror ) #-Ofast)

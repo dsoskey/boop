@@ -23,6 +23,8 @@ public:
         }
         return amplitude * val;
     };
+
+    virtual ~SawWaveGenerator() = default;
 private:
     int numVoices;
 };

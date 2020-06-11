@@ -5,15 +5,19 @@
 #define BOOP_CORE_SYNTH_H
 
 #include <array>
-
 #include "Mixer.h"
 #include "MonoToStereo.h"
 #include "Oscillator.h"
 #include "../waveform/SinWaveformGenerator.h"
+#include "SignalChain.h"
+#include "WaveformProcessor.h"
+#include "ADSRProcessor.h"
 
 constexpr float oscBaseFrequency = 116.0;
 constexpr float oscDivisor = 33.0;
 constexpr float oscAmplitude = 0.3;
+constexpr unsigned int WAVEFORM_INDEX = 0;
+constexpr unsigned int ADSR_INDEX = 1;
 
 /**
  * Top-level Synthesizer object that contains a list of oscillators and a mixer to add them together.
@@ -27,12 +31,20 @@ public:
      * @param cc - channel count
      */
     Synth(int32_t sr, int32_t cc) : sampleRate(sr), channelCount(cc) {
+        std::shared_ptr<WaveGenerator> waveformGenerator = std::make_shared<SinWaveformGenerator>();
+        std::shared_ptr<ADSREnvelope> adsrEnvelope = std::make_shared<ADSREnvelope>();
         for (int i = 0; i < kMaxTracks; ++i) {
-            oscillators[i].setSampleRate(sampleRate);
-            oscillators[i].setFrequency(oscBaseFrequency + (static_cast<float>(i) / oscDivisor));
+            std::shared_ptr<WaveformProcessor> waveformProcessor = std::make_shared<WaveformProcessor>();
+            waveformProcessor->setFrequency(oscBaseFrequency + (static_cast<float>(i) / oscDivisor));
+            waveformProcessor->setSampleRate(sampleRate);
+            waveformProcessor->setWave(waveformGenerator);
+
+            std::shared_ptr<ADSRProcessor> adsrProcessor = std::make_shared<ADSRProcessor>();
+            adsrProcessor->setEnvelope(adsrEnvelope);
+
+            oscillators[i].addRenderable(waveformProcessor);
+            oscillators[i].addRenderable(adsrProcessor);
             oscillators[i].setAmplitude(oscAmplitude);
-            oscillators[i].setWave(new SinWaveformGenerator());
-            oscillators[i].setEnvelope(new ADSREnvelope());
             mixer.addTrack(&oscillators[i]);
         }
         if (channelCount == oboe::ChannelCount::Stereo) {
@@ -52,9 +64,9 @@ public:
      * @param oscIndex
      * @param isOn
      */
-    void setWaveOn(int oscIndex, bool isOn) {
+    void setWaveOn(unsigned int oscIndex, bool isOn) {
         if (oscIndex >= 0 && oscIndex < oscillators.size()) {
-            oscillators[oscIndex].setWaveOn(isOn);
+            oscillators[oscIndex].setOn(isOn);
         }
     }
 
@@ -65,7 +77,8 @@ public:
      */
     void setFrequency(int oscIndex, double frequency) {
         if (oscIndex >= 0 && oscIndex < oscillators.size()) {
-            oscillators[oscIndex].setFrequency(frequency);
+            std::shared_ptr<WaveformProcessor> processor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(WAVEFORM_INDEX));
+            processor->setFrequency(frequency);
         }
     }
 
@@ -74,9 +87,9 @@ public:
      * @param oscIndex
      * @param waveGenerator
      */
-    void setWave(int oscIndex, WaveGenerator* waveGenerator) {
+    void setWave(int oscIndex, std::shared_ptr<WaveGenerator> waveGenerator) {
         if (oscIndex >= 0 && oscIndex < oscillators.size()) {
-            oscillators[oscIndex].setWave(waveGenerator);
+            std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(WAVEFORM_INDEX))->setWave(waveGenerator);
         }
     }
 
@@ -94,8 +107,9 @@ public:
      * @param millis
      */
     void setAttackLength(int millis) {
+        int frames = millis * (sampleRate / 1000);
         for (int i = 0; i < kMaxTracks; ++i) {
-            oscillators[i].setAttackLength(millis);
+            std::dynamic_pointer_cast<ADSRProcessor>(oscillators[i].getRenderable(ADSR_INDEX))->setAttackLength(frames);
         }
     }
 
@@ -104,8 +118,9 @@ public:
      * @param millis
      */
     void setDecayLength(int millis) {
+        int frames = millis * (sampleRate / 1000);
         for (int i = 0; i < kMaxTracks; ++i) {
-            oscillators[i].setDecayLength(millis);
+            std::dynamic_pointer_cast<ADSRProcessor>(oscillators[i].getRenderable(ADSR_INDEX))->setDecayLength(frames);
         }
     }
 
@@ -115,7 +130,7 @@ public:
      */
     void setSustainedLevel(float amplitude) {
         for (int i = 0; i < kMaxTracks; ++i) {
-            oscillators[i].setSustainedLevel(amplitude);
+            std::dynamic_pointer_cast<ADSRProcessor>(oscillators[i].getRenderable(ADSR_INDEX))->setSustainedLevel(amplitude);
         }
     }
 
@@ -124,15 +139,16 @@ public:
      * @param millis
      */
     void setReleaseLength(int millis) {
+        int frames = millis * (sampleRate / 1000);
         for (int i = 0; i < kMaxTracks; ++i) {
-            oscillators[i].setReleaseLength(millis);
+            std::dynamic_pointer_cast<ADSRProcessor>(oscillators[i].getRenderable(ADSR_INDEX))->setReleaseLength(frames);
         }
     }
 
     virtual ~Synth() {}
 private:
     // Rendering objects
-    std::array<Oscillator, kMaxTracks> oscillators;
+    std::array<SignalChain, kMaxTracks> oscillators;
     Mixer mixer;
     MonoToStereo converter = MonoToStereo(&mixer);
     IRenderableAudio *outputStage; // This will point to either the mixer or converter, so it needs to be raw
