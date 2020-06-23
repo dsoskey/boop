@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
+//import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import kotlinx.android.synthetic.main.control_container.*
 import wav.boop.R
-import wav.boop.model.LockedViewModel
+//import wav.boop.model.LockedViewModel
 import wav.boop.model.PadActionViewModel
 import wav.boop.pad.PadFragment
 import kotlin.math.max
@@ -27,33 +28,42 @@ class ControlFragment: Fragment() {
     }
 
     private lateinit var subFragments: Array<Fragment>
-    // TODO: Test if you can configure and call viewPager from synthetic id
-    private lateinit var viewPager: ViewPager2
+
+    val args: ControlFragmentArgs by navArgs()
 
     fun setPage(index: Int) {
-        viewPager.currentItem = index
+        control_pager.currentItem = index
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.control_container, container, false)
     }
 
+    private fun initializeSubfragments() {
+        val newSubfragments = ArrayList<Fragment>()
+        args.subfragmentIds.forEach {
+            newSubfragments.add(when (it) {
+                R.id.preset_menu_option -> PresetControlFragment()
+                R.id.pitch_menu_option -> PitchControlFragment()
+                R.id.oscillator_menu_option -> OscillatorControlFragment()
+                R.id.adsr_menu_option -> ADSRControlFragment()
+                R.id.pad_color_option -> ColorControlFragment()
+                else -> Fragment()
+            })
+        }
+        subFragments = newSubfragments.toTypedArray()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val presetControlFragment = PresetControlFragment()
-        val pitchControlFragment = PitchControlFragment()
-        val oscillatorControlFragment = OscillatorControlFragment()
-        val adsrControlFragment = ADSRControlFragment()
-        val colorControlFragment = ColorControlFragment()
-        subFragments = arrayOf(presetControlFragment, pitchControlFragment, oscillatorControlFragment, adsrControlFragment, colorControlFragment)
+        initializeSubfragments()
+//        val isLockedViewModel: LockedViewModel by activityViewModels()
+//        isLockedViewModel.isLocked.observe(viewLifecycleOwner, Observer { isLocked ->
+//            control_pager.isUserInputEnabled = !isLocked
+//        })
 
-        viewPager = control_pager
-        val isLockedViewModel: LockedViewModel by activityViewModels()
-        isLockedViewModel.isLocked.observe(viewLifecycleOwner, Observer { isLocked ->
-            viewPager.isUserInputEnabled = !isLocked
-        })
-        viewPager.setPageTransformer { view, position ->
+        control_pager.setPageTransformer { view, position ->
             view.apply {
                 val pageWidth = width
                 val pageHeight = height
@@ -88,7 +98,7 @@ class ControlFragment: Fragment() {
                 }
             }
         }
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        control_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val padAction: PadActionViewModel by activityViewModels()
                 super.onPageSelected(position)
@@ -100,31 +110,33 @@ class ControlFragment: Fragment() {
                 setLRVisibility()
             }
         })
-        viewPager.adapter = object : FragmentStateAdapter(this) {
+        control_pager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount(): Int = subFragments.size
             override fun createFragment(position: Int): Fragment = subFragments[position]
         }
+        // smoothScroll:false allows us to set the menu item selected from
+        control_pager.setCurrentItem(args.index, false)
 
         left.setOnClickListener {
-            if (viewPager.currentItem > 0) {
-                setPage(viewPager.currentItem - 1)
+            if (control_pager.currentItem > 0) {
+                setPage(control_pager.currentItem - 1)
             }
         }
         right.setOnClickListener {
-            if (viewPager.currentItem < subFragments.size - 1) {
-                setPage(viewPager.currentItem + 1)
+            if (control_pager.currentItem < subFragments.size - 1) {
+                setPage(control_pager.currentItem + 1)
             }
         }
         setLRVisibility()
     }
 
     private fun setLRVisibility() {
-        left.visibility = if (viewPager.currentItem == 0) {
+        left.visibility = if (control_pager.currentItem == 0) {
             View.GONE
         } else {
             View.VISIBLE
         }
-        right.visibility = if (viewPager.currentItem == subFragments.size - 1) {
+        right.visibility = if (control_pager.currentItem == subFragments.size - 1) {
             View.GONE
         } else {
             View.VISIBLE

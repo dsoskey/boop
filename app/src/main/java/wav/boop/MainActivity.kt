@@ -98,15 +98,22 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         fragmentTransaction.commit()
 
         app_navigation.setNavigationItemSelectedListener { item ->
-            val index = when (item.itemId) {
-                R.id.preset_menu_option -> 0
-                R.id.pitch_menu_option -> 1
-                R.id.oscillator_menu_option -> 2
-                R.id.adsr_menu_option -> 3
-                R.id.pad_color_option -> 4
-                else -> 0
+            val subfragmendIds = intArrayOf(
+                R.id.preset_menu_option,
+                R.id.pitch_menu_option,
+                R.id.oscillator_menu_option,
+                R.id.adsr_menu_option,
+                R.id.pad_color_option
+            )
+
+            val index = if (subfragmendIds.indexOf(item.itemId) != -1) {
+                subfragmendIds.indexOf(item.itemId)
+            } else {
+                0
             }
-            findNavController(R.id.nav_host_fragment).navigate(R.id.synthesizerControlFragment)
+
+            val action = PlaySpaceFragmentDirections.openSynthesizerControls(subfragmendIds).setIndex(index)
+            findNavController(R.id.nav_host_fragment).navigate(action)
             drawer_layout.closeDrawer(GravityCompat.START)
             true
         }

@@ -11,7 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.pitch_control.*
 import wav.boop.R
-import wav.boop.color.getThemeColor
+import wav.boop.SPINNER_DROPDOWN_ITEM_ID
+import wav.boop.SPINNER_ITEM_ID
 import wav.boop.pitch.NoteLetter
 import wav.boop.model.PitchModel
 
@@ -49,8 +50,8 @@ class PitchControlFragment: Fragment() {
 
     private fun configureNoteControls() {
         note_spinner.apply {
-            val noteAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, NoteLetter.values().map { it.text })
-            noteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            val noteAdapter = ArrayAdapter(requireContext(), SPINNER_ITEM_ID, NoteLetter.values().map { it.text })
+            noteAdapter.setDropDownViewResource(SPINNER_DROPDOWN_ITEM_ID)
             adapter = noteAdapter
 
             onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
@@ -59,7 +60,6 @@ class PitchControlFragment: Fragment() {
                         noteLetter = NoteLetter.values().find { it.text == adapterView?.getItemAtPosition(pos) } ?: NoteLetter.C
                     )
                     setTonicFrequencyEditText()
-                    (adapterView?.getChildAt(0) as TextView).setTextColor(getThemeColor(requireActivity().theme, R.attr.colorOnSurface))
                 }
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {}
             }
@@ -99,17 +99,16 @@ class PitchControlFragment: Fragment() {
 
     private fun configureOctaveControls() {
         octave_spinner.apply {
-            val octaveAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, (MIN_OCTAVE..MAX_OCTAVE).toList())
-            octaveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            val octaveAdapter = ArrayAdapter(requireContext(), SPINNER_ITEM_ID, (MIN_OCTAVE..MAX_OCTAVE).toList())
+            octaveAdapter.setDropDownViewResource(SPINNER_DROPDOWN_ITEM_ID)
             adapter = octaveAdapter
 
-            onItemSelectedListener = object:AdapterView.OnItemSelectedListener {
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                     pitchModel.setTonic(
                         octave = adapterView?.getItemAtPosition(pos).toString().toInt()
                     )
                     setTonicFrequencyEditText()
-                    (adapterView?.getChildAt(0) as TextView).setTextColor(getThemeColor(requireActivity().theme, R.attr.colorOnSurface))
                 }
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {}
             }

@@ -61,6 +61,14 @@
         <item name="colorAccent">@color/sunbeamOrange</item>
     </style>
 
+    <style name="Widget.Boop.ControlModule.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+    <style name="Widget.Boop.ControlModule.SpinnerDropItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:background">?attr/colorSurface</item>
+    </style>
+
     <style name="Widget.Boop.ControlModule.Button" parent="">
         <item name="android:textColor">?attr/colorSecondary</item>
         <item name="android:background">?attr/colorOnPrimary</item>
