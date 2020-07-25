@@ -11,19 +11,18 @@
 class ADSRProcessor : public ISignalProcessor {
 public:
     void renderSignal(float *audioData, int32_t numFrames, int burstNum, bool isReleasing) override {
-        LOGI("Burst No: %i", burstNum);
         if (isReleasing) {
             for (int i = 0; i < numFrames; ++i) {
                 float amplitude = adsrEnvelope->getOnReleaseAmplitude(i + numFrames * burstNum);
                 if (amplitude == -1) {
                     audioData[i] = 0;
                 } else {
-                    audioData[i] = amplitude;
+                    audioData[i] *= amplitude;
                 }
             }
         } else {
             for (int i = 0; i < numFrames; ++i) {
-                audioData[i] = adsrEnvelope->getOnPressedAmplitude(i + numFrames * burstNum);
+                audioData[i] *= adsrEnvelope->getOnPressedAmplitude(i + numFrames * burstNum);
             }
         }
     }

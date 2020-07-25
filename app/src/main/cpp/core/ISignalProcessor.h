@@ -12,5 +12,13 @@
 class ISignalProcessor {
 public:
     virtual void renderSignal(float *audioData, int32_t numFrames, int burstNum, bool isReleasing) = 0;
+    void setSignalOn(bool isOn) {
+        this->isOn.store(isOn);
+    }
+    bool isSignalOn() {
+        return isOn.load();
+    }
+private:
+    std::atomic<bool> isOn { true };
 };
 #endif //BOOP_ISIGNALPROCESSOR_H

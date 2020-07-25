@@ -13,7 +13,7 @@ class WaveformProcessor : public ISignalProcessor {
 public:
     void renderSignal(float *audioData, int32_t numFrames, int burstNum, bool isReleasing) override {
         for (int i = 0; i < numFrames; ++i) {
-            audioData[i] = waveGenerator->getWaveform(phase, 1.0);
+            audioData[i] *= waveGenerator->getWaveform(phase, 1.0);
             phase += phaseIncrement;
             if (phase > kTwoPi) phase -= kTwoPi;
         }

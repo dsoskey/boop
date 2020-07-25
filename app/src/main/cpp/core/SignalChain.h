@@ -19,16 +19,13 @@ public:
     void renderAudio(float *audioData, int32_t numFrames) override {
         if (this->isOn.load()) {
             bool isSilent = true;
-//            memset(audioData, 1, sizeof(float) * numFrames);
             float currentAmplitude = amplitude.load();
             for (int j = 0; j < numFrames; ++j) {
                 audioData[j] = currentAmplitude;
             }
             for (int i = 0; i < mNextFreeTrackIndex; i++) {
-                mChainArray[i]->renderSignal(chainBuffer, numFrames, currentBurst.load(), isReleasing.load());
-
-                for (int j = 0; j < numFrames; ++j) {
-                    audioData[j] *= chainBuffer[j];
+                if (mChainArray[i]->isSignalOn()) {
+                    mChainArray[i]->renderSignal(audioData, numFrames, currentBurst.load(), isReleasing.load());
                 }
             }
             for (int j = 0; j < numFrames; ++j) {
@@ -73,8 +70,10 @@ public:
      * Adds a renderable track to the end of the signal chain.
      * @param renderer
      */
-    void addRenderable(std::shared_ptr<ISignalProcessor> renderer){
+    uint8_t addRenderable(std::shared_ptr<ISignalProcessor> renderer){
+        uint8_t index = mNextFreeTrackIndex;
         mChainArray[mNextFreeTrackIndex++] = renderer;
+        return index;
     }
 
     /**
@@ -94,7 +93,6 @@ private:
     std::atomic<bool> isReleasing { false };
     std::atomic<float> amplitude { 0 };
 
-    float chainBuffer[kBufferSize];
     std::array<std::shared_ptr<ISignalProcessor>, kMaxTracks> mChainArray;
     uint8_t mNextFreeTrackIndex = 0;
 };
