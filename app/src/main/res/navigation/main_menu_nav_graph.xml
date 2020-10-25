@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_menu_nav_graph"
+    app:startDestination="@id/mainMenuFragment">
+    <fragment
+        android:id="@+id/mainMenuFragment"
+        android:name="wav.boop.MainMenuFragment">
+        <action
+            android:id="@+id/action_mainMenuFragment_to_samplerFragment"
+            app:destination="@id/samplerFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_padPlayFragment"
+            app:destination="@id/padPlayFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_close_exit"
+            app:popEnterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/samplerFragment"
+        android:name="wav.boop.sample.SamplerFragment"
+        android:label="SamplerFragment" />
+    <fragment
+        android:id="@+id/padPlayFragment"
+        android:name="wav.boop.PadPlayFragment"
+        android:label="PadPlayFragment" />
+</navigation>

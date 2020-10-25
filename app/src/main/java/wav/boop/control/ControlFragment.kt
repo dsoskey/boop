@@ -47,7 +47,6 @@ class ControlFragment: Fragment() {
                 R.id.pitch_menu_option -> PitchControlFragment()
                 R.id.oscillator_menu_option -> OscillatorControlFragment()
                 R.id.adsr_menu_option -> ADSRControlFragment()
-                R.id.pad_color_option -> ColorControlFragment()
                 else -> Fragment()
             })
         }

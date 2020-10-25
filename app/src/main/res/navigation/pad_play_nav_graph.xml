@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
+    android:id="@+id/pad_play_nav_graph"
     app:startDestination="@id/playSpaceFragment">
     <fragment
         android:id="@+id/playSpaceFragment"
@@ -16,11 +16,11 @@
     <fragment
         android:id="@+id/synthesizerControlFragment"
         android:name="wav.boop.control.ControlFragment"
-        android:label="synthesizer" >
+        android:label="synthesizer">
         <argument
             android:name="index"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <argument
             android:name="subfragmentIds"
             app:argType="integer[]" />

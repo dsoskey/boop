@@ -10,9 +10,7 @@ import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.test_pad.*
 import wav.boop.R
 import wav.boop.model.PitchModel
-import wav.boop.pitch.Chord
 import wav.boop.pitch.Scale
-import wav.boop.pitch.getFrequenciesForChord
 import wav.boop.pitch.getFrequenciesForScale
 
 class TestPad: Fragment() {
@@ -27,10 +25,8 @@ class TestPad: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val pitchModel: PitchModel by activityViewModels()
-//        val pitches = getFrequenciesForScale(pitchModel.tonicFrequency, Scale.)
+        val pitches = getFrequenciesForScale(pitchModel.tonicFrequency, Scale.CHROMATIC)
         test_pad_button.setOnTouchListener { v, event ->
-//            val pitches = getFrequenciesForChord(pitchModel.tonicFrequency, Chord.MINOR_7TH)
-            val pitches = getFrequenciesForScale(pitchModel.tonicFrequency, Scale.IONIAN)
             val rawIndex = (event.x / (v.width / pitches.size)).toInt()
             val pitchIndex = if (rawIndex >= pitches.size) pitches.size - 1 else rawIndex
             when (event.action) {

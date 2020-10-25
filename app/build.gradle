@@ -25,11 +25,11 @@ android {
     }
     ndkVersion "21.0.6113669"
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
     flavorDimensions "default"
     defaultConfig {
         applicationId "wav.boop"
-        minSdkVersion 26
+        minSdkVersion 29
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"

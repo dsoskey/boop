@@ -10,6 +10,8 @@
 #include "log.h"
 
 // TODO: Decouple creation of engine from starting of engine
+// - This would allow me to free up the audio streams without having to recreate the entire engine every damn time
+
 static AudioEngine *engine;
 static std::shared_ptr<WaveGenerator> SQUARE = std::make_shared<SquareWaveGenerator>();
 static std::shared_ptr<WaveGenerator> SIN = std::make_shared<SinWaveformGenerator>();
@@ -27,7 +29,30 @@ std::vector<int> convertJavaArrayToVector(JNIEnv *env, jintArray intArray) {
     return v;
 }
 
+std::vector<float> convertJavaArrayToVector(JNIEnv *env, jfloatArray floatArray) {
+    std::vector<float> v;
+    jsize length = env->GetArrayLength(floatArray);
+    if (length > 0) {
+        jfloat *elements = env->GetFloatArrayElements(floatArray, nullptr);
+        v.insert(v.end(), &elements[0], &elements[length]);
+        // Unpin the memory for the array, or free the copy.
+        env->ReleaseFloatArrayElements(floatArray, elements, 0);
+    }
+    return v;
+}
+
 extern "C" {
+    /**
+     * Checks if the engine exists, which implies its running.
+     * @param env
+     * @param thiz
+     * @return boolean: true if engine is running.
+     */
+    JNIEXPORT jboolean JNICALL
+    Java_wav_boop_MainActivity_isEngineRunning(JNIEnv *env, jobject thiz) {
+        return static_cast<jboolean>((engine != nullptr));
+    }
+
     /**
     * Start the audio engine
     * @param env
@@ -105,6 +130,22 @@ extern "C" {
     }
 
     /**
+    * Sets the oscillator at oscIndex to on or off. Requires engine to be on to work
+    * @param env
+    * @param instance
+    * @param oscIndex - index of oscillator in synthesizer to affect
+    * @param isOn - should oscillator be on or off
+    */
+    JNIEXPORT void JNICALL
+    Java_wav_boop_sample_SamplerFragment_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isOn) {
+        if (engine) {
+            engine->setSourceOn(oscIndex, isOn);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    /**
      * Sets frequency of oscillator at oscIndex. Requires engine to be on to work
      * @param env
      * @param instance
@@ -144,6 +185,44 @@ extern "C" {
             engine->setWaveform(oscIndex, gen);
         } else {
             LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+
+    JNIEXPORT void JNICALL
+    Java_wav_boop_model_OscillatorModel_ndkSetSample(JNIEnv *env, jobject instance, jint oscIndex, jfloatArray jSample) {
+        if (engine) {
+            std::vector<float> data = convertJavaArrayToVector(env, jSample);
+            engine->setSample(oscIndex, data);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    JNIEXPORT void JNICALL
+    Java_wav_boop_model_OscillatorModel_ndkStartRecording(JNIEnv *env, jobject instance, jint oscIndex) {
+        if (engine) {
+            engine->startRecordingSample(oscIndex);
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    JNIEXPORT jfloatArray JNICALL
+    Java_wav_boop_model_OscillatorModel_ndkStopRecording(JNIEnv *env, jobject instance) {
+        jfloatArray result;
+        if (engine) {
+            std::array<float, kMaxSamples> sample = engine->stopRecordingSample();
+            result = env->NewFloatArray(sample.size());
+
+            if (result != NULL) {
+                env->SetFloatArrayRegion(result, 0, sample.size(), sample.data());
+            }
+
+            return result;
+        } else {
+            LOGE("Engine does not exist, call createEngine() to create a new one");
+            return NULL;
         }
     }
 

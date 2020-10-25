@@ -13,6 +13,8 @@
 #include "SignalChain.h"
 #include "WaveformProcessor.h"
 #include "ADSRProcessor.h"
+#include "../sampler/Sample.h"
+#include "../sampler/Noise.h"
 
 constexpr float oscBaseFrequency = 116.0;
 constexpr float oscDivisor = 33.0;
@@ -25,6 +27,12 @@ class Synth : public IRenderableAudio {
 public:
 
     /**
+     * TODO: Designate space for different sections of application
+     *
+     * [0,7] - Sampler pads
+     * [8,39] - 4x4 pads
+     * [40,41] - Test pad
+     *
      * Constructor
      * @param sr - sample rate
      * @param cc - channel count
@@ -32,12 +40,8 @@ public:
     Synth(int32_t sr, int32_t cc) : sampleRate(sr), channelCount(cc) {
         std::shared_ptr<WaveGenerator> waveformGenerator = std::make_shared<SinWaveformGenerator>();
         std::shared_ptr<ADSREnvelope> adsrEnvelope = std::make_shared<ADSREnvelope>();
-//        std::array<float,kMaxSamples> noiseData = *(new std::array<float,kMaxSamples>());
-//        for (int i = 0; i < kMaxSamples; i++) {
-//            noiseData[i] = ((float) rand()) / (((float) RAND_MAX) * 2.0f) - 1.0f;
-//        }
         for (int i = 0; i < kMaxTracks; ++i) {
-//            std::shared_ptr<Sample> noise = std::make_shared<Sample>(noiseData);
+            std::shared_ptr<Sample> noise = std::make_shared<Sample>(Noise::randomNoise());
             std::shared_ptr<WaveformProcessor> waveformProcessor = std::make_shared<WaveformProcessor>();
             waveformProcessor->setFrequency(oscBaseFrequency + (static_cast<float>(i) / oscDivisor));
             waveformProcessor->setSampleRate(sampleRate);
@@ -47,7 +51,7 @@ public:
             adsrProcessor->setEnvelope(adsrEnvelope);
 
             waveformIndex = oscillators[i].addRenderable(waveformProcessor);
-//            sampleIndex = oscillators[i].addRenderable(noise);
+            sampleIndex = oscillators[i].addRenderable(noise);
             adsrIndex = oscillators[i].addRenderable(adsrProcessor);
             oscillators[i].setAmplitude(oscAmplitude);
             mixer.addTrack(&oscillators[i]);
@@ -75,6 +79,7 @@ public:
         }
     }
 
+    // TODO: all of these set functions need to check for index bounds of sections of boop, as defined above
     /**
      * Sets base frequency of an oscillator at oscIndex
      * @param oscIndex
@@ -82,11 +87,10 @@ public:
      */
     void setFrequency(int oscIndex, double frequency) {
         if (oscIndex >= 0 && oscIndex < oscillators.size()) {
-            //
             std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
             waveProcessor->setFrequency(frequency);
-//            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
-//            sampleProcessor->setSignalOn(false);
+            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
+            sampleProcessor->setSignalOn(false);
             waveProcessor->setSignalOn(true);
 
         }
@@ -99,35 +103,33 @@ public:
      */
     void setWave(int oscIndex, std::shared_ptr<WaveGenerator> waveGenerator) {
         if (oscIndex >= 0 && oscIndex < oscillators.size()) {
-            //
             std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
             waveProcessor->setWave(waveGenerator);
-//            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
-//            sampleProcessor->setSignalOn(false);
+            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
+            sampleProcessor->setSignalOn(false);
             waveProcessor->setSignalOn(true);
         }
     }
 
     void setSample(int oscIndex, std::vector<float> data) {
-//        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
-//            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
-//            sampleProcessor->setData(data);
-//            std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
-//            waveProcessor->setSignalOn(false);
-//            sampleProcessor->setSignalOn(true);
-//        }
+        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
+            sampleProcessor->setData(data);
+            std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
+            waveProcessor->setSignalOn(false);
+            sampleProcessor->setSignalOn(true);
+        }
     }
 
-//    void setSample(int oscIndex, std::array<float, kMaxSamples> data) {
-//        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
-//            LOGE("DOING THE THING");
-//            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
-//            sampleProcessor->setData(data);
-//            std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
-//            waveProcessor->setSignalOn(false);
-//            sampleProcessor->setSignalOn(true);
-//        }
-//    }
+    void setSample(int oscIndex, std::array<float, kMaxSamples> data) {
+        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
+            sampleProcessor->setData(data);
+            std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
+            waveProcessor->setSignalOn(false);
+            sampleProcessor->setSignalOn(true);
+        }
+    }
 
     /**
      * Set amplitude of an oscillator at oscIndex

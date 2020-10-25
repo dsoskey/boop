@@ -21,17 +21,4 @@
                 android:title="ADSR" />
         </menu>
     </item>
-    <item
-        android:id="@+id/aesthetic_option_group"
-        android:menuCategory="container"
-        android:icon="@drawable/outline_palette_24"
-        android:title="Aesthetics"
-    >
-        <menu>
-            <item
-                android:id="@+id/pad_color_option"
-                android:title="Pad Color"
-            />
-        </menu>
-    </item>
 </menu>

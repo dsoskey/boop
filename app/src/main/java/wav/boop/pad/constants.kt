@@ -17,4 +17,5 @@ fun getOscillatorsForPad(padId: Int, numVoices: Int = 2): IntArray {
     return (0 until numVoices).map { osc -> osc + index * numVoices  }.toIntArray()
 }
 
-val padToOscillator: Map<Int, IntArray> = padIds.associate { it to getOscillatorsForPad(it) }
+// TODO: Set numVoices to 1 when testing out sampler.
+val padToOscillator: Map<Int, IntArray> = padIds.associate { it to getOscillatorsForPad(it, 1) }

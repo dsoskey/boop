@@ -41,7 +41,6 @@ public:
      * @param frequency
      */
     void setFrequency(double frequency) {
-        LOGE("SETTING FREQUENCY!");
         this->frequency = frequency;
         updatePhaseIncrement();
     };

@@ -1,81 +1,49 @@
 package wav.boop
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.media.AudioManager
 import android.os.Bundle
 import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import wav.boop.color.getThemeColor
-import wav.boop.control.colorButtonIds
 import wav.boop.model.*
-import wav.boop.pad.PadFragment
-import wav.boop.pad.padIds
-import wav.boop.pitch.Scale
-import wav.boop.preset.DefaultPresetLoader
 import wav.boop.model.SynthesizerModel
 import wav.boop.model.SynthesizerModel.Companion.AUTOSAVE_PREFIX
-import wav.boop.model.SynthesizerModelFactory
+import wav.boop.pitch.Scale
+import wav.boop.preset.DefaultPresetLoader
 
+const val BOOP_REQUEST_CODE = 0
 /**
  * Root activity for boop.
  */
-class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
+class MainActivity : AppCompatActivity() {
     // Native interface for AudioEngine controls
     private external fun startEngine(cpuIds: IntArray)
+    private external fun isEngineRunning(): Boolean
     private external fun stopEngine()
     private external fun setDefaultStreamValues(sampleRate: Int, framesPerBurst: Int)
 
-    // Gotten from https://www.youtube.com/watch?v=2k8x8V77CrU
-    private val navController by lazy { findNavController(R.id.nav_host_fragment) }
-    private val appBarConfig by lazy { AppBarConfiguration(navController.graph, drawer_layout) }
-
-    // ColorPicker Dialog management
     lateinit var colorScheme: ColorScheme
-
     lateinit var synthModel: SynthesizerModel
-    override fun onDialogDismissed(dialogId: Int) {}
-    override fun onColorSelected(dialogId: Int, colorInt: Int) {
-        val color = Color.valueOf(colorInt)
-        when {
-            padIds.contains(dialogId) -> {
-                colorScheme.setColorForButtons(color, dialogId)
-            }
-            colorButtonIds.contains(dialogId) -> {
-                val assignment: ColorAssignment? = colorScheme.getAssignment(colorButtonIds.indexOf(dialogId))
-                if (assignment != null) {
-                    colorScheme.setColorForButtons(color, assignment.padIds)
-                }
-            }
-            else -> error("Dialog ID (${dialogId}) not recognized as either a pad or a color button")
-        }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfig) || super.onSupportNavigateUp()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setSupportActionBar(findViewById(R.id.title_bar))
-        setupActionBarWithNavController(navController, appBarConfig)
-        app_navigation.setupWithNavController(navController)
-
-        startEngine(getExclusiveCores())
-        setDefaultStreamValues()
+        if (!isRecordPermissionGranted()) {
+            requestRecordPermission()
+        }
+        if (!isEngineRunning()) {
+            startEngine(getExclusiveCores())
+            setDefaultStreamValues()
+        }
 
         val synthFactory = SynthesizerModelFactory(
             DefaultPresetLoader(applicationContext, Json(JsonConfiguration.Stable)),
@@ -92,44 +60,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             Scale.IONIAN
         )
 
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val padFragment = PadFragment()
-        fragmentTransaction.add(R.id.main_action, padFragment)
-        fragmentTransaction.commit()
-
-        app_navigation.setNavigationItemSelectedListener { item ->
-            val subfragmendIds = intArrayOf(
-                R.id.preset_menu_option,
-                R.id.pitch_menu_option,
-                R.id.oscillator_menu_option,
-                R.id.adsr_menu_option,
-                R.id.pad_color_option
-            )
-
-            val index = if (subfragmendIds.indexOf(item.itemId) != -1) {
-                subfragmendIds.indexOf(item.itemId)
-            } else {
-                0
-            }
-
-            val action = PlaySpaceFragmentDirections.openSynthesizerControls(subfragmendIds).setIndex(index)
-            findNavController(R.id.nav_host_fragment).navigate(action)
-            drawer_layout.closeDrawer(GravityCompat.START)
-            true
-        }
-
         synthModel.loadPreset(AUTOSAVE_PREFIX)
     }
 
     override fun onStop() {
         synthModel.saveCurrentPreset(AUTOSAVE_PREFIX)
-        stopEngine()
         super.onStop()
     }
 
     override fun onRestart() {
-        startEngine(getExclusiveCores())
-        synthModel.refresh()
+        if (!isEngineRunning()) {
+            startEngine(getExclusiveCores())
+            synthModel.refresh()
+        }
         super.onRestart()
     }
 
@@ -151,6 +94,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val framesPerBurstStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)
         val defaultFramesPerBurst = framesPerBurstStr.toInt()
         setDefaultStreamValues(defaultSampleRate, defaultFramesPerBurst)
+    }
+
+    private fun requestRecordPermission() {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), BOOP_REQUEST_CODE)
+    }
+
+    private fun isRecordPermissionGranted(): Boolean {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
     }
 
     companion object {

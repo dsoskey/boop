@@ -17,6 +17,8 @@ class DefaultPresetLoader(
     private val serializer: Json
 ): PresetLoader {
 
+    private val presetDir = "presets"
+
     private val fileMap = mutableMapOf<String, Preset>()
     override fun listPresets(): List<String> = fileMap.keys.toList()
     init {
