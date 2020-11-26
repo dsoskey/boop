@@ -16,9 +16,6 @@ class OscillatorModel: ViewModel(), OscillatorController {
     private external fun ndkSetWaveform(oscIndex: Int, waveform: String)
     private external fun ndkSetAmplitude(oscIndex: Int, amplitude: Float)
 
-    public external fun ndkStartRecording(oscIndex: Int)
-    public external fun ndkStopRecording(): FloatArray
-
     override fun setAmplitude(waveNum: Int, amplitude: Float) {
         padToOscillator.forEach{ (_, oscIndices) ->
             oscIndices.forEach { oscIndex ->

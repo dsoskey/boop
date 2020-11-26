@@ -18,6 +18,8 @@ import wav.boop.model.SynthesizerModel
 import wav.boop.model.SynthesizerModel.Companion.AUTOSAVE_PREFIX
 import wav.boop.pitch.Scale
 import wav.boop.preset.DefaultPresetLoader
+import wav.boop.sample.SamplerModel
+import wav.boop.sample.SamplerModelFactory
 
 const val BOOP_REQUEST_CODE = 0
 /**
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             ViewModelProvider(this)[OscillatorModel::class.java]
         )
         synthModel = ViewModelProvider(this, synthFactory)[SynthesizerModel::class.java]
+
 
         colorScheme = ViewModelProvider(this)[ColorScheme::class.java]
         colorScheme.makeMode(

@@ -25,4 +25,7 @@
     <string name="save">Save</string>
     <string name="load">Load</string>
     <string name="preset_name">Preset Name</string>
+    <string name="sampler_save_text">SAVE</string>
+    <string name="sampler_rec_text">REC</string>
+    <string name="sampler_load_text">LOAD</string>
 </resources>

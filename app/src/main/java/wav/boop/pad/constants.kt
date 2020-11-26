@@ -9,13 +9,13 @@ val padIds: IntArray = intArrayOf(
     R.id.grid_12, R.id.grid_13, R.id.grid_14, R.id.grid_15
 )
 
+// This should fill [8,39] as defined in cpp/core/Synth.h
 fun getOscillatorsForPad(padId: Int, numVoices: Int = 2): IntArray {
     val index = padIds.indexOf(padId)
     if (index == -1) {
         return intArrayOf()
     }
-    return (0 until numVoices).map { osc -> osc + index * numVoices  }.toIntArray()
+    return (0 until numVoices).map { osc -> 8 + osc + index * numVoices }.toIntArray()
 }
 
-// TODO: Set numVoices to 1 when testing out sampler.
-val padToOscillator: Map<Int, IntArray> = padIds.associate { it to getOscillatorsForPad(it, 1) }
+val padToOscillator: Map<Int, IntArray> = padIds.associate { it to getOscillatorsForPad(it, 2) }

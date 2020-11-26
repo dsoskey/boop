@@ -27,6 +27,8 @@ public:
         }
     }
 
+    bool requiresRelease() override { return true; }
+
     /**
      * Sets ADSR envelope component on oscillator
      * @param generator

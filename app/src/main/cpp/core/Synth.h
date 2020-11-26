@@ -20,6 +20,10 @@ constexpr float oscBaseFrequency = 116.0;
 constexpr float oscDivisor = 33.0;
 constexpr float oscAmplitude = 0.3;
 
+constexpr int minSamplerIndex = 0;
+constexpr int maxSamplerIndex = 7;
+constexpr int minPlayPadIndex = 8;
+constexpr int maxPlayPadIndex = 39;
 /**
  * Top-level Synthesizer object that contains a list of oscillators and a mixer to add them together.
  */
@@ -27,8 +31,7 @@ class Synth : public IRenderableAudio {
 public:
 
     /**
-     * TODO: Designate space for different sections of application
-     *
+     * Signal chain allocation within boop.
      * [0,7] - Sampler pads
      * [8,39] - 4x4 pads
      * [40,41] - Test pad
@@ -40,8 +43,14 @@ public:
     Synth(int32_t sr, int32_t cc) : sampleRate(sr), channelCount(cc) {
         std::shared_ptr<WaveGenerator> waveformGenerator = std::make_shared<SinWaveformGenerator>();
         std::shared_ptr<ADSREnvelope> adsrEnvelope = std::make_shared<ADSREnvelope>();
-        for (int i = 0; i < kMaxTracks; ++i) {
+        for (int i = minSamplerIndex; i <= maxSamplerIndex; ++i) {
             std::shared_ptr<Sample> noise = std::make_shared<Sample>(Noise::randomNoise());
+            sampleIndex = oscillators[i].addRenderable(noise);
+            oscillators[i].setAmplitude(.6);
+            mixer.addTrack(&oscillators[i]);
+        }
+
+        for (int i = minPlayPadIndex; i < kMaxTracks; ++i) {
             std::shared_ptr<WaveformProcessor> waveformProcessor = std::make_shared<WaveformProcessor>();
             waveformProcessor->setFrequency(oscBaseFrequency + (static_cast<float>(i) / oscDivisor));
             waveformProcessor->setSampleRate(sampleRate);
@@ -51,7 +60,6 @@ public:
             adsrProcessor->setEnvelope(adsrEnvelope);
 
             waveformIndex = oscillators[i].addRenderable(waveformProcessor);
-            sampleIndex = oscillators[i].addRenderable(noise);
             adsrIndex = oscillators[i].addRenderable(adsrProcessor);
             oscillators[i].setAmplitude(oscAmplitude);
             mixer.addTrack(&oscillators[i]);
@@ -76,6 +84,8 @@ public:
     void setWaveOn(unsigned int oscIndex, bool isOn) {
         if (oscIndex >= 0 && oscIndex < oscillators.size()) {
             oscillators[oscIndex].setOn(isOn);
+        } else {
+            LOGE("Index out of bounds! Expected range [0, %d], received (%d)", (int)oscillators.size(), oscIndex);
         }
     }
 
@@ -86,13 +96,12 @@ public:
      * @param frequency
      */
     void setFrequency(int oscIndex, double frequency) {
-        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+        if (oscIndex >= minPlayPadIndex && oscIndex < oscillators.size()) { // TODO: Add upper bound when something is above play pads
             std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
             waveProcessor->setFrequency(frequency);
-            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
-            sampleProcessor->setSignalOn(false);
             waveProcessor->setSignalOn(true);
-
+        } else {
+            LOGE("Play pad index out of bounds");
         }
     }
 
@@ -102,32 +111,32 @@ public:
      * @param waveGenerator
      */
     void setWave(int oscIndex, std::shared_ptr<WaveGenerator> waveGenerator) {
-        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+        if (oscIndex >= minPlayPadIndex && oscIndex < oscillators.size()) { // TODO: Add upper bound when something is above play pads
             std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
             waveProcessor->setWave(waveGenerator);
-            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
-            sampleProcessor->setSignalOn(false);
             waveProcessor->setSignalOn(true);
+        } else {
+            LOGE("Play pad index out of bounds");
         }
     }
 
     void setSample(int oscIndex, std::vector<float> data) {
-        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+        if (oscIndex >= minSamplerIndex && oscIndex <= maxSamplerIndex) {
             std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
             sampleProcessor->setData(data);
-            std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
-            waveProcessor->setSignalOn(false);
             sampleProcessor->setSignalOn(true);
+        } else {
+            LOGE("Sampler index out of bounds");
         }
     }
 
     void setSample(int oscIndex, std::array<float, kMaxSamples> data) {
-        if (oscIndex >= 0 && oscIndex < oscillators.size()) {
+        if (oscIndex >= minSamplerIndex && oscIndex <= maxSamplerIndex) {
             std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
             sampleProcessor->setData(data);
-            std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
-            waveProcessor->setSignalOn(false);
             sampleProcessor->setSignalOn(true);
+        } else {
+            LOGE("Sampler index out of bounds");
         }
     }
 
@@ -141,44 +150,52 @@ public:
     }
 
     /**
+     * TODO: Make this set an individual oscillator.
      * Set attack length of all oscillators
+     * Note: This only applies to the pad play oscillators, NOT the sampler
      * @param millis
      */
     void setAttackLength(int millis) {
         int frames = millis * (sampleRate / 1000);
-        for (int i = 0; i < kMaxTracks; ++i) {
+        for (int i = minPlayPadIndex; i < kMaxTracks; ++i) {
             std::dynamic_pointer_cast<ADSRProcessor>(oscillators[i].getRenderable(adsrIndex))->setAttackLength(frames);
         }
     }
 
     /**
+     * TODO: Make this set an individual oscillator.
      * Set decay length of all oscillators
+     * Note: This only applies to the pad play oscillators, NOT the sampler
      * @param millis
      */
     void setDecayLength(int millis) {
         int frames = millis * (sampleRate / 1000);
-        for (int i = 0; i < kMaxTracks; ++i) {
+        for (int i = minPlayPadIndex; i < kMaxTracks; ++i) {
             std::dynamic_pointer_cast<ADSRProcessor>(oscillators[i].getRenderable(adsrIndex))->setDecayLength(frames);
         }
     }
 
     /**
-     * Set sustatined level of all oscillators
+     * TODO: Make this set an individual oscillator.
+     * Set sustained level of all oscillators
+     * Note: This only applies to the pad play oscillators, NOT the sampler
      * @param amplitude
      */
     void setSustainedLevel(float amplitude) {
-        for (int i = 0; i < kMaxTracks; ++i) {
+        for (int i = minPlayPadIndex; i < kMaxTracks; ++i) {
             std::dynamic_pointer_cast<ADSRProcessor>(oscillators[i].getRenderable(adsrIndex))->setSustainedLevel(amplitude);
         }
     }
 
     /**
+     * TODO: Make this set an individual oscillator.
      * Set release length of all oscillators
+     * Note: This only applies to the pad play oscillators, NOT the sampler
      * @param millis
      */
     void setReleaseLength(int millis) {
         int frames = millis * (sampleRate / 1000);
-        for (int i = 0; i < kMaxTracks; ++i) {
+        for (int i = minPlayPadIndex; i < kMaxTracks; ++i) {
             std::dynamic_pointer_cast<ADSRProcessor>(oscillators[i].getRenderable(adsrIndex))->setReleaseLength(frames);
         }
     }
@@ -186,9 +203,9 @@ public:
     virtual ~Synth() {}
 private:
     // Rendering objects
-    uint8_t waveformIndex;
-    uint8_t adsrIndex;
-    uint8_t sampleIndex;
+    uint8_t waveformIndex; // Only used for play pads
+    uint8_t adsrIndex; // Only used for play pads
+    uint8_t sampleIndex; // Only used for sampler
     std::array<SignalChain, kMaxTracks> oscillators;
     Mixer mixer;
     MonoToStereo converter = MonoToStereo(&mixer);

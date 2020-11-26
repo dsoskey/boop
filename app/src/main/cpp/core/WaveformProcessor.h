@@ -19,6 +19,8 @@ public:
         }
     }
 
+    bool requiresRelease() override { return false; }
+
     /**
      * Sets wave generator component of oscillator
      * @param waveGenerator

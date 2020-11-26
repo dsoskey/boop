@@ -36,7 +36,7 @@
             android:layout_marginBottom="4dp"
             android:background="#E91E63"
             android:textColor="#FFFFFF"
-            android:text="REC"
+            android:text="@string/sampler_rec_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.6"
@@ -53,7 +53,7 @@
             android:layout_marginBottom="4dp"
             android:background="#FF5722"
             android:textColor="#FFFFFF"
-            android:text="SAVE"
+            android:text="@string/sampler_save_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/v666"
             app:layout_constraintStart_toStartOf="@id/v333"
@@ -69,7 +69,7 @@
             android:layout_marginBottom="4dp"
             android:background="#FF9800"
             android:textColor="#FFFFFF"
-            android:text="LOAD"
+            android:text="@string/sampler_load_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/v333"
             app:layout_constraintStart_toStartOf="parent"
@@ -115,85 +115,77 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".83"
         app:layout_constraintTop_toTopOf="parent" />
-    <Button
+    <ImageButton
         android:id="@+id/pad_0"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#9C27B0"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizonal_mid_pads"
         app:layout_constraintEnd_toStartOf="@+id/v25"
         app:layout_constraintStart_toStartOf="parent"
     />
-    <Button
+    <ImageButton
         android:id="@+id/pad_1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#3F51B5"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizonal_mid_pads"
         app:layout_constraintEnd_toStartOf="@id/vertical_center"
         app:layout_constraintStart_toStartOf="@id/v25"
     />
-    <Button
+    <ImageButton
         android:id="@+id/pad_2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#2196F3"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizonal_mid_pads"
         app:layout_constraintEnd_toStartOf="@id/v75"
         app:layout_constraintStart_toStartOf="@id/vertical_center" />
-    <Button
+    <ImageButton
         android:id="@+id/pad_3"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#03A9F4"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizonal_mid_pads"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/v75" />
-    <Button
+    <ImageButton
         android:id="@+id/pad_4"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#00BCD4"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@id/horizonal_mid_pads"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toStartOf="@id/v25"
         app:layout_constraintStart_toStartOf="parent" />
-    <Button
+    <ImageButton
         android:id="@+id/pad_5"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#009688"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@id/horizonal_mid_pads"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toStartOf="@id/vertical_center"
         app:layout_constraintStart_toStartOf="@id/v25"
     />
-    <Button
+    <ImageButton
         android:id="@+id/pad_6"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#4CAF50"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@id/horizonal_mid_pads"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toEndOf="@id/v75"
         app:layout_constraintStart_toStartOf="@id/vertical_center" />
-    <Button
+    <ImageButton
         android:id="@+id/pad_7"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#8BC34A"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@id/horizonal_mid_pads"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toEndOf="parent"

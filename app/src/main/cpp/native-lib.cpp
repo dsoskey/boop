@@ -133,13 +133,13 @@ extern "C" {
     * Sets the oscillator at oscIndex to on or off. Requires engine to be on to work
     * @param env
     * @param instance
-    * @param oscIndex - index of oscillator in synthesizer to affect
-    * @param isOn - should oscillator be on or off
+    * @param channelIndex - index of channel in synthesizer to affect
+    * @param isOn - should channel be on or off
     */
     JNIEXPORT void JNICALL
-    Java_wav_boop_sample_SamplerFragment_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isOn) {
+    Java_wav_boop_sample_SamplerModel_ndkSetSampleOn(JNIEnv *env, jobject instance, jint channelIndex, jboolean isOn) {
         if (engine) {
-            engine->setSourceOn(oscIndex, isOn);
+            engine->setSourceOn(channelIndex, isOn);
         } else {
             LOGE("Engine does not exist, call createEngine() to create a new one");
         }
@@ -190,17 +190,17 @@ extern "C" {
 
 
     JNIEXPORT void JNICALL
-    Java_wav_boop_model_OscillatorModel_ndkSetSample(JNIEnv *env, jobject instance, jint oscIndex, jfloatArray jSample) {
+    Java_wav_boop_sample_SamplerModel_ndkSetSample(JNIEnv *env, jobject instance, jint channelIndex, jfloatArray sample) {
         if (engine) {
-            std::vector<float> data = convertJavaArrayToVector(env, jSample);
-            engine->setSample(oscIndex, data);
+            std::vector<float> data = convertJavaArrayToVector(env, sample);
+            engine->setSample(channelIndex, data);
         } else {
             LOGE("Engine does not exist, call createEngine() to create a new one");
         }
     }
 
     JNIEXPORT void JNICALL
-    Java_wav_boop_model_OscillatorModel_ndkStartRecording(JNIEnv *env, jobject instance, jint oscIndex) {
+    Java_wav_boop_sample_SamplerModel_ndkStartRecording(JNIEnv *env, jobject instance, jint oscIndex) {
         if (engine) {
             engine->startRecordingSample(oscIndex);
         } else {
@@ -209,7 +209,7 @@ extern "C" {
     }
 
     JNIEXPORT jfloatArray JNICALL
-    Java_wav_boop_model_OscillatorModel_ndkStopRecording(JNIEnv *env, jobject instance) {
+    Java_wav_boop_sample_SamplerModel_ndkStopRecording(JNIEnv *env, jobject instance) {
         jfloatArray result;
         if (engine) {
             std::array<float, kMaxSamples> sample = engine->stopRecordingSample();
@@ -241,6 +241,7 @@ extern "C" {
             LOGE("Engine does not exist, call createEngine() to create a new one");
         }
     }
+
 
     /**
     * Sets attack length in milliseconds for all oscillators. Requires an engine to be on to work

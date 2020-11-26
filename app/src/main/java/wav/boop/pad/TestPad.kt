@@ -18,6 +18,10 @@ class TestPad: Fragment() {
     private external fun setWaveOn(oscIndex: Int, isOn: Boolean)
     private external fun setFrequency(oscIndex: Int, frequency: Double)
 
+    companion object {
+        val oscillators = arrayOf(40, 41)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saveInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.test_pad, container, false)
     }
@@ -31,18 +35,18 @@ class TestPad: Fragment() {
             val pitchIndex = if (rawIndex >= pitches.size) pitches.size - 1 else rawIndex
             when (event.action) {
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_BUTTON_RELEASE -> {
-                    listOf(0, 1).forEach {
+                    oscillators.forEach {
                         setWaveOn(it, false)
                     }
                 }
                 MotionEvent.ACTION_DOWN -> {
-                    listOf(0, 1).forEach {
+                    oscillators.forEach {
                         setFrequency(it, pitches[pitchIndex])
                         setWaveOn(it, true)
                     }
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    listOf(0, 1).forEach {
+                    oscillators.forEach {
                         setFrequency(it, pitches[pitchIndex])
                     }
                 }

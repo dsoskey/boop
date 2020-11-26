@@ -53,8 +53,10 @@ public:
         if (isOn) {
             this->isOn.store(true);
             isReleasing.store(false);
-        } else {
+        } else if (this->shouldUseRelease()) {
             isReleasing.store(true);
+        } else {
+            this->isOn.store(false);
         }
     };
 
@@ -81,13 +83,22 @@ public:
      * It is the caller's responsibility to know what type of Signal Processor is at each
      * IDEA: Type inflection
      * @param index
-     * @return reference to si
+     * @return reference to signal processor at index.
      */
     std::shared_ptr<ISignalProcessor> getRenderable(unsigned int index) {
         return mChainArray[index];
     }
 
 private:
+    bool shouldUseRelease() {
+        bool shouldRelease = false;
+        for (int i = 0; i < mNextFreeTrackIndex; i++) {
+            if (mChainArray[i]->usesRelease()) {
+                shouldRelease = true;
+            }
+        }
+        return shouldRelease;
+    }
     std::atomic<bool> isOn { false };
     std::atomic<int> currentBurst { 0 };
     std::atomic<bool> isReleasing { false };
