@@ -5,57 +5,51 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
+import wav.boop.file.SerialLoader
 
-@Serializable
-data class Sample(
-    val rawData: FloatArray, // Should this be a ByteArray copy of rawFile?
-    val rawFileName: String, // Evaluate if this is needed in internal sample file
-    var startFrame: Int,
-    var endFrame: Int,
-    var isLooping: Boolean,
-    var startLoopFrame: Int,
-    var endLoopFrame: Int
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+/**
+ * Model that manages all interactions with the Sampler's data.
+ */
+class SamplerModel(
+    private val padToChannelIndex: Map<Int, Int>,
+    private val context: Context,
+    private val sampleLoader: SerialLoader<Sample>
+): ViewModel() {
+    companion object {
+        const val AUTOSAVE_PREFIX = "autozone"
 
-        other as Sample
-
-        if (!rawData.contentEquals(other.rawData)) return false
-        if (rawFileName != other.rawFileName) return false
-        if (startFrame != other.startFrame) return false
-        if (endFrame != other.endFrame) return false
-        if (isLooping != other.isLooping) return false
-        if (startLoopFrame != other.startLoopFrame) return false
-        if (endLoopFrame != other.endLoopFrame) return false
-
-        return true
+        fun autoSaveFileName(channelIndex: Int): String { return "${AUTOSAVE_PREFIX}_${channelIndex}" }
     }
 
-    override fun hashCode(): Int {
-        var result = rawData.contentHashCode()
-        result = 31 * result + rawFileName.hashCode()
-        result = 31 * result + startFrame
-        result = 31 * result + endFrame
-        result = 31 * result + isLooping.hashCode()
-        result = 31 * result + startLoopFrame
-        result = 31 * result + endLoopFrame
-        return result
-    }
-}
-
-class SamplerModel(private val padToChannelIndex: Map<Int, Int>, private val context: Context): ViewModel() {
     // Native interface
     private external fun ndkStartRecording(channelIndex: Int)
     private external fun ndkStopRecording(): FloatArray
     private external fun ndkSetSample(channelIndex: Int, sample: FloatArray)
     private external fun ndkSetSampleOn(channelIndex: Int, isOn: Boolean)
 
+    /** Map of Channel Index -> Sample loaded onto Channel. */
     private val loadedSamples: MutableMap<Int, Savable<Sample>> = HashMap()
+
+    /** Index of channel currently being recorded to. */
     private var currentRecordingChannelIndex: Int? = null // Beware, this might have a race condition
 
+    /**
+     * Restores any autosaves located in the sampleLoader's subdirectory.
+     * NOTE: This will overwrite any currently loaded samples, so use with care.
+     */
+    fun loadAutosaves() {
+        padToChannelIndex.values.forEach {
+            val sample = sampleLoader.get(autoSaveFileName(it))
+            if (sample != null) {
+                loadedSamples[it] = Savable(false, sample) // TODO: Might need to store the savable wrapper too
+                ndkSetSample(it, sample.rawData)
+            }
+        }
+    }
+
+    /**
+     * Starts recording for a channel tied to a specific pad.
+     */
     fun startRecording(padIndex: Int) {
         val channelIndex = padToChannelIndex[padIndex]
         if (channelIndex != null && currentRecordingChannelIndex == null) {
@@ -64,7 +58,14 @@ class SamplerModel(private val padToChannelIndex: Map<Int, Int>, private val con
         }
     }
 
-    // TODO: proper error throwing when race condition is hit instead of returning empty list
+    /**
+     * If there is a channel currently recording input, this function
+     * - stops recording
+     * - sets the loaded sample
+     * - saves a raw version of the sample as a wav
+     * - saves the active sample for restoring when app restarts
+     * TODO: proper error throwing when race condition is hit instead of returning empty list
+     */
     fun stopRecording() {
         val channelIndex = currentRecordingChannelIndex
         if (channelIndex != null) {
@@ -73,16 +74,25 @@ class SamplerModel(private val padToChannelIndex: Map<Int, Int>, private val con
             val sample = Savable(false, Sample(sampleData, fileName, 0, sampleData.size, false, 0 , sampleData.size))
             loadedSamples[channelIndex] = sample
             GlobalScope.launch {
+                // Save raw data to a wav
                 pcmToWavFile(context, fileName, sampleData)
+                // Save active sample to restore when app restarts.
+                sampleLoader.save(autoSaveFileName(channelIndex), sample.data)
             }
             currentRecordingChannelIndex = null
         }
     }
 
+    /**
+     * Gets a loaded sample based on the pad index, if it exists.
+     */
     fun getSample(padIndex: Int): Savable<Sample>? {
         return loadedSamples[padToChannelIndex[padIndex]]
     }
 
+    /**
+     * Sets a sample to play on/off.
+     */
     fun setSampleOn(padIndex: Int, isOn: Boolean) {
         val channelIndex = padToChannelIndex[padIndex]
         if (channelIndex != null) {
@@ -91,8 +101,19 @@ class SamplerModel(private val padToChannelIndex: Map<Int, Int>, private val con
     }
 }
 
-class SamplerModelFactory(private val padToChannelIndex: Map<Int, Int>, private val context: Context): ViewModelProvider.Factory {
+/**
+ * Factory to allow Model to have a non-empty constructor.
+ */
+class SamplerModelFactory(
+    private val padToChannelIndex: Map<Int, Int>,
+    private val context: Context,
+    private val sampleLoader: SerialLoader<Sample>
+): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return modelClass.getConstructor(Map::class.java, Context::class.java).newInstance(padToChannelIndex, context)
+        return modelClass.getConstructor(
+            Map::class.java,
+            Context::class.java,
+            SerialLoader::class.java
+        ).newInstance(padToChannelIndex, context, sampleLoader)
     }
 }

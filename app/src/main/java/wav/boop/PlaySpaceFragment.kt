@@ -5,15 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import wav.boop.control.ControlFragment
-import wav.boop.model.*
-import wav.boop.pad.PadFragment
 import wav.boop.pad.TestPad
-import wav.boop.preset.DefaultPresetLoader
 
 
 /**

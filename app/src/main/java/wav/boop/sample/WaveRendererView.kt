@@ -9,44 +9,31 @@ import android.view.View
 import wav.boop.R
 
 class WaveRendererView(context: Context, attributeSet: AttributeSet): View(context, attributeSet) {
-    // We want to ensure that the lines drawn don't bleed off the canvas, so we shrink the normalized data to fit
-    var data: FloatArray = floatArrayOf()
-        set(value) {
-            // TODO: Move silence chopping to a place that lets all of the app get the chopped sample
-            val firstSilence = value.indexOfLast { it != 0f } + 1
-            val withoutSilence = value.sliceArray(0 until firstSilence)
-            val xStep: Float = width.toFloat() / withoutSilence.size
-            val yMid: Float = height / 2f
-            // X is evenly distributed among [xMin, xMax]
-            normedX = withoutSilence.mapIndexed { frame, _ -> frame * xStep }.toFloatArray()
-            // Y is already normalized [-1, 1], so it can be transformed to represent distance away from the midpoint of the view
-            normedY = withoutSilence.map { waveVal -> yMid + yMid * waveVal }.toFloatArray()
-            field = withoutSilence
+    private val padIdsToRenderedSample: MutableMap<Int, List<Pair<Float, Float>>> = HashMap()
+    private var currentPadId: Int = R.id.pad_0
+
+    fun hasData(padId: Int): Boolean { return padIdsToRenderedSample[padId] != null }
+    fun loadData(padId: Int, sampleData: FloatArray) {
+        padIdsToRenderedSample[padId] = renderedSample(sampleData, width, height)
+    }
+    fun renderData(padId: Int) {
+        if (padIdsToRenderedSample.containsKey(padId)) {
+            currentPadId = padId
             invalidate()
         }
-    var normedX: FloatArray = floatArrayOf()
-    var normedY: FloatArray = floatArrayOf()
-    private var paintOdd = Paint().apply {
-        color = Color.YELLOW
-        strokeWidth = 2f
     }
-    private var paintEven = Paint().apply {
-        color = Color.GREEN
-        strokeWidth = 2f
-    }
-    fun setData(padId: Int, sampleData: FloatArray) {
-        val paint = padIdsToPaint[padId]
-        if (paint != null) {
-            paintOdd = paint.first
-            paintEven = paint.second
-        }
-        data = sampleData
-    }
+
     override fun onDraw(canvas: Canvas) {
-        data.forEachIndexed { index, _ ->
-            if (index > 0) {
-                val paint = if (index % 2 == 0) paintEven else paintOdd
-                canvas.drawLine(normedX[index - 1], normedY[index - 1], normedX[index], normedY[index], paint)
+        val sample = padIdsToRenderedSample[currentPadId]
+        if (sample != null) {
+            val paints = padIdsToPaint[currentPadId]!!
+
+
+            sample.forEachIndexed { index, _ ->
+                if (index > 0) {
+                    val paint = if (index % 2 == 0) paints.first else paints.second
+                    canvas.drawLine(sample[index - 1].first, sample[index - 1].second, sample[index].first, sample[index].second, paint)
+                }
             }
         }
         super.onDraw(canvas)

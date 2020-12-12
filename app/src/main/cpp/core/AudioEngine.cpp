@@ -46,7 +46,7 @@ oboe::Result AudioEngine::createRecordingStream(int32_t sampleRate) {
             ->setFormat(oboe::AudioFormat::Float)
             ->setChannelCount(1)
             ->setSampleRate(sampleRate)
-            ->setCallback(recordingCallback.get()) // TODO: create recording callback. maybe not tho
+            ->setCallback(recordingCallback.get())
             ->openManagedStream(recordingStream);
 }
 
@@ -102,14 +102,12 @@ void AudioEngine::setReleaseLength(int millis) {
 
 void AudioEngine::startRecordingSample(int oscIndex) {
     if (recordingIndex == -1) {
-        LOGE("LETS START");
         recordingIndex = oscIndex;
         sampler->setRecording(true);
     }
 }
 
 std::array<float, kMaxSamples> AudioEngine::stopRecordingSample() {
-//    LOGE("STOP RECORDING: %i", recordingIndex);
     std::array<float, kMaxSamples> sample = sampler->getSample();
     audioSource->setSample(recordingIndex, sample);
     sampler->setRecording(false);

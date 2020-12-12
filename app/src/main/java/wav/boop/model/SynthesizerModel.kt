@@ -2,16 +2,14 @@ package wav.boop.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import wav.boop.file.SerialLoader
 import wav.boop.preset.TonicController
 import wav.boop.preset.ADSRController
 import wav.boop.preset.OscillatorController
 import wav.boop.preset.Preset
-import wav.boop.preset.PresetLoader
-//import java.time.LocalDateTime
-//import java.time.format.DateTimeFormatter
 
 class SynthesizerModel(
-    private val presetLoader: PresetLoader,
+    private val presetLoader: SerialLoader<Preset>,
     private val tonicController: PitchModel,
     private val adsrController: ADSRModel,
     private val oscillatorController: OscillatorModel
@@ -37,20 +35,19 @@ class SynthesizerModel(
         )
     }
 
+    // TODO: Replace this with saving whenever something changes
     override fun onCleared() {
-//        val fileName = "${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss"))}-${AUTOSAVE_PREFIX}"
-        val fileName = AUTOSAVE_PREFIX
-        println("Clear!")
-        presetLoader.savePreset(buildPreset(fileName))
+        val preset = buildPreset(AUTOSAVE_PREFIX)
+        presetLoader.save(AUTOSAVE_PREFIX, preset)
         super.onCleared()
     }
 
     fun saveCurrentPreset(fileName: String) {
-        presetLoader.savePreset(buildPreset(fileName))
+        presetLoader.save(fileName, buildPreset(fileName))
     }
 
     fun loadPreset(fileName: String): Boolean {
-        val filePreset = presetLoader.getPreset(fileName)
+        val filePreset = presetLoader.get(fileName)
         if (filePreset != null) {
             currentFileName = fileName
             refresh(filePreset)
@@ -58,7 +55,7 @@ class SynthesizerModel(
         return filePreset != null
     }
 
-    fun getLoadedPresets(): List<String> { return presetLoader.listPresets() }
+    fun getLoadedPresets(): List<String> { return presetLoader.list() }
 
     fun refresh() { refresh(buildPreset(currentFileName)) }
     private fun refresh(preset: Preset) {
@@ -75,14 +72,14 @@ class SynthesizerModel(
 }
 
 class SynthesizerModelFactory(
-    private val presetLoader: PresetLoader,
+    private val presetLoader: SerialLoader<Preset>,
     private val tonicController: PitchModel,
     private val adsrController: ADSRModel,
     private val oscillatorController: OscillatorModel
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(
-            PresetLoader::class.java,
+            SerialLoader::class.java,
             PitchModel::class.java,
             ADSRModel::class.java,
             OscillatorModel::class.java

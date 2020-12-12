@@ -18,4 +18,3 @@ data class Preset(
     var tonicOctave: Int,
     val oscillators: List<OscillatorState>
 )
-

@@ -13,7 +13,10 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.sampler_main.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import wav.boop.R
+import wav.boop.file.buildSampleLoader
 
 
 class SamplerFragment: Fragment() {
@@ -64,8 +67,10 @@ class SamplerFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val samplerFactory = SamplerModelFactory(padToOscId, requireContext())
+        val sampleLoader = buildSampleLoader(requireContext(), Json(JsonConfiguration.Stable))
+        val samplerFactory = SamplerModelFactory(padToOscId, requireContext(), sampleLoader)
         samplerModel = ViewModelProvider(requireActivity(), samplerFactory)[SamplerModel::class.java]
+        samplerModel.loadAutosaves()
         // onClick vs onTouch
         // - onClick for one-handed mode
         // - onTouch for two-handed mode
@@ -140,10 +145,14 @@ class SamplerFragment: Fragment() {
                                 // play sample
                                 samplerModel.setSampleOn(padId, true)
                                 // set sample view to show sample.
-                                val sample = samplerModel.getSample(padId)
-                                if (sample != null) {
-                                    (waveform_canvas as WaveRendererView).setData(padId, sample.data.rawData)
+                                val waveRendererView = (waveform_canvas as WaveRendererView)
+                                if (!waveRendererView.hasData(padId)) {
+                                    val sample = samplerModel.getSample(padId)
+                                    if (sample != null) {
+                                        waveRendererView.loadData(padId, sample.data.rawData)
+                                    }
                                 }
+                                waveRendererView.renderData(padId)
                             }
                             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_BUTTON_RELEASE -> {
                                 // For now I'm letting the sample run out instead of turning off on release
@@ -169,7 +178,9 @@ class SamplerFragment: Fragment() {
                                 // set sample view to show sample
                                 val sample = samplerModel.getSample(padId)
                                 if (sample != null) {
-                                    (waveform_canvas as WaveRendererView).setData(padId, sample.data.rawData)
+                                    val waveRendererView = (waveform_canvas as WaveRendererView)
+                                    waveRendererView.loadData(padId, sample.data.rawData)
+                                    waveRendererView.renderData(padId)
                                 }
                                 currentAction = SamplerAction.PLAY
                                 clearPads()
