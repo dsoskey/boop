@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.sampler_main.*
@@ -36,6 +37,10 @@ class SamplerFragment: Fragment() {
         LOAD
     }
     var currentAction: SamplerAction = SamplerAction.PLAY
+
+    /** Index of channel currently being chopped. */
+    private var currentChoppingChannelIndex: Int? = null
+
     lateinit var samplerModel: SamplerModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -128,6 +133,25 @@ class SamplerFragment: Fragment() {
             }
         }
 
+        startBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    samplerModel.setSampleStartFrame(currentChoppingChannelIndex!!, progress)
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        endBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    samplerModel.setSampleEndFrame(currentChoppingChannelIndex!!, progress)
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
         padIds.forEach { id ->
             val button = requireView().findViewById<ImageButton>(id)
             button.setOnTouchListener { view, event ->
@@ -145,14 +169,16 @@ class SamplerFragment: Fragment() {
                                 // play sample
                                 samplerModel.setSampleOn(padId, true)
                                 // set sample view to show sample.
+                                val sample = samplerModel.getSample(padId)
                                 val waveRendererView = (waveform_canvas as WaveRendererView)
-                                if (!waveRendererView.hasData(padId)) {
-                                    val sample = samplerModel.getSample(padId)
-                                    if (sample != null) {
+                                if (sample != null) {
+                                    if (!waveRendererView.hasData(padId)) {
                                         waveRendererView.loadData(padId, sample.data.rawData)
                                     }
+                                    setSampleChopperBars(sample)
                                 }
                                 waveRendererView.renderData(padId)
+                                currentChoppingChannelIndex = padId
                             }
                             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_BUTTON_RELEASE -> {
                                 // For now I'm letting the sample run out instead of turning off on release
@@ -181,6 +207,8 @@ class SamplerFragment: Fragment() {
                                     val waveRendererView = (waveform_canvas as WaveRendererView)
                                     waveRendererView.loadData(padId, sample.data.rawData)
                                     waveRendererView.renderData(padId)
+                                    setSampleChopperBars(sample)
+                                    currentChoppingChannelIndex = padId
                                 }
                                 currentAction = SamplerAction.PLAY
                                 clearPads()
@@ -227,6 +255,16 @@ class SamplerFragment: Fragment() {
         }
     }
 
+    private fun setSampleChopperBars(sample: Savable<Sample>) {
+        startBar.apply {
+            max = sample.data.rawData.size
+            progress = sample.data.startFrame
+        }
+        endBar.apply {
+            max = sample.data.rawData.size
+            progress = sample.data.endFrame
+        }
+    }
     private fun setRecordOn() {
         record_button.setTextColor(resources.getColor(R.color.temperedSienna))
         record_button.setBackgroundColor(Color.WHITE)

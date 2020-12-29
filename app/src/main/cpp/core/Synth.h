@@ -140,6 +140,26 @@ public:
         }
     }
 
+    void setSampleStart(int oscIndex, int frame) {
+        if (oscIndex >= minSamplerIndex && oscIndex <= maxSamplerIndex) {
+            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
+            sampleProcessor->setSampleStart(frame);
+            sampleProcessor->setSignalOn(true);
+        } else {
+            LOGE("Sampler index out of bounds");
+        }
+    }
+
+    void setSampleEnd(int oscIndex, int frame) {
+        if (oscIndex >= minSamplerIndex && oscIndex <= maxSamplerIndex) {
+            std::shared_ptr<Sample> sampleProcessor = std::dynamic_pointer_cast<Sample>(oscillators[oscIndex].getRenderable(sampleIndex));
+            sampleProcessor->setSampleEnd(frame);
+            sampleProcessor->setSignalOn(true);
+        } else {
+            LOGE("Sampler index out of bounds");
+        }
+    }
+
     /**
      * Set amplitude of an oscillator at oscIndex
      * @param oscIndex

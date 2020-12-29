@@ -212,7 +212,7 @@ extern "C" {
     Java_wav_boop_sample_SamplerModel_ndkStopRecording(JNIEnv *env, jobject instance) {
         jfloatArray result;
         if (engine) {
-            std::array<float, kMaxSamples> sample = engine->stopRecordingSample();
+            std::vector<float> sample = engine->stopRecordingSample();
             result = env->NewFloatArray(sample.size());
 
             if (result != NULL) {
@@ -223,6 +223,34 @@ extern "C" {
         } else {
             LOGE("Engine does not exist, call createEngine() to create a new one");
             return NULL;
+        }
+    }
+
+    /**
+     * Sets startFrame of sample at oscIndex
+     * @param oscIndex - index of sample in sampler to affect
+     * @param startFrame - new frame value
+     */
+    JNIEXPORT void JNICALL
+    Java_wav_boop_sample_SamplerModel_ndkSetSampleStart(JNIEnv *env, jobject instance, jint oscIndex, jint startFrame) {
+        if (engine && engine->getSynth()) {
+            engine->getSynth()->setSampleStart(oscIndex, startFrame);
+        } else {
+          LOGE("Engine or synth does not exist"); // TODO: separate errors.
+        }
+    }
+
+    /**
+     * Sets startFrame of sample at oscIndex
+     * @param oscIndex - index of sample in sampler to affect
+     * @param endFrame - new frame value
+     */
+    JNIEXPORT void JNICALL
+    Java_wav_boop_sample_SamplerModel_ndkSetSampleEnd(JNIEnv *env, jobject instance, jint oscIndex, jint endFrame) {
+        if (engine && engine->getSynth()) {
+            engine->getSynth()->setSampleEnd(oscIndex, endFrame);
+        } else {
+            LOGE("Engine or synth does not exist"); // TODO: separate errors.
         }
     }
 

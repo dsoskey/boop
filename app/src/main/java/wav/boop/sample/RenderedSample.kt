@@ -13,20 +13,18 @@ import kotlin.math.pow
  * By default it calculates the appropriate step value to scale inversely to the size of the sample.
  */
 fun renderedSample(rawData: FloatArray, width: Int, height: Int, sampleRate: Int? = null): List<Pair<Float, Float>> {
-    val firstSilence = rawData.indexOfLast { it != 0f } + 1
-    val withoutSilence = rawData.sliceArray(0 until firstSilence)
-    val xStep: Float = width.toFloat() / withoutSilence.size
+    val xStep: Float = width.toFloat() / rawData.size
     val yMid: Float = height / 2f
     // NOTE: if i want to add zooming in the future, sample rate counting will need to be extracted from this function and calculated during render process
-    val mSampleRate: Int = sampleRate ?: linearSampleRateCurve(withoutSilence.size)
+    val mSampleRate: Int = sampleRate ?: linearSampleRateCurve(rawData.size)
 
     // X is evenly distributed among [xMin, xMax]
-    val normedX: FloatArray = withoutSilence
+    val normedX: FloatArray = rawData
         .mapIndexed { frame, _ -> frame * xStep } // This one needs the map first because it uses frame to determine step
         .filterIndexed { frame, _ -> frame % mSampleRate == 0 }
         .toFloatArray()
     // Y is already normalized [-1, 1], so it can be transformed to represent distance away from the midpoint of the canvas
-    val normedY: FloatArray = withoutSilence
+    val normedY: FloatArray = rawData
         .filterIndexed { frame, _ -> frame % mSampleRate == 0 }
         .map { waveVal -> yMid + yMid * waveVal }
         .toFloatArray()

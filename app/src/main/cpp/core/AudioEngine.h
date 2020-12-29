@@ -34,9 +34,11 @@ public:
 
     // Sampling Interface
     void startRecordingSample(int oscIndex);
-    std::array<float, kMaxSamples> stopRecordingSample();
+    std::vector<float> stopRecordingSample();
 
     virtual void restart() override;
+
+    std::shared_ptr<Synth> getSynth();
 
 private:
     oboe::ManagedStream stream;

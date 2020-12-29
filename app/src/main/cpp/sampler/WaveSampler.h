@@ -23,6 +23,16 @@ public:
         return data;
     }
 
+    std::vector<float> asVector() {
+        int firstSilenceIndex = data.size() - 1;
+        while (firstSilenceIndex >= 0 && data[firstSilenceIndex] == 0) firstSilenceIndex--;
+        std::vector<float> choppedSample = std::vector<float>(firstSilenceIndex, 0);
+        for(int i = 0; i < firstSilenceIndex; i++) {
+            choppedSample[i] = data[i];
+        }
+        return choppedSample;
+    }
+
     int write(const float* sourceData, int32_t numFrames) {
         if (recordingCursor + numFrames > kMaxSamples) {
             numFrames = kMaxSamples - recordingCursor;

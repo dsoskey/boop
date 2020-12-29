@@ -28,6 +28,10 @@ void AudioEngine::restart() {
     start();
 }
 
+std::shared_ptr<Synth> AudioEngine::getSynth() {
+    return audioSource;
+}
+
 // TODO: look at builder documentation to understand each setting
 oboe::Result AudioEngine::createPlaybackStream() {
     oboe::AudioStreamBuilder builder;
@@ -107,10 +111,10 @@ void AudioEngine::startRecordingSample(int oscIndex) {
     }
 }
 
-std::array<float, kMaxSamples> AudioEngine::stopRecordingSample() {
-    std::array<float, kMaxSamples> sample = sampler->getSample();
-    audioSource->setSample(recordingIndex, sample);
+std::vector<float> AudioEngine::stopRecordingSample() {
+    std::vector<float> choppedSample = sampler->asVector();
+    audioSource->setSample(recordingIndex, choppedSample);
     sampler->setRecording(false);
     recordingIndex = -1;
-    return sample;
+    return choppedSample;
 }

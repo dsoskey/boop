@@ -26,6 +26,8 @@ class SamplerModel(
     private external fun ndkStopRecording(): FloatArray
     private external fun ndkSetSample(channelIndex: Int, sample: FloatArray)
     private external fun ndkSetSampleOn(channelIndex: Int, isOn: Boolean)
+    private external fun ndkSetSampleStart(channelIndex: Int, startFrame: Int)
+    private external fun ndkSetSampleEnd(channelIndex: Int, endFrame: Int)
 
     /** Map of Channel Index -> Sample loaded onto Channel. */
     private val loadedSamples: MutableMap<Int, Savable<Sample>> = HashMap()
@@ -43,6 +45,8 @@ class SamplerModel(
             if (sample != null) {
                 loadedSamples[it] = Savable(false, sample) // TODO: Might need to store the savable wrapper too
                 ndkSetSample(it, sample.rawData)
+                ndkSetSampleStart(it, sample.startFrame)
+                ndkSetSampleEnd(it, sample.endFrame)
             }
         }
     }
@@ -80,6 +84,8 @@ class SamplerModel(
                 sampleLoader.save(autoSaveFileName(channelIndex), sample.data)
             }
             currentRecordingChannelIndex = null
+        } else {
+            throw RuntimeException("stopRecording called without calling startRecording")
         }
     }
 
@@ -97,6 +103,26 @@ class SamplerModel(
         val channelIndex = padToChannelIndex[padIndex]
         if (channelIndex != null) {
             ndkSetSampleOn(channelIndex, isOn)
+        }
+    }
+
+    fun setSampleStartFrame(padIndex: Int, startFrame: Int) {
+        val channelIndex = padToChannelIndex[padIndex] ?: error("padIndex not found in map: $padToChannelIndex")
+        val sample = loadedSamples[channelIndex]!!
+        if (startFrame < sample.data.endFrame) {
+            sample.data.startFrame = startFrame
+            sampleLoader.save(autoSaveFileName(channelIndex), sample.data)
+            ndkSetSampleStart(channelIndex, startFrame)
+        }
+    }
+
+    fun setSampleEndFrame(padIndex: Int, endFrame: Int) {
+        val channelIndex = padToChannelIndex[padIndex] ?: error("padIndex not found in map: $padToChannelIndex")
+        val sample = loadedSamples[channelIndex]!!
+        if (endFrame > sample.data.startFrame) {
+            sample.data.endFrame = endFrame
+            sampleLoader.save(autoSaveFileName(channelIndex), sample.data)
+            ndkSetSampleEnd(channelIndex, endFrame)
         }
     }
 }
