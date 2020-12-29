@@ -54,8 +54,10 @@ public:
             this->isOn.store(true);
             isReleasing.store(false);
         } else if (this->shouldUseRelease()) {
+            LOGE("RELEASING");
             isReleasing.store(true);
         } else {
+            LOGE("OFFING");
             this->isOn.store(false);
         }
     };
@@ -93,6 +95,7 @@ private:
     bool shouldUseRelease() {
         bool shouldRelease = false;
         for (int i = 0; i < mNextFreeTrackIndex; i++) {
+            LOGE("Index: %d, usesRelease %d", i, mChainArray[i]->usesRelease() );
             if (mChainArray[i]->usesRelease()) {
                 shouldRelease = true;
             }

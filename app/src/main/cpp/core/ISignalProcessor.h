@@ -25,7 +25,7 @@ public:
      * @return true if this processor uses release, false if processor uses on/off
      */
     bool usesRelease() {
-        return this->currentlyUsesRelease;
+        return isSignalOn() && requiresRelease();
     };
 
     /**
@@ -34,11 +34,6 @@ public:
      */
     void setSignalOn(bool isOn) {
         this->isOn.store(isOn);
-        if (isOn) {
-            this->currentlyUsesRelease = this->requiresRelease();
-        } else {
-            this->currentlyUsesRelease = false;
-        }
     }
 
     /**
@@ -55,10 +50,6 @@ protected:
      * @return true if this processor uses release, false if processor uses on/off
      */
     virtual bool requiresRelease() = 0;
-    /**
-     * Stores state of whether or not to use release strategy at the moment.
-     */
-    bool currentlyUsesRelease{ false };
 private:
     std::atomic<bool> isOn { true };
 };
