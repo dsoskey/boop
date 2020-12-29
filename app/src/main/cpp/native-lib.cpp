@@ -13,6 +13,7 @@
 // - This would allow me to free up the audio streams without having to recreate the entire engine every damn time
 
 static AudioEngine *engine;
+static std::shared_ptr<Synth> synth;
 static std::shared_ptr<WaveGenerator> SQUARE = std::make_shared<SquareWaveGenerator>();
 static std::shared_ptr<WaveGenerator> SIN = std::make_shared<SinWaveformGenerator>();
 static std::shared_ptr<WaveGenerator> SAW = std::make_shared<SawWaveGenerator>(69);
@@ -64,6 +65,7 @@ extern "C" {
         std::vector<int> cpuIds = convertJavaArrayToVector(env, jCpuIds);
         LOGD("cpu ids size: %d", static_cast<int>(cpuIds.size()));
         engine = new AudioEngine(std::move(cpuIds));
+        synth = engine->getSynth();
         LOGD("Engine Started");
     }
 
@@ -76,6 +78,9 @@ extern "C" {
     Java_wav_boop_MainActivity_stopEngine(JNIEnv *env, jobject instance) {
         if (engine) {
             delete engine;
+            if (synth) {
+                synth.reset();
+            }
         } else {
             LOGD("Engine does not exist, call startEngine() to create");
         }
@@ -90,10 +95,10 @@ extern "C" {
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_pad_PadFragment_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isOn) {
-        if (engine) {
-            engine->setSourceOn(oscIndex, isOn);
+        if (synth) {
+            synth->setWaveOn(oscIndex, isOn);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
@@ -106,10 +111,10 @@ extern "C" {
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_model_PitchModel_setFrequency(JNIEnv *env, jobject instance, jint oscIndex, jdouble frequency) {
-        if (engine) {
-            engine->setFrequency(oscIndex, frequency);
+        if (synth) {
+            synth->setFrequency(oscIndex, frequency);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
@@ -122,10 +127,10 @@ extern "C" {
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_pad_TestPad_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isOn) {
-        if (engine) {
-            engine->setSourceOn(oscIndex, isOn);
+        if (synth) {
+            synth->setWaveOn(oscIndex, isOn);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
@@ -138,10 +143,10 @@ extern "C" {
     */
     JNIEXPORT void JNICALL
     Java_wav_boop_sample_SamplerModel_ndkSetSampleOn(JNIEnv *env, jobject instance, jint channelIndex, jboolean isOn) {
-        if (engine) {
-            engine->setSourceOn(channelIndex, isOn);
+        if (synth) {
+            synth->setWaveOn(channelIndex, isOn);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
@@ -154,10 +159,10 @@ extern "C" {
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_pad_TestPad_setFrequency(JNIEnv *env, jobject instance, jint oscIndex, jdouble frequency) {
-        if (engine) {
-            engine->setFrequency(oscIndex, frequency);
+        if (synth) {
+            synth->setFrequency(oscIndex, frequency);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
@@ -170,7 +175,7 @@ extern "C" {
     */
     JNIEXPORT void JNICALL
     Java_wav_boop_model_OscillatorModel_ndkSetWaveform(JNIEnv *env, jobject instance, jint oscIndex, jstring waveform) {
-        if (engine) {
+        if (synth) {
             std::shared_ptr<WaveGenerator> gen;
             std::string wf = env->GetStringUTFChars(waveform, NULL);
             if (wf.compare("sin") == 0) {
@@ -182,20 +187,20 @@ extern "C" {
             } else {
                 gen = SIN;
             }
-            engine->setWaveform(oscIndex, gen);
+            synth->setWave(oscIndex, gen);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
 
     JNIEXPORT void JNICALL
     Java_wav_boop_sample_SamplerModel_ndkSetSample(JNIEnv *env, jobject instance, jint channelIndex, jfloatArray sample) {
-        if (engine) {
+        if (synth) {
             std::vector<float> data = convertJavaArrayToVector(env, sample);
-            engine->setSample(channelIndex, data);
+            synth->setSample(channelIndex, data);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
@@ -233,10 +238,10 @@ extern "C" {
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_sample_SamplerModel_ndkSetSampleStart(JNIEnv *env, jobject instance, jint oscIndex, jint startFrame) {
-        if (engine && engine->getSynth()) {
-            engine->getSynth()->setSampleStart(oscIndex, startFrame);
+        if (synth) {
+            synth->setSampleStart(oscIndex, startFrame);
         } else {
-          LOGE("Engine or synth does not exist"); // TODO: separate errors.
+          LOGE("Synth does not exist");
         }
     }
 
@@ -247,94 +252,82 @@ extern "C" {
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_sample_SamplerModel_ndkSetSampleEnd(JNIEnv *env, jobject instance, jint oscIndex, jint endFrame) {
-        if (engine && engine->getSynth()) {
-            engine->getSynth()->setSampleEnd(oscIndex, endFrame);
+        if (synth) {
+            synth->setSampleEnd(oscIndex, endFrame);
         } else {
-            LOGE("Engine or synth does not exist"); // TODO: separate errors.
+            LOGE("Synth does not exist");
         }
     }
 
     /**
      * Sets amplitude for oscillator at oscIndex. Requires engine to be on to work
-     * @param env
-     * @param instance
      * @param oscIndex - index of oscillator in synthesizer to affect
      * @param amplitude - new amplitude
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_model_OscillatorModel_ndkSetAmplitude(JNIEnv *env, jobject instance, jint oscIndex, jfloat amplitude) {
-        if (engine) {
-            engine->setAmplitude(oscIndex, amplitude);
+        if (synth) {
+            synth->setAmplitude(oscIndex, amplitude);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
 
     /**
     * Sets attack length in milliseconds for all oscillators. Requires an engine to be on to work
-    * @param env
-    * @param instance - index of oscillator in synthesizer to affect
     * @param numMillis - length of attack
     */
     JNIEXPORT void JNICALL
     Java_wav_boop_model_ADSRModel_ndkSetAttackLength(JNIEnv *env, jobject instance, jint numMillis) {
-        if (engine) {
-            engine->setAttackLength(numMillis);
+        if (synth) {
+            synth->setAttackLength(numMillis);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
     /**
      * Sets decay length in milliseconds for all oscillators. Requires an engine to be on to work
-     * @param env
-     * @param instance - index of oscillator in synthesizer to affect
      * @param numMillis - length of decay
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_model_ADSRModel_ndkSetDecayLength(JNIEnv *env, jobject instance, jint numMillis) {
-        if (engine) {
-            engine->setDecayLength(numMillis);
+        if (synth) {
+            synth->setDecayLength(numMillis);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
     /**
      * Sets sustain level amplitude for all oscillators. Requires an engine to be on to work
-     * @param env
-     * @param instance
      * @param amplitude
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_model_ADSRModel_ndkSetSustainLevel(JNIEnv *env, jobject instance, jfloat amplitude) {
-        if (engine) {
-            engine->setSustainedLevel(amplitude);
+        if (synth) {
+            synth->setSustainedLevel(amplitude);
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
     /**
      * Sets attack length in milliseconds for all oscillators. Requires an engine to be on to work
-     * @param env
-     * @param instance - index of oscillator in synthesizer to affect
      * @param numMillis - length of attack
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_model_ADSRModel_ndkSetReleaseLength(JNIEnv *env, jobject instance, jint numMillis) {
-        if (engine) {
-            engine->setReleaseLength(numMillis);
+        if (synth) {
+            synth->setReleaseLength(numMillis); // TODO: See if this is working nice
         } else {
-            LOGE("Engine does not exist, call createEngine() to create a new one");
+            LOGE("Synth does not exist, call createEngine() to create a new one");
         }
     }
 
     /**
      * Globally sets sample rate and frames per burst
-     * @param env
-     * @param type
      * @param sampleRate
      * @param framesPerBurst
      */

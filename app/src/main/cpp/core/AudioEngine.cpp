@@ -8,22 +8,6 @@ AudioEngine::AudioEngine(std::vector<int> cpuIds) {
     start();
 }
 
-void AudioEngine::setSourceOn(int oscIndex, bool isOn) {
-    audioSource->setWaveOn(oscIndex, isOn);
-}
-
-void AudioEngine::setFrequency(int oscIndex, double frequency) {
-    audioSource->setFrequency(oscIndex, frequency);
-}
-
-void AudioEngine::setWaveform(int oscIndex, std::shared_ptr<WaveGenerator> waveGenerator) {
-    audioSource->setWave(oscIndex, waveGenerator);
-}
-
-void AudioEngine::setSample(int oscIndex, std::vector<float> data) {
-    audioSource->setSample(oscIndex, data);
-}
-
 void AudioEngine::restart() {
     start();
 }
@@ -64,6 +48,7 @@ void AudioEngine::createCallback(std::vector<int> cpuIds) {
     callback->setThreadAffinityEnabled(true);
 }
 
+// TODO: Extract Synth creation from AudioEngine
 void AudioEngine::start() {
     auto result = createPlaybackStream();
     if (result == oboe::Result::OK) {
@@ -82,26 +67,6 @@ void AudioEngine::start() {
     } else {
         LOGE("Failed to create the playback stream. Error: %s", convertToText(result));
     }
-}
-
-void AudioEngine::setAmplitude(int oscIndex, float amplitude) {
-    audioSource->setAmplitude(oscIndex, amplitude);
-}
-
-void AudioEngine::setAttackLength(int millis) {
-    audioSource->setAttackLength(millis);
-}
-
-void AudioEngine::setDecayLength(int millis) {
-    audioSource->setDecayLength(millis);
-}
-
-void AudioEngine::setSustainedLevel(float amplitude){
-    audioSource->setSustainedLevel(amplitude);
-}
-
-void AudioEngine::setReleaseLength(int millis) {
-    audioSource->setReleaseLength(millis);
 }
 
 void AudioEngine::startRecordingSample(int oscIndex) {

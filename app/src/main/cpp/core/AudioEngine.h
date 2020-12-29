@@ -12,30 +12,18 @@
 #include "../sampler/DefaultRecordingStreamCallback.h"
 
 /**
- * Oboe-based Audio Engine. TODO: Flatten oscillator out of the AudioEngine
+ * Oboe-based Audio Engine.
  */
 class AudioEngine : public IRestartable {
 public:
     AudioEngine(std::vector<int> cpuIds);
     virtual ~AudioEngine() = default;
 
-    // Oscillator Interface
-    void setSourceOn(int oscIndex, bool isOn);
-    void setFrequency(int oscIndex, double frequency);
-    void setWaveform(int oscIndex, std::shared_ptr<WaveGenerator> waveGenerator);
-    void setSample(int oscIndex, std::vector<float> data);
-    void setAmplitude(int oscIndex, float amplitude);
-
-    // ADSR Interface
-    void setAttackLength(int millis);
-    void setDecayLength(int millis);
-    void setSustainedLevel(float amplitude);
-    void setReleaseLength(int millis);
-
     // Sampling Interface
     void startRecordingSample(int oscIndex);
     std::vector<float> stopRecordingSample();
 
+    // TODO: Test removing virtual
     virtual void restart() override;
 
     std::shared_ptr<Synth> getSynth();
