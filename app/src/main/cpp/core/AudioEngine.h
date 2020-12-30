@@ -23,8 +23,7 @@ public:
     void startRecordingSample(int oscIndex);
     std::vector<float> stopRecordingSample();
 
-    // TODO: Test removing virtual
-    virtual void restart() override;
+    void restart() override;
 
     std::shared_ptr<Synth> getSynth();
 
@@ -39,7 +38,6 @@ private:
     std::shared_ptr<WaveSampler> sampler;
     std::unique_ptr<DefaultRecordingStreamCallback> recordingCallback;
     oboe::Result createRecordingStream(int32_t sampleRate);
-    void createRecordingCallback();
     int recordingIndex = -1;
 
     void start();

@@ -4,7 +4,7 @@
 
 AudioEngine::AudioEngine(std::vector<int> cpuIds) {
     createCallback(cpuIds);
-    createRecordingCallback();
+    recordingCallback = std::make_unique<DefaultRecordingStreamCallback>();
     start();
 }
 
@@ -38,10 +38,6 @@ oboe::Result AudioEngine::createRecordingStream(int32_t sampleRate) {
             ->openManagedStream(recordingStream);
 }
 
-void AudioEngine::createRecordingCallback() {
-    recordingCallback = std::make_unique<DefaultRecordingStreamCallback>();
-}
-
 void AudioEngine::createCallback(std::vector<int> cpuIds) {
     callback = std::make_unique<DefaultAudioStreamCallback>(*this);
     callback->setCpuIds(cpuIds);
@@ -52,7 +48,9 @@ void AudioEngine::createCallback(std::vector<int> cpuIds) {
 void AudioEngine::start() {
     auto result = createPlaybackStream();
     if (result == oboe::Result::OK) {
-        audioSource = std::make_shared<Synth>(stream->getSampleRate(), stream->getChannelCount());
+        if (audioSource == nullptr) {
+            audioSource = std::make_shared<Synth>(stream->getSampleRate(), stream->getChannelCount());
+        }
         callback->setSource(std::dynamic_pointer_cast<IRenderableAudio>(audioSource));
         stream->start();
 
