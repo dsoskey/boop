@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <wav.boop.sample.WaveRendererView
@@ -93,6 +95,14 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/sample_horizontal_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".33"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -108,7 +118,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toStartOf="@+id/v125"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="ContentDescription" />
 
     <ImageButton
         android:id="@+id/pad_1"
@@ -118,7 +129,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/v25"
         app:layout_constraintStart_toStartOf="@id/v125"
-        app:layout_constraintTop_toTopOf="@id/horizontal_center" />
+        app:layout_constraintTop_toTopOf="@id/horizontal_center"
+        tools:ignore="ContentDescription" />
 
     <ImageButton
         android:id="@+id/pad_2"
@@ -128,7 +140,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/v375"
         app:layout_constraintStart_toStartOf="@id/v25"
-        app:layout_constraintTop_toTopOf="@id/horizontal_center" />
+        app:layout_constraintTop_toTopOf="@id/horizontal_center"
+        tools:ignore="ContentDescription" />
     <ImageButton
         android:id="@+id/pad_3"
         android:layout_width="0dp"
@@ -137,7 +150,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toStartOf="@id/vertical_center"
-        app:layout_constraintStart_toStartOf="@id/v375" />
+        app:layout_constraintStart_toStartOf="@id/v375"
+        tools:ignore="ContentDescription" />
     <ImageButton
         android:id="@+id/pad_4"
         android:layout_width="0dp"
@@ -146,7 +160,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toStartOf="@id/v625"
-        app:layout_constraintStart_toStartOf="@id/vertical_center" />
+        app:layout_constraintStart_toStartOf="@id/vertical_center"
+        tools:ignore="ContentDescription" />
     <ImageButton
         android:id="@+id/pad_5"
         android:layout_width="0dp"
@@ -155,7 +170,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toStartOf="@id/v75"
-        app:layout_constraintStart_toStartOf="@id/v625" />
+        app:layout_constraintStart_toStartOf="@id/v625"
+        tools:ignore="ContentDescription" />
     <ImageButton
         android:id="@+id/pad_6"
         android:layout_width="0dp"
@@ -164,7 +180,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toEndOf="@id/v875"
-        app:layout_constraintStart_toStartOf="@id/v75" />
+        app:layout_constraintStart_toStartOf="@id/v75"
+        tools:ignore="ContentDescription" />
     <ImageButton
         android:id="@+id/pad_7"
         android:layout_width="0dp"
@@ -173,7 +190,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/horizontal_center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/v875" />
+        app:layout_constraintStart_toStartOf="@id/v875"
+        tools:ignore="ContentDescription" />
 
 <!--    -->
 
@@ -230,21 +248,30 @@
     <SeekBar
         android:id="@+id/startBar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:max="100"
+        android:thumb="@drawable/start_thumb"
+        android:progressDrawable="@null"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
         app:layout_constraintBottom_toTopOf="@+id/horizontal_center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/v125"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/sample_horizontal_center"
         app:layout_constraintVertical_bias="0.95" />
+
 
     <SeekBar
         android:id="@+id/endBar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:max="100"
-        app:layout_constraintBottom_toTopOf="@+id/horizontal_center"
+        android:thumb="@drawable/end_thumb"
+        android:progressDrawable="@null"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/sample_horizontal_center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/v125"

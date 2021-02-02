@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center" android:left="8dp">
+        <shape  android:shape="rectangle">
+            <size android:width="8dp"  android:height="200dp"/>
+            <gradient
+                android:angle="0"
+                android:endColor="@color/ap_transparent"
+                android:startColor="?attr/colorAccent"
+                android:type="linear"
+                />
+        </shape>
+    </item>
+    <item
+        android:gravity="top"
+        android:drawable="@drawable/e"
+        android:top="30dp"
+        android:left="25dp"
+        android:height="32dp"
+        android:width="32dp"
+    />
+</layer-list>

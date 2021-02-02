@@ -134,8 +134,8 @@ class SamplerFragment: Fragment() {
         }
 
         startBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (fromUser && currentChoppingChannelIndex != null) {
                     samplerModel.setSampleStartFrame(currentChoppingChannelIndex!!, progress)
                 }
             }
@@ -143,8 +143,8 @@ class SamplerFragment: Fragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
         endBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (fromUser && currentChoppingChannelIndex != null) {
                     samplerModel.setSampleEndFrame(currentChoppingChannelIndex!!, progress)
                 }
             }
@@ -207,8 +207,8 @@ class SamplerFragment: Fragment() {
                                     val waveRendererView = (waveform_canvas as WaveRendererView)
                                     waveRendererView.loadData(padId, sample.data.rawData)
                                     waveRendererView.renderData(padId)
-                                    setSampleChopperBars(sample)
                                     currentChoppingChannelIndex = padId
+                                    setSampleChopperBars(sample)
                                 }
                                 currentAction = SamplerAction.PLAY
                                 clearPads()
