@@ -3,9 +3,13 @@ package wav.boop.sample
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import wav.boop.file.SerialLoader
+import kotlin.collections.HashMap
 
 /**
  * Model that manages all interactions with the Sampler's data.
@@ -51,6 +55,17 @@ class SamplerModel(
         }
     }
 
+    /** map of channelIndex --> currently running autosave job */
+    private val currentAutosaveJobs: MutableMap<Int, Job?> = HashMap()
+    private fun startAutosave(channelIndex: Int, sample: Savable<Sample>) {
+        if (currentAutosaveJobs[channelIndex] == null) {
+            currentAutosaveJobs[channelIndex] = viewModelScope.launch(Dispatchers.IO) {
+                sampleLoader.save(autoSaveFileName(channelIndex), sample.data)
+                currentAutosaveJobs[channelIndex] = null
+            }
+        }
+    }
+
     /**
      * Starts recording for a channel tied to a specific pad.
      */
@@ -68,7 +83,6 @@ class SamplerModel(
      * - sets the loaded sample
      * - saves a raw version of the sample as a wav
      * - saves the active sample for restoring when app restarts
-     * TODO: proper error throwing when race condition is hit instead of returning empty list
      */
     fun stopRecording() {
         val channelIndex = currentRecordingChannelIndex
@@ -111,7 +125,7 @@ class SamplerModel(
         val sample = loadedSamples[channelIndex]!!
         if (startFrame < sample.data.endFrame) {
             sample.data.startFrame = startFrame
-            sampleLoader.save(autoSaveFileName(channelIndex), sample.data)
+            startAutosave(channelIndex, sample)
             ndkSetSampleStart(channelIndex, startFrame)
         }
     }
@@ -121,7 +135,7 @@ class SamplerModel(
         val sample = loadedSamples[channelIndex]!!
         if (endFrame > sample.data.startFrame) {
             sample.data.endFrame = endFrame
-            sampleLoader.save(autoSaveFileName(channelIndex), sample.data)
+            startAutosave(channelIndex, sample)
             ndkSetSampleEnd(channelIndex, endFrame)
         }
     }

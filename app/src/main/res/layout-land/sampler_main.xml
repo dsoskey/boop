@@ -261,7 +261,6 @@
         app:layout_constraintTop_toTopOf="@+id/sample_horizontal_center"
         app:layout_constraintVertical_bias="0.95" />
 
-
     <SeekBar
         android:id="@+id/endBar"
         android:layout_width="0dp"
