@@ -10,7 +10,8 @@ data class Sample(
     var endFrame: Int,
     var isLooping: Boolean,
     var startLoopFrame: Int,
-    var endLoopFrame: Int
+    var endLoopFrame: Int,
+    var amplitude: Float = 0.69f
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -25,6 +26,7 @@ data class Sample(
         if (isLooping != other.isLooping) return false
         if (startLoopFrame != other.startLoopFrame) return false
         if (endLoopFrame != other.endLoopFrame) return false
+        if (amplitude != other.amplitude) return false
 
         return true
     }
@@ -37,6 +39,7 @@ data class Sample(
         result = 31 * result + isLooping.hashCode()
         result = 31 * result + startLoopFrame
         result = 31 * result + endLoopFrame
+        result = 31 * result + amplitude.hashCode()
         return result
     }
 }

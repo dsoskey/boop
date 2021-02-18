@@ -32,6 +32,7 @@ class SamplerModel(
     private external fun ndkSetSampleOn(channelIndex: Int, isOn: Boolean)
     private external fun ndkSetSampleStart(channelIndex: Int, startFrame: Int)
     private external fun ndkSetSampleEnd(channelIndex: Int, endFrame: Int)
+    private external fun ndkSetSampleAmplitude(channelIndex: Int, amplitude: Float)
 
     /** Map of Channel Index -> Sample loaded onto Channel. */
     private val loadedSamples: MutableMap<Int, Savable<Sample>> = HashMap()
@@ -51,6 +52,7 @@ class SamplerModel(
                 ndkSetSample(it, sample.rawData)
                 ndkSetSampleStart(it, sample.startFrame)
                 ndkSetSampleEnd(it, sample.endFrame)
+                ndkSetSampleAmplitude(it, sample.amplitude)
             }
         }
     }
@@ -138,6 +140,14 @@ class SamplerModel(
             startAutosave(channelIndex, sample)
             ndkSetSampleEnd(channelIndex, endFrame)
         }
+    }
+
+    fun setSampleAmplitude(padIndex: Int, amplitude: Float) {
+        val channelIndex = padToChannelIndex[padIndex] ?: error("padIndex not found in map: $padToChannelIndex")
+        val sample = loadedSamples[channelIndex]!!
+        sample.data.amplitude = amplitude
+        startAutosave(channelIndex, sample)
+        ndkSetSampleAmplitude(channelIndex, amplitude)
     }
 }
 

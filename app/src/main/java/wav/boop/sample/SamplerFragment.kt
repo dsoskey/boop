@@ -151,6 +151,15 @@ class SamplerFragment: Fragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+        sample_amplitude.apply {
+            maxValue = 100
+            setOnProgressChangeListener {
+                if (currentChoppingChannelIndex != null) {
+                    val amplitude: Float = it / 100f
+                    samplerModel.setSampleAmplitude(currentChoppingChannelIndex!!, amplitude)
+                }
+            }
+        }
 
         padIds.forEach { id ->
             val button = requireView().findViewById<ImageButton>(id)
@@ -171,6 +180,9 @@ class SamplerFragment: Fragment() {
                                 // set sample view to show sample.
                                 val sample = samplerModel.getSample(padId)
                                 val waveRendererView = (waveform_canvas as WaveRendererView)
+                                // Setting this var needs to happen before setting the progress on amplitude seekbar,
+                                // the vertical seekbar can't tell the difference between a user and programmatic progress change
+                                currentChoppingChannelIndex = padId
                                 if (sample != null) {
                                     if (!waveRendererView.hasData(padId)) {
                                         waveRendererView.loadData(padId, sample.data.rawData)
@@ -178,7 +190,6 @@ class SamplerFragment: Fragment() {
                                     setSampleChopperBars(sample)
                                 }
                                 waveRendererView.renderData(padId)
-                                currentChoppingChannelIndex = padId
                             }
                             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_BUTTON_RELEASE -> {
                                 // For now I'm letting the sample run out instead of turning off on release
@@ -264,6 +275,7 @@ class SamplerFragment: Fragment() {
             max = sample.data.rawData.size
             progress = sample.data.endFrame
         }
+        sample_amplitude.progress = (sample.data.amplitude * 100).toInt()
     }
     private fun setRecordOn() {
         record_button.setTextColor(resources.getColor(R.color.temperedSienna))

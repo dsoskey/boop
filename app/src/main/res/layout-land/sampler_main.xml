@@ -12,11 +12,31 @@
         android:layout_height="0dp"
         android:background="@color/ap_black"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_center"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/v9375"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/v125"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@id/v9375"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_center"
+    >
+        <com.lukelorusso.verticalseekbar.VerticalSeekBar
+            android:id="@+id/sample_amplitude"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:vsb_bar_background="?attr/colorPrimary"
+            app:vsb_bar_progress_gradient_end="?attr/colorPrimary"
+            app:vsb_bar_progress_gradient_start="?attr/colorOnPrimary"
+            app:vsb_thumb_container_tint="?attr/colorOnPrimary"
+            app:vsb_thumb_placeholder_src="@drawable/outline_menu_24"
+        />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
@@ -244,6 +264,14 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".875"
         app:layout_constraintTop_toTopOf="parent"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/v9375"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".9375"
+        app:layout_constraintTop_toTopOf="parent"/>
+
 
     <SeekBar
         android:id="@+id/startBar"
@@ -255,7 +283,7 @@
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
         app:layout_constraintBottom_toTopOf="@+id/horizontal_center"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/v9375"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/v125"
         app:layout_constraintTop_toTopOf="@+id/sample_horizontal_center"
@@ -271,7 +299,7 @@
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
         app:layout_constraintBottom_toTopOf="@+id/sample_horizontal_center"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/v9375"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/v125"
         app:layout_constraintTop_toTopOf="parent"

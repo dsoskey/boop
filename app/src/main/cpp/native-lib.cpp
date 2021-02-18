@@ -265,6 +265,20 @@ extern "C" {
      * @param amplitude - new amplitude
      */
     JNIEXPORT void JNICALL
+    Java_wav_boop_sample_SamplerModel_ndkSetSampleAmplitude(JNIEnv *env, jobject instance, jint oscIndex, jfloat amplitude) {
+        if (synth) {
+            synth->setAmplitude(oscIndex, amplitude);
+        } else {
+            LOGE("Synth does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    /**
+     * Sets amplitude for oscillator at oscIndex. Requires engine to be on to work
+     * @param oscIndex - index of oscillator in synthesizer to affect
+     * @param amplitude - new amplitude
+     */
+    JNIEXPORT void JNICALL
     Java_wav_boop_model_OscillatorModel_ndkSetAmplitude(JNIEnv *env, jobject instance, jint oscIndex, jfloat amplitude) {
         if (synth) {
             synth->setAmplitude(oscIndex, amplitude);
