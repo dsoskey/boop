@@ -1,7 +1,10 @@
 package wav.boop.sample
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.ACTION_OPEN_DOCUMENT
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
@@ -22,13 +25,12 @@ import wav.boop.file.buildSampleLoader
 
 class SamplerFragment: Fragment() {
     companion object {
-        val OPEN_SAMPLE_ID = 1
-
         // Left to right list of pads
         val padIds = arrayOf(
             R.id.pad_0, R.id.pad_1, R.id.pad_2, R.id.pad_3,
             R.id.pad_4, R.id.pad_5, R.id.pad_6, R.id.pad_7)
         val padToOscId = padIds.associate { it to padIds.indexOf(it) }
+        val oscToPadId = padIds.associateBy { padIds.indexOf(it) }
     }
     enum class SamplerAction {
         PLAY,
@@ -59,23 +61,36 @@ class SamplerFragment: Fragment() {
         super.onDetach()
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        if (requestCode == OPEN_SAMPLE_ID) {
-//            if (resultCode == Activity.RESULT_OK) {
-//                data?.data?.also { uri ->
-//                    val parcelFileDescriptor: ParcelFileDescriptor =
-//                }
-//            }
-//        }
-//    }
+    /**
+     * Handles intent for loading samples.
+     * @param requestCode - channelIndex to load data into.
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (padToOscId.values.contains(requestCode)) {
+            if (resultCode == Activity.RESULT_OK) {
+                data?.data?.also { uri ->
+                    requireContext().applicationContext.contentResolver.openInputStream(uri)?.use {
+                        // For now, assume it's json of a Sample
+                        val sample: Sample = Json(JsonConfiguration.Stable).parse(Sample.serializer(), it.bufferedReader().use { it.readText() })
+                        samplerModel.setSample(requestCode, sample)
+                        val waveRendererView = (waveform_canvas as WaveRendererView)
+                        val padId = oscToPadId[requestCode]!!
+                        waveRendererView.loadData(padId, sample.rawData)
+                        waveRendererView.renderData(padId)
+                    }
+                }
+            }
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         val sampleLoader = buildSampleLoader(requireContext(), Json(JsonConfiguration.Stable))
-        val samplerFactory = SamplerModelFactory(padToOscId, requireContext(), sampleLoader)
+        val samplerFactory = SamplerModelFactory(requireContext(), sampleLoader)
         samplerModel = ViewModelProvider(requireActivity(), samplerFactory)[SamplerModel::class.java]
-        samplerModel.loadAutosaves()
+        samplerModel.loadAutosaves(padToOscId.values)
         // onClick vs onTouch
         // - onClick for one-handed mode
         // - onTouch for two-handed mode
@@ -165,6 +180,7 @@ class SamplerFragment: Fragment() {
             val button = requireView().findViewById<ImageButton>(id)
             button.setOnTouchListener { view, event ->
                 val padId = view.id
+                val channelIndex = getChannelIndex(padId)
                 when (currentAction) {
                     SamplerAction.PLAY -> {
                         /**
@@ -176,13 +192,13 @@ class SamplerFragment: Fragment() {
                         when (event.action) {
                             MotionEvent.ACTION_DOWN -> {
                                 // play sample
-                                samplerModel.setSampleOn(padId, true)
+                                samplerModel.setSampleOn(channelIndex, true)
                                 // set sample view to show sample.
-                                val sample = samplerModel.getSample(padId)
+                                val sample = samplerModel.getSample(channelIndex)
                                 val waveRendererView = (waveform_canvas as WaveRendererView)
                                 // Setting this var needs to happen before setting the progress on amplitude seekbar,
                                 // the vertical seekbar can't tell the difference between a user and programmatic progress change
-                                currentChoppingChannelIndex = padId
+                                currentChoppingChannelIndex = channelIndex
                                 if (sample != null) {
                                     if (!waveRendererView.hasData(padId)) {
                                         waveRendererView.loadData(padId, sample.data.rawData)
@@ -207,18 +223,18 @@ class SamplerFragment: Fragment() {
                                     requireView().findViewById<ImageButton>(it).isClickable = false
                                 }
                                 // start recording
-                                samplerModel.startRecording(padId)
+                                samplerModel.startRecording(channelIndex)
                             }
                             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_BUTTON_RELEASE -> {
                                 // stop recording and save raw sample
                                 samplerModel.stopRecording()
                                 // set sample view to show sample
-                                val sample = samplerModel.getSample(padId)
+                                val sample = samplerModel.getSample(channelIndex)
                                 if (sample != null) {
                                     val waveRendererView = (waveform_canvas as WaveRendererView)
                                     waveRendererView.loadData(padId, sample.data.rawData)
                                     waveRendererView.renderData(padId)
-                                    currentChoppingChannelIndex = padId
+                                    currentChoppingChannelIndex = channelIndex
                                     setSampleChopperBars(sample)
                                 }
                                 currentAction = SamplerAction.PLAY
@@ -245,12 +261,14 @@ class SamplerFragment: Fragment() {
                             // TODO: confirmation modal if sample exists for this button and not saved
                             // TODO: load file dialog
                             // This code should be enabled
-//                            val filePickerIntent = Intent(ACTION_OPEN_DOCUMENT).apply {
-//                                addCategory(Intent.CATEGORY_OPENABLE)
-//                                type = "application/json"
-//                            }
-//                            startActivityForResult(filePickerIntent, OPEN_SAMPLE_ID)
+                            val filePickerIntent = Intent(ACTION_OPEN_DOCUMENT).apply {
+                                addCategory(Intent.CATEGORY_OPENABLE)
+                                type = "application/json" // TODO: Figure out a way to handle all kinds of audio files, including a custom spec that contains sample metadata
+                            }
+                            startActivityForResult(filePickerIntent, channelIndex)
 
+                            currentAction = SamplerAction.PLAY
+                            setLoadOff()
                         } else if (
                             event.action == MotionEvent.ACTION_UP ||
                             event.action == MotionEvent.ACTION_CANCEL ||
@@ -320,5 +338,8 @@ class SamplerFragment: Fragment() {
                 )
             }
         }
+    }
+    private fun getChannelIndex(padIndex: Int): Int {
+        return padToOscId[padIndex] ?: error("$padIndex not found in map: $padToOscId")
     }
 }

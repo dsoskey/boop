@@ -15,14 +15,13 @@ import kotlin.collections.HashMap
  * Model that manages all interactions with the Sampler's data.
  */
 class SamplerModel(
-    private val padToChannelIndex: Map<Int, Int>,
     private val context: Context,
     private val sampleLoader: SerialLoader<Sample>
 ): ViewModel() {
     companion object {
         const val AUTOSAVE_PREFIX = "autozone"
 
-        fun autoSaveFileName(channelIndex: Int): String { return "${AUTOSAVE_PREFIX}_${channelIndex}" }
+        fun autoSaveFileName(channelIndex: Int): String { return "${AUTOSAVE_PREFIX}${channelIndex}.json" }
     }
 
     // Native interface
@@ -44,15 +43,11 @@ class SamplerModel(
      * Restores any autosaves located in the sampleLoader's subdirectory.
      * NOTE: This will overwrite any currently loaded samples, so use with care.
      */
-    fun loadAutosaves() {
-        padToChannelIndex.values.forEach {
+    fun loadAutosaves(channelIndicies: Collection<Int>) {
+        channelIndicies.forEach {
             val sample = sampleLoader.get(autoSaveFileName(it))
             if (sample != null) {
-                loadedSamples[it] = Savable(false, sample) // TODO: Might need to store the savable wrapper too
-                ndkSetSample(it, sample.rawData)
-                ndkSetSampleStart(it, sample.startFrame)
-                ndkSetSampleEnd(it, sample.endFrame)
-                ndkSetSampleAmplitude(it, sample.amplitude)
+                setSample(it, sample)
             }
         }
     }
@@ -71,9 +66,8 @@ class SamplerModel(
     /**
      * Starts recording for a channel tied to a specific pad.
      */
-    fun startRecording(padIndex: Int) {
-        val channelIndex = padToChannelIndex[padIndex]
-        if (channelIndex != null && currentRecordingChannelIndex == null) {
+    fun startRecording(channelIndex: Int) {
+        if (currentRecordingChannelIndex == null) {
             ndkStartRecording(channelIndex)
             currentRecordingChannelIndex = channelIndex
         }
@@ -108,22 +102,18 @@ class SamplerModel(
     /**
      * Gets a loaded sample based on the pad index, if it exists.
      */
-    fun getSample(padIndex: Int): Savable<Sample>? {
-        return loadedSamples[padToChannelIndex[padIndex]]
+    fun getSample(channelIndex: Int): Savable<Sample>? {
+        return loadedSamples[channelIndex]
     }
 
     /**
      * Sets a sample to play on/off.
      */
-    fun setSampleOn(padIndex: Int, isOn: Boolean) {
-        val channelIndex = padToChannelIndex[padIndex]
-        if (channelIndex != null) {
-            ndkSetSampleOn(channelIndex, isOn)
-        }
+    fun setSampleOn(channelIndex: Int, isOn: Boolean) {
+       ndkSetSampleOn(channelIndex, isOn)
     }
 
-    fun setSampleStartFrame(padIndex: Int, startFrame: Int) {
-        val channelIndex = padToChannelIndex[padIndex] ?: error("padIndex not found in map: $padToChannelIndex")
+    fun setSampleStartFrame(channelIndex: Int, startFrame: Int) {
         val sample = loadedSamples[channelIndex]!!
         if (startFrame < sample.data.endFrame) {
             sample.data.startFrame = startFrame
@@ -132,22 +122,30 @@ class SamplerModel(
         }
     }
 
-    fun setSampleEndFrame(padIndex: Int, endFrame: Int) {
-        val channelIndex = padToChannelIndex[padIndex] ?: error("padIndex not found in map: $padToChannelIndex")
+    fun setSampleEndFrame(channelIndex: Int, endFrame: Int) {
         val sample = loadedSamples[channelIndex]!!
         if (endFrame > sample.data.startFrame) {
+            ndkSetSampleEnd(channelIndex, endFrame)
             sample.data.endFrame = endFrame
             startAutosave(channelIndex, sample)
-            ndkSetSampleEnd(channelIndex, endFrame)
         }
     }
 
-    fun setSampleAmplitude(padIndex: Int, amplitude: Float) {
-        val channelIndex = padToChannelIndex[padIndex] ?: error("padIndex not found in map: $padToChannelIndex")
+    fun setSampleAmplitude(channelIndex: Int, amplitude: Float) {
         val sample = loadedSamples[channelIndex]!!
+        ndkSetSampleAmplitude(channelIndex, amplitude)
         sample.data.amplitude = amplitude
         startAutosave(channelIndex, sample)
-        ndkSetSampleAmplitude(channelIndex, amplitude)
+    }
+
+    fun setSample(channelIndex: Int, sample: Sample) {
+        ndkSetSample(channelIndex, sample.rawData)
+        ndkSetSampleAmplitude(channelIndex, sample.amplitude)
+        ndkSetSampleStart(channelIndex, sample.startFrame)
+        ndkSetSampleEnd(channelIndex, sample.endFrame)
+        val savable = Savable(true, sample)
+        loadedSamples[channelIndex] = savable
+        startAutosave(channelIndex, savable)
     }
 }
 
@@ -155,15 +153,13 @@ class SamplerModel(
  * Factory to allow Model to have a non-empty constructor.
  */
 class SamplerModelFactory(
-    private val padToChannelIndex: Map<Int, Int>,
     private val context: Context,
     private val sampleLoader: SerialLoader<Sample>
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(
-            Map::class.java,
             Context::class.java,
             SerialLoader::class.java
-        ).newInstance(padToChannelIndex, context, sampleLoader)
+        ).newInstance(context, sampleLoader)
     }
 }
