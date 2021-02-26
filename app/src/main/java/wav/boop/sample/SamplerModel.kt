@@ -117,6 +117,7 @@ class SamplerModel(
         val sample = loadedSamples[channelIndex]!!
         if (startFrame < sample.data.endFrame) {
             sample.data.startFrame = startFrame
+            sample.isSaved = false
             startAutosave(channelIndex, sample)
             ndkSetSampleStart(channelIndex, startFrame)
         }
@@ -127,6 +128,7 @@ class SamplerModel(
         if (endFrame > sample.data.startFrame) {
             ndkSetSampleEnd(channelIndex, endFrame)
             sample.data.endFrame = endFrame
+            sample.isSaved = false
             startAutosave(channelIndex, sample)
         }
     }
@@ -135,6 +137,7 @@ class SamplerModel(
         val sample = loadedSamples[channelIndex]!!
         ndkSetSampleAmplitude(channelIndex, amplitude)
         sample.data.amplitude = amplitude
+        sample.isSaved = false
         startAutosave(channelIndex, sample)
     }
 

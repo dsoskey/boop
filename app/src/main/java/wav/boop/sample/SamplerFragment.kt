@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.ACTION_CREATE_DOCUMENT
 import android.content.Intent.ACTION_OPEN_DOCUMENT
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -31,6 +32,9 @@ class SamplerFragment: Fragment() {
             R.id.pad_4, R.id.pad_5, R.id.pad_6, R.id.pad_7)
         val padToOscId = padIds.associate { it to padIds.indexOf(it) }
         val oscToPadId = padIds.associateBy { padIds.indexOf(it) }
+        const val OPCODE_LOAD = 1
+        const val OPCODE_SAVE = 2
+        val JSON = Json(JsonConfiguration.Stable)
     }
     enum class SamplerAction {
         PLAY,
@@ -62,24 +66,53 @@ class SamplerFragment: Fragment() {
     }
 
     /**
-     * Handles intent for loading samples.
-     * @param requestCode - channelIndex to load data into.
+     * Handles intent for saving/loading samples.
+     * @param requestCode - code containing logic instructions for activity result
+     * request code structure: 3+ digit number: O+PP
+     * (O) Op Code: which action to take
+     *  - 1: Load sample to oscId
+     *  - 2: Save oscId's sample to file
+     * (P) oscId: which pad to take the action for
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (padToOscId.values.contains(requestCode)) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.data?.also { uri ->
-                    requireContext().applicationContext.contentResolver.openInputStream(uri)?.use {
-                        // For now, assume it's json of a Sample
-                        val sample: Sample = Json(JsonConfiguration.Stable).parse(Sample.serializer(), it.bufferedReader().use { it.readText() })
-                        samplerModel.setSample(requestCode, sample)
-                        val waveRendererView = (waveform_canvas as WaveRendererView)
-                        val padId = oscToPadId[requestCode]!!
-                        waveRendererView.loadData(padId, sample.rawData)
-                        waveRendererView.renderData(padId)
+        val opCode = requestCode / 100
+        val oscId = requestCode % 100
+        if (padToOscId.values.contains(oscId)) {
+            when (opCode) {
+                OPCODE_LOAD -> {
+                    if (resultCode == Activity.RESULT_OK) {
+                        data?.data?.also { uri ->
+                            requireContext().applicationContext.contentResolver.openInputStream(uri)?.use { inputStream ->
+                                // For now, assume it's json of a Sample
+                                val sample: Sample = JSON.parse(Sample.serializer(), inputStream.bufferedReader().use { it.readText() })
+                                samplerModel.setSample(oscId, sample)
+                                val waveRendererView = (waveform_canvas as WaveRendererView)
+                                val padId = oscToPadId[oscId]!!
+                                waveRendererView.loadData(padId, sample.rawData)
+                                waveRendererView.renderData(padId)
+                                setPadIcons()
+                            }
+                        }
+                    }
+                }
+                OPCODE_SAVE -> {
+                    if (resultCode == Activity.RESULT_OK) {
+                        val sample = samplerModel.getSample(oscId)
+                        if (sample != null) {
+                            data?.data?.also { uri ->
+                                // Does this need to run on a separate thread or does it already run off the IO thread
+                                requireContext().applicationContext.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                                    outputStream.bufferedWriter().use { it.write(JSON.stringify(Sample.serializer(), sample.data)) }
+                                }
+                                sample.isSaved = true
+                                setPadIcons()
+
+                            }
+                        }
                     }
                 }
             }
+
         }
     }
 
@@ -87,7 +120,7 @@ class SamplerFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val sampleLoader = buildSampleLoader(requireContext(), Json(JsonConfiguration.Stable))
+        val sampleLoader = buildSampleLoader(requireContext(), JSON)
         val samplerFactory = SamplerModelFactory(requireContext(), sampleLoader)
         samplerModel = ViewModelProvider(requireActivity(), samplerFactory)[SamplerModel::class.java]
         samplerModel.loadAutosaves(padToOscId.values)
@@ -211,7 +244,7 @@ class SamplerFragment: Fragment() {
                                 // For now I'm letting the sample run out instead of turning off on release
                                 // TODO: In the future this could be configurable.
                                 // stop sample
-//                                samplerModel.setSampleOn(padId, false)
+                                // samplerModel.setSampleOn(channelIndex, false)
                             }
                         }
                     }
@@ -247,34 +280,20 @@ class SamplerFragment: Fragment() {
                     }
                     SamplerAction.SAVE -> {
                         if (event.action == MotionEvent.ACTION_DOWN) {
-                            // TODO: save file
-                        } else if (
-                            event.action == MotionEvent.ACTION_UP ||
-                            event.action == MotionEvent.ACTION_CANCEL ||
-                            event.action == MotionEvent.ACTION_BUTTON_RELEASE
-                        ) {
-                            // I don't think i need anything for this one
+                            val fileSaverIntent = Intent(ACTION_CREATE_DOCUMENT).apply {
+                                addCategory(Intent.CATEGORY_OPENABLE)
+                                type = "application/json"
+                            }
+                            startActivityForResult(fileSaverIntent, 100 * OPCODE_SAVE + channelIndex)
                         }
                     }
                     SamplerAction.LOAD -> {
                         if (event.action == MotionEvent.ACTION_DOWN) {
-                            // TODO: confirmation modal if sample exists for this button and not saved
-                            // TODO: load file dialog
-                            // This code should be enabled
                             val filePickerIntent = Intent(ACTION_OPEN_DOCUMENT).apply {
                                 addCategory(Intent.CATEGORY_OPENABLE)
                                 type = "application/json" // TODO: Figure out a way to handle all kinds of audio files, including a custom spec that contains sample metadata
                             }
-                            startActivityForResult(filePickerIntent, channelIndex)
-
-                            currentAction = SamplerAction.PLAY
-                            setLoadOff()
-                        } else if (
-                            event.action == MotionEvent.ACTION_UP ||
-                            event.action == MotionEvent.ACTION_CANCEL ||
-                            event.action == MotionEvent.ACTION_BUTTON_RELEASE
-                        ) {
-                            // I don't think i need anything for this one
+                            startActivityForResult(filePickerIntent, 100 * OPCODE_LOAD + channelIndex)
                         }
                     }
                 }
@@ -325,8 +344,10 @@ class SamplerFragment: Fragment() {
         }
     }
     private fun setPadIcons() {
-        padIds.forEach { padId ->
-            val sample = samplerModel.getSample(padId)
+        padToOscId.forEach { pair ->
+            val padId = pair.key
+            val oscId = pair.value
+            val sample = samplerModel.getSample(oscId)
             if (sample != null) {
                 val button = requireView().findViewById<ImageButton>(padId)
                 button.setImageResource(
