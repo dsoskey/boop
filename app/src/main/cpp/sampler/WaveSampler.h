@@ -15,7 +15,7 @@ public:
         this->isRecording.store(isRecording);
         if (isRecording) {
             recordingCursor = 0;
-            memset(data.data(), 0, data.size());
+            memset(data.data(), 0, data.size()); // This sets values to \0, the null terminator
         }
     }
 
@@ -25,12 +25,13 @@ public:
 
     std::vector<float> asVector() {
         int firstSilenceIndex = data.size() - 1;
+        // This might be stopping at the null terminator
         while (firstSilenceIndex >= 0 && data[firstSilenceIndex] == 0) firstSilenceIndex--;
         std::vector<float> choppedSample = std::vector<float>(firstSilenceIndex, 0);
         for(int i = 0; i < firstSilenceIndex; i++) {
             choppedSample[i] = data[i];
         }
-        return choppedSample;
+        return choppedSample; // potential memory leak
     }
 
     int write(const float* sourceData, int32_t numFrames) {

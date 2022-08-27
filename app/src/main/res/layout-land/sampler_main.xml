@@ -287,7 +287,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/v125"
         app:layout_constraintTop_toTopOf="@+id/sample_horizontal_center"
-        app:layout_constraintVertical_bias="0.95" />
+     />
 
     <SeekBar
         android:id="@+id/endBar"
@@ -303,6 +303,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/v125"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05" />
+    />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
