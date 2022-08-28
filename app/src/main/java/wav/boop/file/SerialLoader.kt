@@ -1,7 +1,6 @@
 package wav.boop.file
 
 import android.content.Context
-import kotlinx.serialization.json.JsonDecodingException
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -42,8 +41,6 @@ class DefaultSerialLoader<T>(
             iStream.close()
             data
         } catch (e: FileNotFoundException) {
-            null
-        } catch (e: JsonDecodingException) {
             null
         }
     }

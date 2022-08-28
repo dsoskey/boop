@@ -34,7 +34,6 @@ class SamplerFragment: Fragment() {
         val oscToPadId = padIds.associateBy { padIds.indexOf(it) }
         const val OPCODE_LOAD = 1
         const val OPCODE_SAVE = 2
-        val JSON = Json(JsonConfiguration.Stable)
     }
     enum class SamplerAction {
         PLAY,
@@ -84,7 +83,7 @@ class SamplerFragment: Fragment() {
                         data?.data?.also { uri ->
                             requireContext().applicationContext.contentResolver.openInputStream(uri)?.use { inputStream ->
                                 // For now, assume it's json of a Sample
-                                val sample: Sample = JSON.parse(Sample.serializer(), inputStream.bufferedReader().use { it.readText() })
+                                val sample: Sample = Json.decodeFromString(Sample.serializer(), inputStream.bufferedReader().use { it.readText() })
                                 samplerModel.setSample(oscId, sample)
                                 val waveRendererView = (waveform_canvas as WaveRendererView)
                                 val padId = oscToPadId[oscId]!!
@@ -102,7 +101,7 @@ class SamplerFragment: Fragment() {
                             data?.data?.also { uri ->
                                 // Does this need to run on a separate thread or does it already run off the IO thread
                                 requireContext().applicationContext.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                                    outputStream.bufferedWriter().use { it.write(JSON.stringify(Sample.serializer(), sample.data)) }
+                                    outputStream.bufferedWriter().use { it.write(Json.encodeToString(Sample.serializer(), sample.data)) }
                                 }
                                 sample.isSaved = true
                                 setPadIcons()
@@ -120,7 +119,7 @@ class SamplerFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val sampleLoader = buildSampleLoader(requireContext(), JSON)
+        val sampleLoader = buildSampleLoader(requireContext())
         val samplerFactory = SamplerModelFactory(requireContext(), sampleLoader)
         samplerModel = ViewModelProvider(requireActivity(), samplerFactory)[SamplerModel::class.java]
         samplerModel.loadAutosaves(padToOscId.values)

@@ -10,8 +10,6 @@ import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import wav.boop.color.getThemeColor
 import wav.boop.file.buildPresetLoader
 import wav.boop.model.*
@@ -46,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val synthFactory = SynthesizerModelFactory(
-            buildPresetLoader(applicationContext, Json(JsonConfiguration.Stable)),
+            buildPresetLoader(applicationContext),
             ViewModelProvider(this)[PitchModel::class.java],
             ViewModelProvider(this)[ADSRModel::class.java],
             ViewModelProvider(this)[OscillatorModel::class.java]

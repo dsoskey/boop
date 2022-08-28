@@ -5,20 +5,20 @@ import kotlinx.serialization.json.Json
 import wav.boop.preset.Preset
 import wav.boop.sample.Sample
 
-fun buildPresetLoader(context: Context, json: Json): DefaultSerialLoader<Preset> {
+fun buildPresetLoader(context: Context): DefaultSerialLoader<Preset> {
     return DefaultSerialLoader(
         "presets",
         context,
-        { json.stringify(Preset.serializer(), it) },
-        { json.parse(Preset.serializer(), it) }
+        { Json.encodeToString(Preset.serializer(), it) },
+        { Json.decodeFromString(Preset.serializer(), it) }
     )
 }
 
-fun buildSampleLoader(context: Context, json: Json): DefaultSerialLoader<Sample> {
+fun buildSampleLoader(context: Context): DefaultSerialLoader<Sample> {
     return DefaultSerialLoader(
         "samples",
         context,
-        { json.stringify(Sample.serializer(), it) },
-        { json.parse(Sample.serializer(), it) }
+        { Json.encodeToString(Sample.serializer(), it) },
+        { Json.decodeFromString(Sample.serializer(), it) }
     )
 }

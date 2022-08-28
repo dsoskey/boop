@@ -124,8 +124,8 @@ class SamplerModel(
     }
 
     fun setSampleEndFrame(channelIndex: Int, endFrame: Int) {
-        val sample = loadedSamples[channelIndex]!!
-        if (endFrame > sample.data.startFrame) {
+        val sample = loadedSamples[channelIndex]
+        if (sample != null && endFrame > sample.data.startFrame) {
             ndkSetSampleEnd(channelIndex, endFrame)
             sample.data.endFrame = endFrame
             sample.isSaved = false
