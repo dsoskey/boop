@@ -87,6 +87,7 @@ extern "C" {
     }
 
     /**
+     * DEPRECATED. use synth equivalent
      * Sets the oscillator at oscIndex to on or off. Requires engine to be on to work
      * @param env
      * @param instance
@@ -95,6 +96,22 @@ extern "C" {
      */
     JNIEXPORT void JNICALL
     Java_wav_boop_pad_PadFragment_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isOn) {
+        if (synth) {
+            synth->setWaveOn(oscIndex, isOn);
+        } else {
+            LOGE("Synth does not exist, call createEngine() to create a new one");
+        }
+    }
+
+    /**
+    * Sets the oscillator at oscIndex to on or off. Requires engine to be on to work
+    * @param env
+    * @param instance
+    * @param oscIndex - index of oscillator in synthesizer to affect
+    * @param isOn - should oscillator be on or off
+    */
+    JNIEXPORT void JNICALL
+    Java_wav_boop_model_SynthesizerModel_setWaveOn(JNIEnv *env, jobject instance, jint oscIndex, jboolean isOn) {
         if (synth) {
             synth->setWaveOn(oscIndex, isOn);
         } else {
@@ -178,11 +195,11 @@ extern "C" {
         if (synth) {
             std::shared_ptr<WaveGenerator> gen;
             std::string wf = env->GetStringUTFChars(waveform, NULL);
-            if (wf.compare("sin") == 0) {
+            if (wf == "sin") {
                 gen = SIN;
-            } else if (wf.compare("square") == 0) {
+            } else if (wf == "square") {
                 gen = SQUARE;
-            } else if (wf.compare("saw") == 0) {
+            } else if (wf == "saw") {
                 gen = SAW;
             } else {
                 gen = SIN;
@@ -220,14 +237,14 @@ extern "C" {
             std::vector<float> sample = engine->stopRecordingSample();
             result = env->NewFloatArray(sample.size());
 
-            if (result != NULL) {
+            if (result != nullptr) {
                 env->SetFloatArrayRegion(result, 0, sample.size(), sample.data());
             }
 
             return result;
         } else {
             LOGE("Engine does not exist, call createEngine() to create a new one");
-            return NULL;
+            return nullptr;
         }
     }
 

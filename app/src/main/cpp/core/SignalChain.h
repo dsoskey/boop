@@ -82,7 +82,7 @@ public:
 
     /**
      * Gets a reference to a Signal Processor at the index position in the chain.
-     * It is the caller's responsibility to know what type of Signal Processor is at each
+     * It is the caller's responsibility to know what type of Signal Processor is at each index
      * IDEA: Type inflection
      * @param index
      * @return reference to signal processor at index.

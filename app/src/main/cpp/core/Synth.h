@@ -15,15 +15,12 @@
 #include "ADSRProcessor.h"
 #include "../sampler/Sample.h"
 #include "../sampler/Noise.h"
+#include "../log.h"
 
 constexpr float oscBaseFrequency = 116.0;
 constexpr float oscDivisor = 33.0;
 constexpr float oscAmplitude = 0.3;
 
-constexpr int minSamplerIndex = 0;
-constexpr int maxSamplerIndex = 7;
-constexpr int minPlayPadIndex = 8;
-constexpr int maxPlayPadIndex = 39;
 /**
  * Top-level Synthesizer object that contains a list of oscillators and a mixer to add them together.
  */
@@ -40,16 +37,29 @@ public:
      * @param sr - sample rate
      * @param cc - channel count
      */
-    Synth(int32_t sr, int32_t cc) : sampleRate(sr), channelCount(cc) {
+    Synth(
+        int32_t sr,
+        int32_t cc,
+        u_int8_t numSamplers,
+        u_int8_t numWaveforms
+    ) : sampleRate(sr), channelCount(cc) {
+        assert(numSamplers + numWaveforms <= kMaxTracks);
+
+        minSamplerIndex = 0;
+        maxSamplerIndex = numSamplers > 0 ? numSamplers - 1 : 0;
+        minPlayPadIndex = numSamplers;
+        maxPlayPadIndex = minPlayPadIndex + numWaveforms - 1;
+
         std::shared_ptr<WaveGenerator> waveformGenerator = std::make_shared<SinWaveformGenerator>();
         std::shared_ptr<ADSREnvelope> adsrEnvelope = std::make_shared<ADSREnvelope>();
-        for (int i = minSamplerIndex; i <= maxSamplerIndex; ++i) {
-            std::shared_ptr<Sample> noise = std::make_shared<Sample>(Noise::randomNoise());
-            sampleIndex = oscillators[i].addRenderable(noise);
-            oscillators[i].setAmplitude(.6);
-            mixer.addTrack(&oscillators[i]);
-        }
-
+        LOGV("creating samplers");
+//        for (int i = minSamplerIndex; i <= maxSamplerIndex; ++i) {
+//            std::shared_ptr<Sample> noise = std::make_shared<Sample>(Noise::randomNoise());
+//            sampleIndex = oscillators[i].addRenderable(noise);
+//            oscillators[i].setAmplitude(.6);
+//            mixer.addTrack(&oscillators[i]);
+//        }
+        LOGV("creating waveforms");
         for (int i = minPlayPadIndex; i < kMaxTracks; ++i) {
             std::shared_ptr<WaveformProcessor> waveformProcessor = std::make_shared<WaveformProcessor>();
             waveformProcessor->setFrequency(oscBaseFrequency + (static_cast<float>(i) / oscDivisor));
@@ -64,11 +74,13 @@ public:
             oscillators[i].setAmplitude(oscAmplitude);
             mixer.addTrack(&oscillators[i]);
         }
+        LOGV("setting mono/stereo");
         if (channelCount == oboe::ChannelCount::Stereo) {
             outputStage =  &converter;
         } else {
             outputStage = &mixer;
         }
+        LOGV("synth initialized");
     }
 
     // From IRenderableAudio
@@ -111,7 +123,7 @@ public:
      * @param waveGenerator
      */
     void setWave(int oscIndex, std::shared_ptr<WaveGenerator> waveGenerator) {
-        if (oscIndex >= minPlayPadIndex && oscIndex < oscillators.size()) { // TODO: Add upper bound when something is above play pads
+        if (oscIndex >= minPlayPadIndex && oscIndex < oscillators.size()) {
             std::shared_ptr<WaveformProcessor> waveProcessor = std::dynamic_pointer_cast<WaveformProcessor>(oscillators[oscIndex].getRenderable(waveformIndex));
             waveProcessor->setWave(waveGenerator);
             waveProcessor->setSignalOn(true);
@@ -232,6 +244,10 @@ private:
     IRenderableAudio *outputStage; // This will point to either the mixer or converter, so it needs to be raw
     int32_t sampleRate;
     int32_t channelCount;
+    uint8_t minSamplerIndex;
+    uint8_t maxSamplerIndex;
+    uint8_t minPlayPadIndex;
+    uint8_t maxPlayPadIndex;
 };
 
 #endif //BOOP_CORE_SYNTH_H

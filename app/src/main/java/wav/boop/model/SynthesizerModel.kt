@@ -22,6 +22,8 @@ class SynthesizerModel(
     }
     var currentFileName: String = "Autozone"
 
+    external fun setWaveOn(oscIndex: Int, isOn: Boolean)
+
     private fun buildPreset(fileName: String): Preset {
         return Preset(
             fileName,
@@ -63,11 +65,11 @@ class SynthesizerModel(
         adsrController.setDecayLength(preset.decay)
         adsrController.setSustainLevel(preset.sustain)
         adsrController.setReleaseLength(preset.release)
-        tonicController.setTonic(preset.tonicLetter, preset.tonicOctave)
-        preset.oscillators.forEachIndexed { index, oscillator ->
-            oscillatorController.setAmplitude(index, oscillator.amplitude)
-            oscillatorController.setWaveform(index, oscillator.baseWave)
-        }
+//        tonicController.setTonic(preset.tonicLetter, preset.tonicOctave)
+//        preset.oscillators.forEachIndexed { index, oscillator ->
+//            oscillatorController.setAmplitude(index, oscillator.amplitude)
+//            oscillatorController.setWaveform(index, oscillator.baseWave)
+//        }
     }
 }
 
@@ -77,7 +79,7 @@ class SynthesizerModelFactory(
     private val adsrController: ADSRModel,
     private val oscillatorController: OscillatorModel
 ): ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(
             SerialLoader::class.java,
             PitchModel::class.java,

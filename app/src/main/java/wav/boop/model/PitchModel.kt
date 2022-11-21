@@ -1,9 +1,11 @@
 package wav.boop.model
 
 import androidx.lifecycle.ViewModel
-import wav.boop.pad.padIds
-import wav.boop.pad.padToOscillator
-import wav.boop.pitch.*
+import wav.boop.pad.getOscillatorsForIsoKey
+import wav.boop.pitch.Chord
+import wav.boop.pitch.NoteLetter
+import wav.boop.pitch.Scale
+import wav.boop.pitch.westernTuning
 import wav.boop.preset.TonicController
 
 /**
@@ -17,7 +19,12 @@ class PitchModel: ViewModel(), TonicController {
     private val baseOctave: Int = 4
     private val baseNoteLetter: NoteLetter = NoteLetter.A
     private val baseFrequency: Double = 440.0
+
+    private val gb3: Double = 184.997
     var frequencyMap: MutableMap<Int, Double> = HashMap()
+        private set
+
+    var pitches: DoubleArray = doubleArrayOf()
         private set
     var tonicOctave: Int = baseOctave
         private set
@@ -27,19 +34,21 @@ class PitchModel: ViewModel(), TonicController {
         private set
 
     init {
-        setTonic(baseFrequency)
+        setTonic(gb3)
     }
 
     override fun setTonic(frequency: Double) {
-        val pitches: DoubleArray =
-            getFrequenciesFromTonic(frequency, padIds.size)
-        padIds.forEachIndexed { index, id ->
-            frequencyMap[id] = pitches[index]
-            (padToOscillator[id] ?: error("")).forEach { oscIndex ->
-                setFrequency(oscIndex, pitches[index])
+        pitches = Scale.ISOMORPHIC_HIGH.frequencies(frequency)
+            .plus(Scale.ISOMORPHIC_LOW.frequencies(frequency * 2))
+            .plus(Scale.ISOMORPHIC_HIGH.frequencies(frequency * 2))
+            .plus(Scale.ISOMORPHIC_LOW.frequencies(frequency * 4))
+            .plus(Scale.ISOMORPHIC_HIGH.frequencies(frequency * 4))
+
+        pitches.forEachIndexed { index, pitch ->
+            getOscillatorsForIsoKey(index).forEach { oscIndex ->
+                setFrequency(oscIndex, pitch)
             }
         }
-
     }
 
     override fun setTonic(octave: Int) {

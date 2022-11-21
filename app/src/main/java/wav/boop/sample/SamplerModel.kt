@@ -159,7 +159,7 @@ class SamplerModelFactory(
     private val context: Context,
     private val sampleLoader: SerialLoader<Sample>
 ): ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(
             Context::class.java,
             SerialLoader::class.java

@@ -45,7 +45,9 @@ public:
      * Sets mono or stereo
      * @param channelCount
      */
-    void setChannelCount(int32_t channelCount){ mChannelCount = channelCount; }
+    void setChannelCount(int32_t channelCount){
+        mChannelCount = channelCount;
+    }
 
 private:
     float mixingBuffer[kBufferSize];

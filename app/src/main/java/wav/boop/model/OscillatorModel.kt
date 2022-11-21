@@ -7,7 +7,7 @@ import wav.boop.preset.OscillatorController
 import wav.boop.preset.OscillatorState
 
 class OscillatorModel: ViewModel(), OscillatorController {
-    val oscillators = MutableLiveData<MutableList<OscillatorState>>(mutableListOf(
+    val oscillators = MutableLiveData(mutableListOf(
         OscillatorState("SIN", .5f),
         OscillatorState("SIN", .5f)
     ))

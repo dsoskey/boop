@@ -1,5 +1,6 @@
 package wav.boop
 
+import App
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -7,7 +8,8 @@ import android.graphics.Color
 import android.media.AudioManager
 import android.os.Bundle
 import android.os.Process
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import wav.boop.color.getThemeColor
@@ -21,7 +23,7 @@ const val BOOP_REQUEST_CODE = 0
 /**
  * Root activity for boop.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     // Native interface for AudioEngine controls
     private external fun startEngine(cpuIds: IntArray)
     private external fun isEngineRunning(): Boolean
@@ -33,7 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
         if (!isRecordPermissionGranted()) {
             requestRecordPermission()
@@ -60,6 +61,10 @@ class MainActivity : AppCompatActivity() {
         )
 
         synthModel.loadPreset(AUTOSAVE_PREFIX)
+
+        setContent {
+            App(synthModel) // TODO: access synth model from a context
+        }
     }
 
     override fun onStop() {

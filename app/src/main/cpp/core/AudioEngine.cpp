@@ -48,10 +48,17 @@ void AudioEngine::createCallback(std::vector<int> cpuIds) {
 void AudioEngine::start() {
     auto result = createPlaybackStream();
     if (result == oboe::Result::OK) {
+        // Extract start. TODO: Do i need to stop and start the stream surrounding setAudioSource?
         if (audioSource == nullptr) {
-            audioSource = std::make_shared<Synth>(stream->getSampleRate(), stream->getChannelCount());
+            audioSource = std::make_shared<Synth>(
+                stream->getSampleRate(),
+                stream->getChannelCount(),
+                0,
+                42 * 2
+            );
         }
         callback->setSource(std::dynamic_pointer_cast<IRenderableAudio>(audioSource));
+        // Extract end
         stream->start();
 
         result = createRecordingStream(stream->getSampleRate());
