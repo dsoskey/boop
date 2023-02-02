@@ -1,88 +1,117 @@
 package wav.boop
 
+import App
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.media.AudioManager
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import wav.boop.pad.*
-import wav.boop.synth.DefaultSynthesizer
-import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import wav.boop.visualisation.ClassicOscilloscopeFragment
-import javax.inject.Inject
+import android.os.Process
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
+import wav.boop.color.getThemeColor
+import wav.boop.file.buildPresetLoader
+import wav.boop.model.*
+import wav.boop.model.SynthesizerModel
+import wav.boop.model.SynthesizerModel.Companion.AUTOSAVE_PREFIX
+import wav.boop.pitch.Scale
 
+const val BOOP_REQUEST_CODE = 0
+/**
+ * Root activity for boop.
+ */
+class MainActivity : ComponentActivity() {
+    // Native interface for AudioEngine controls
+    private external fun startEngine(cpuIds: IntArray)
+    private external fun isEngineRunning(): Boolean
+    private external fun stopEngine()
+    private external fun setDefaultStreamValues(sampleRate: Int, framesPerBurst: Int)
 
-class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
-    var colorScheme: ColorScheme = ColorScheme.piano(
-        Color.valueOf(Color.parseColor("#FFEC00")),
-        Color.valueOf(Color.parseColor("#AB00FF"))
-    )
-    @Inject lateinit var synthesizer: DefaultSynthesizer
-    lateinit var padFragment: PadFragment
+    lateinit var colorScheme: ColorScheme
+    lateinit var synthModel: SynthesizerModel
 
-    override fun onDialogDismissed(dialogId: Int) {}
-    override fun onColorSelected(dialogId: Int, colorInt: Int) {
-        val color = Color.valueOf(colorInt)
-        colorScheme.withColor(dialogId, color)
-        padFragment.setPadColor(dialogId, color)
-    }
-
-    override fun onOptionsMenuClosed(menu: Menu?) {
-        padFragment.actionMode = PadFragment.PadAction.PLAY
-        super.onOptionsMenuClosed(menu)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
-
-        val engineSelectorExpandListener = object: MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                return true // Return true to collapse action view
-            }
-
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.PLAY
-                colorScheme.idList.forEach { id -> padFragment.darken(id) }
-                return true // Return true to expand action view
-            }
-        }
-        val engineSelectorMenuItem = menu?.findItem(R.id.action_color_picker_mode)
-        engineSelectorMenuItem?.setOnActionExpandListener(engineSelectorExpandListener)
-
-        val colorPickerExpandListener = object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.PLAY
-                colorScheme.idList.forEach { id -> padFragment.darken(id) }
-                return true // Return true to collapse action view
-            }
-
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                padFragment.actionMode = PadFragment.PadAction.COLOR
-                colorScheme.idList.forEach { id -> padFragment.brighten(id) }
-                return true // Return true to expand action view
-            }
-        }
-        val colorPickerMenuItem = menu?.findItem(R.id.action_color_picker_mode)
-        colorPickerMenuItem?.setOnActionExpandListener(colorPickerExpandListener)
-        return true
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        (applicationContext as BoopApp).appGraph.inject(this)
 
-        val toolbar: Toolbar = findViewById(R.id.my_toolbar)
-        setSupportActionBar(toolbar)
+        if (!isRecordPermissionGranted()) {
+            requestRecordPermission()
+        }
+        if (!isEngineRunning()) {
+            startEngine(getExclusiveCores())
+            setDefaultStreamValues()
+        }
 
-        val oscilloscopeTransaction = supportFragmentManager.beginTransaction()
-        val oscilloscopeFragment = ClassicOscilloscopeFragment()
-        oscilloscopeTransaction.add(R.id.side_action, oscilloscopeFragment)
-        oscilloscopeTransaction.commit()
+        val synthFactory = SynthesizerModelFactory(
+            buildPresetLoader(applicationContext),
+            ViewModelProvider(this)[PitchModel::class.java],
+            ViewModelProvider(this)[ADSRModel::class.java],
+            ViewModelProvider(this)[OscillatorModel::class.java]
+        )
+        synthModel = ViewModelProvider(this, synthFactory)[SynthesizerModel::class.java]
 
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        padFragment = PadFragment(this, oscilloscopeFragment, synthesizer, colorScheme)
-        fragmentTransaction.add(R.id.main_action, padFragment)
-        fragmentTransaction.commit()
+
+        colorScheme = ViewModelProvider(this)[ColorScheme::class.java]
+        colorScheme.makeMode(
+            Color.valueOf(getThemeColor(theme, R.attr.colorAccent)),
+            Color.valueOf(getThemeColor(theme, R.attr.colorOnPrimary)),
+            Scale.IONIAN
+        )
+
+        synthModel.loadPreset(AUTOSAVE_PREFIX)
+
+        setContent {
+            App(synthModel) // TODO: access synth model from a context
+        }
+    }
+
+    override fun onStop() {
+        synthModel.saveCurrentPreset(AUTOSAVE_PREFIX)
+        super.onStop()
+    }
+
+    override fun onRestart() {
+        if (!isEngineRunning()) {
+            startEngine(getExclusiveCores())
+            synthModel.refresh()
+        }
+        super.onRestart()
+    }
+
+    private fun getExclusiveCores(): IntArray {
+        var exclusiveCores: IntArray = intArrayOf()
+
+        try {
+            exclusiveCores = Process.getExclusiveCores()
+        } catch (e: RuntimeException) {
+            println("getExclusiveCores() not supported on this device")
+        }
+        return exclusiveCores
+    }
+
+    private fun setDefaultStreamValues() {
+        val myAudioMgr = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val sampleRateStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
+        val defaultSampleRate = sampleRateStr.toInt()
+        val framesPerBurstStr = myAudioMgr.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)
+        val defaultFramesPerBurst = framesPerBurstStr.toInt()
+        setDefaultStreamValues(defaultSampleRate, defaultFramesPerBurst)
+    }
+
+    private fun requestRecordPermission() {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), BOOP_REQUEST_CODE)
+    }
+
+    private fun isRecordPermissionGranted(): Boolean {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+    }
+
+    companion object {
+        // Used to load the 'native-lib' library on application startup.
+        init {
+            System.loadLibrary("native-lib")
+        }
     }
 }

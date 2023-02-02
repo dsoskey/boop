@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/synthesizer_option_group"
+        android:menuCategory="container"
+        android:icon="@drawable/outline_music_note_24"
+        android:title="Synthesizer"
+    >
+        <menu>
+            <item
+                android:id="@+id/preset_menu_option"
+                android:title="Preset" />
+            <item
+                android:id="@+id/pitch_menu_option"
+                android:title="Pitch" />
+            <item
+                android:id="@+id/oscillator_menu_option"
+                android:title="Oscillator" />
+            <item
+                android:id="@+id/adsr_menu_option"
+                android:title="ADSR" />
+        </menu>
+    </item>
+</menu>

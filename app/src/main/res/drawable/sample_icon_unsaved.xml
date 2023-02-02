@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:viewportHeight="500"
+    android:viewportWidth="500"
+    android:width="108dp"
+    android:height="108dp"
+    >
+        <path android:name="lightningBolt"
+            android:fillType="evenOdd" android:strokeColor="@color/temperedSienna" android:strokeWidth="10"
+            android:pathData="M 250.00,50.00
+           C 250.00,73.00 250.00,140.00 250.00,140.00
+             250.00,140.00 300.00,125.00 300.00,125.00
+             300.00,125.00 200.00,200.00 200.00,200.00
+             200.00,200.00 325.00,200.00 325.00,200.00
+             325.00,200.00 175.00,300.00 175.00,300.00
+             175.00,300.00 300.00,300.00 300.00,300.00
+             300.00,300.00 200.00,375.00 200.00,375.00
+             200.00,375.00 250.00,360.00 250.00,360.00
+             250.00,360.00 250.00,450.00 250.00,450.00"
+        />
+</vector>

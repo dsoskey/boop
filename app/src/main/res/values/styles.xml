@@ -1,11 +1,97 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/innerRind</item>
+        <item name="colorOnPrimary">@color/outerRind</item>
+        <item name="colorSecondary">@color/seeds</item>
+        <item name="colorSurface">@color/innerRind</item>
+        <item name="colorOnSurface">@color/seeds</item>
+        <item name="colorPrimaryDark">@color/outerRind</item>
+        <item name="colorAccent">@color/meat</item>
+        <item name="fontFamily">monospace</item>
+    </style>
+
+    <style name="AppThemeContrast" parent="AppTheme">
+        <item name="colorPrimary">@color/itsBlack</item>
+        <item name="colorPrimaryDark">@color/itsBlack</item>
+        <item name="colorOnPrimary">@color/ap_white</item>
+        <item name="colorSecondary">@color/ap_gray</item>
+        <item name="colorSurface">@color/itsBlack</item>
+        <item name="colorOnSurface">@color/ap_white</item>
+        <item name="colorAccent">@color/temperedSienna</item>
+    </style>
+
+    <style name="AppThemeYuh" parent="AppTheme">
+        <item name="colorPrimary">@color/electricBlue</item>
+        <item name="colorPrimaryDark">@color/boyBlue</item>
+        <item name="colorOnPrimary">@color/boyBlue</item>
+        <item name="colorSecondary">@color/electricYellow</item>
+        <item name="colorSurface">@color/electricBlue</item>
+        <item name="colorOnSurface">@color/electricYellow</item>
+        <item name="colorAccent">@color/electricOrange</item>
+    </style>
+
+    <style name="AppThemeRed" parent="AppTheme">
+        <item name="colorPrimary">@color/numberTwoYellow</item>
+        <item name="colorPrimaryDark">@color/temperedSienna</item>
+        <item name="colorOnPrimary">@color/temperedSienna</item>
+        <item name="colorSecondary">@color/itsBlack</item>
+        <item name="colorSurface">@color/numberTwoYellow</item>
+        <item name="colorOnSurface">@color/itsBlack</item>
+        <item name="colorAccent">@color/valentinaPink</item>
+    </style>
+
+    <style name="AppThemeGreen" parent="AppTheme">
+        <item name="colorPrimary">@color/meat</item>
+        <item name="colorPrimaryDark">@color/melonRind</item>
+        <item name="colorOnPrimary">@color/melonRind</item>
+        <item name="colorSecondary">@color/melonSeed</item>
+        <item name="colorSurface">@color/meat</item>
+        <item name="colorOnSurface">@color/melonSeed</item>
+        <item name="colorAccent">@color/melonSkin</item>
+    </style>
+
+    <style name="AppThemeBlue" parent="AppTheme">
+        <item name="colorPrimary">@color/semiPeriwinkle</item>
+        <item name="colorPrimaryDark">@color/lakeBlue</item>
+        <item name="colorOnPrimary">@color/lakeBlue</item>
+        <item name="colorSecondary">@color/sunbeamYellow</item>
+        <item name="colorSurface">@color/semiPeriwinkle</item>
+        <item name="colorOnSurface">@color/sunbeamYellow</item>
+        <item name="colorAccent">@color/sunbeamOrange</item>
+    </style>
+
+    <style name="Widget.Boop.ControlModule.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+    <style name="Widget.Boop.ControlModule.SpinnerDropItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:background">?attr/colorSurface</item>
+    </style>
+
+    <style name="Widget.Boop.ControlModule.Button" parent="">
+        <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="android:background">?attr/colorOnPrimary</item>
+
+    </style>
+
+    <style name="Widget.Boop.PadGrid.Pad" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">1dp</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:backgroundTintMode">src_over</item>
+    </style>
+    <style name="Widget.Boop.ControlModule.Button.Small">
+        <item name="android:textSize">24sp</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+    <style name="Widget.Boop.ControlModule.Button.Medium">
+        <item name="android:layout_width">75dp</item>
+        <item name="android:layout_height">75dp</item>
     </style>
 
     <style name="OscDark">
